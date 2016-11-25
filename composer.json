@@ -10,10 +10,16 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=5.5.0",
+        "symfony/http-kernel": "~2.8|~3.0",
+        "symfony/filesystem": "~2.8|~3.0",
+        "symfony/dependency-injection": "~2.8|~3.0",
+        "symfony/config": "~2.8|~3.0",
+        "symfony/routing": "~2.8|~3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.5"
+        "phpunit/phpunit": "~4.5",
+        "contao/core-bundle": "dev-release/4.3.0 as 4.3.0"
     },
     "autoload": {
         "psr-4": {
@@ -29,7 +35,5 @@
         "branch-alias": {
             "dev-develop": "1.0.x-dev"
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
