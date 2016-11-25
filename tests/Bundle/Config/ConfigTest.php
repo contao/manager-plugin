@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
-    const FIXTURES_DIR = __DIR__ . '/../../Fixtures/Bundle/Config';
+    const FIXTURES_DIR = '/../../Fixtures/Bundle/Config';
 
     public function testInstantiation()
     {
@@ -116,7 +116,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $kernel = $this->getMock(KernelInterface::class);
         $kernel
             ->method('getRootDir')
-            ->willReturn(self::FIXTURES_DIR . '/app')
+            ->willReturn(__DIR__ . self::FIXTURES_DIR . '/app')
         ;
 
         $config = ModuleConfig::create('foobar');
@@ -125,7 +125,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
         $this->assertEquals(
-            self::FIXTURES_DIR . '/system/modules/foobar',
+            __DIR__ . self::FIXTURES_DIR . '/system/modules/foobar',
             $bundle->getPath()
         );
     }
@@ -138,7 +138,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $kernel = $this->getMock(KernelInterface::class);
         $kernel
             ->method('getRootDir')
-            ->willReturn(self::FIXTURES_DIR . '/app')
+            ->willReturn(__DIR__ . self::FIXTURES_DIR . '/app')
         ;
 
         $config = ModuleConfig::create('barfoo');

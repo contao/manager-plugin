@@ -15,8 +15,6 @@ use Contao\ManagerPlugin\Bundle\Parser\IniParser;
 
 class IniParserTest extends \PHPUnit_Framework_TestCase
 {
-    const FIXTURES_DIR = __DIR__ . '/../../Fixtures/Bundle/IniParser';
-
     /**
      * @var IniParser
      */
@@ -29,7 +27,7 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->parser = new IniParser(self::FIXTURES_DIR);
+        $this->parser = new IniParser(__DIR__ . '/../../Fixtures/Bundle/IniParser');
     }
 
     public function testInstantiation()
@@ -120,6 +118,8 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @runInSeparateProcess
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage cannot be decoded
      */
     public function testParseBrokenIni()
     {
@@ -131,7 +131,6 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
         \PHPUnit_Framework_Error_Notice::$enabled = false;
         error_reporting(0);
 
-        $this->setExpectedException('RuntimeException', 'File ' . self::FIXTURES_DIR . '/broken-ini/config/autoload.ini cannot be decoded');
         $this->parser->parse('broken-ini');
     }
 }
