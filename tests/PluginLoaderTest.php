@@ -114,6 +114,30 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @runInSeparateProcess
+     */
+    public function testLoadIsOnlyRunOnce()
+    {
+        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooBarPlugin.php';
+
+        /** @var PluginLoader|\PHPUnit_Framework_MockObject_MockObject $pluginLoader */
+        $pluginLoader = $this->getMockBuilder(PluginLoader::class)
+            ->setMethods(['orderPlugins'])
+            ->setConstructorArgs([__DIR__ . '/' . self::FIXTURES_DIR . '/installed.json'])
+            ->getMock()
+        ;
+
+        $pluginLoader
+            ->expects($this->once())
+            ->method('orderPlugins')
+            ->willReturnArgument(0)
+        ;
+
+        $pluginLoader->getInstances();
+        $pluginLoader->getInstances();
+    }
+
+    /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage not found
      */

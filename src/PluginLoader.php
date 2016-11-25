@@ -117,7 +117,7 @@ class PluginLoader
             }
         }
 
-        $this->orderPlugins($plugins);
+        $this->plugins = $this->orderPlugins($plugins);
 
         // Instantiate a global plugin to load AppBundle or other customizations
         $appPlugin = '\ContaoManagerPlugin';
@@ -129,12 +129,15 @@ class PluginLoader
     /**
      * @param array $plugins
      *
+     * @return array
+     *
      * @throws UnresolvableDependenciesException
      */
-    private function orderPlugins(array $plugins)
+    protected function orderPlugins(array $plugins)
     {
         $this->plugins = [];
 
+        $ordered = [];
         $dependencies = [];
         $packages = array_keys($plugins);
 
@@ -154,7 +157,9 @@ class PluginLoader
         }
 
         foreach ($this->orderByDependencies($dependencies) as $packageName) {
-            $this->plugins[$packageName] = $plugins[$packageName];
+            $ordered[$packageName] = $plugins[$packageName];
         }
+
+        return $ordered;
     }
 }
