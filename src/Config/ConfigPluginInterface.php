@@ -10,7 +10,7 @@
 
 namespace Contao\ManagerPlugin\Config;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
 /**
  * @author Andreas Schempp <https://github.com/aschempp>
@@ -18,9 +18,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 interface ConfigPluginInterface
 {
     /**
-     * Allows a plugin to prepend Container extension configurations.
+     * Allows a plugin to load the container configuration.
      *
-     * @param ContainerBuilder $container
+     * @param LoaderInterface $loader
+     * @param array           $managerConfig
      */
-    public function prependConfig(array $configs, ContainerBuilder $container);
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig);
 }

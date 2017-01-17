@@ -3,11 +3,11 @@
 namespace Foo\Config;
 
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
 class FooConfigPlugin implements ConfigPluginInterface
 {
-    public function prependConfig(array $configs, ContainerBuilder $container)
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
     {
     }
 }
