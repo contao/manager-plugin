@@ -18,6 +18,23 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ModuleConfig extends BundleConfig
 {
+    const LEGACY_MODULES = [
+        'core',
+        'calendar',
+        'comments',
+        'faq',
+        'listing',
+        'news',
+        'newsletter'
+    ];
+
+    public function __construct($name)
+    {
+        parent::__construct($name);
+
+        $this->setLoadAfterLegacyModules();
+    }
+
     /**
      * @inheritdoc
      *
@@ -26,5 +43,15 @@ class ModuleConfig extends BundleConfig
     public function getBundleInstance(KernelInterface $kernel)
     {
         return new ContaoModuleBundle($this->name, $kernel->getRootDir());
+    }
+
+    private function setLoadAfterLegacyModules()
+    {
+        $modules = array_merge(self::LEGACY_MODULES, [$this->getName()]);
+        sort($modules);
+        $modules = array_values($modules);
+        array_splice($modules, array_search($this->getName(), $modules, true));
+
+        $this->setLoadAfter($modules);
     }
 }

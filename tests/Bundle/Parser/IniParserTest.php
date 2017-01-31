@@ -68,7 +68,7 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('without-ini', $configs[0]->getName());
         $this->assertEquals([], $configs[0]->getReplace());
-        $this->assertEquals([], $configs[0]->getLoadAfter());
+        $this->assertNotEmpty($configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
@@ -83,7 +83,7 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('without-requires', $configs[0]->getName());
         $this->assertEquals([], $configs[0]->getReplace());
-        $this->assertEquals([], $configs[0]->getLoadAfter());
+        $this->assertNotEmpty($configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
@@ -98,7 +98,7 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('foobar', $configs[0]->getName());
         $this->assertEquals([], $configs[0]->getReplace());
-        $this->assertEquals([], $configs[0]->getLoadAfter());
+        $this->assertNotEmpty($configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
