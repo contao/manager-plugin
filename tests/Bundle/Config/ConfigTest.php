@@ -145,4 +145,20 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $config->getBundleInstance($kernel);
     }
+
+    public function testModuelConfigLoadsAfterLegacyModules()
+    {
+        $config = ModuleConfig::create('foobar');
+        $this->assertContains('core', $config->getLoadAfter());
+        $this->assertNotContains('foobar', $config->getLoadAfter());
+        $this->assertNotContains('news', $config->getLoadAfter());
+
+        $config = ModuleConfig::create('a_module');
+        $this->assertContains('core', $config->getLoadAfter());
+        $this->assertNotContains('calendar', $config->getLoadAfter());
+
+        $config = ModuleConfig::create('z_custom');
+        $this->assertContains('core', $config->getLoadAfter());
+        $this->assertContains('news', $config->getLoadAfter());
+    }
 }

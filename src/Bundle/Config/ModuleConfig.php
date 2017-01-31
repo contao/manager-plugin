@@ -52,6 +52,10 @@ class ModuleConfig extends BundleConfig
         $modules = array_values($modules);
         array_splice($modules, array_search($this->getName(), $modules, true));
 
+        if (!in_array('core', $modules, true)) {
+            $modules[] = 'core';
+        }
+
         $this->setLoadAfter($modules);
     }
 }
