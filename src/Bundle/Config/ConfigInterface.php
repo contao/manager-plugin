@@ -14,28 +14,28 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
- * Autoload configuration interface
+ * Autoload configuration interface.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
 interface ConfigInterface
 {
     /**
-     * Returns the name
+     * Returns the name.
      *
      * @return string
      */
     public function getName();
 
     /**
-     * Returns the replaces
+     * Returns the replaces.
      *
      * @return array
      */
     public function getReplace();
 
     /**
-     * Sets the replaces
+     * Sets the replaces.
      *
      * @param array $replace
      *
@@ -44,14 +44,14 @@ interface ConfigInterface
     public function setReplace(array $replace);
 
     /**
-     * Returns the "load after" bundles
+     * Returns the "load after" bundles.
      *
      * @return array
      */
     public function getLoadAfter();
 
     /**
-     * Sets the "load after" bundles
+     * Sets the "load after" bundles.
      *
      * @param array $loadAfter
      *
@@ -60,14 +60,14 @@ interface ConfigInterface
     public function setLoadAfter(array $loadAfter);
 
     /**
-     * Returns if the bundle should be loaded in "prod" environment
+     * Returns if the bundle should be loaded in "prod" environment.
      *
      * @return bool
      */
     public function loadInProduction();
 
     /**
-     * Sets if bundle should be loaded in "prod" environment
+     * Sets if bundle should be loaded in "prod" environment.
      *
      * @param bool $loadInDevelopment
      *
@@ -76,14 +76,14 @@ interface ConfigInterface
     public function setLoadInProduction($loadInProduction);
 
     /**
-     * Returns if the bundle should be loaded in "dev" environment
+     * Returns if the bundle should be loaded in "dev" environment.
      *
      * @return bool
      */
     public function loadInDevelopment();
 
     /**
-     * Sets if bundle should be loaded in "dev" environment
+     * Sets if bundle should be loaded in "dev" environment.
      *
      * @param bool $loadInDevelopment
      *

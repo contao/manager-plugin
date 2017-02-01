@@ -25,7 +25,7 @@ class ModuleConfig extends BundleConfig
         'faq',
         'listing',
         'news',
-        'newsletter'
+        'newsletter',
     ];
 
     public function __construct($name)
@@ -36,7 +36,7 @@ class ModuleConfig extends BundleConfig
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \LogicException
      */

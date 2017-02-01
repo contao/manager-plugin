@@ -11,15 +11,15 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "symfony/http-kernel": "~2.8|~3.0",
-        "symfony/filesystem": "~2.8|~3.0",
-        "symfony/dependency-injection": "~2.8|~3.0",
-        "symfony/config": "~2.8|~3.0",
-        "symfony/routing": "~2.8|~3.0"
+        "symfony/http-kernel": "^2.8|^3.0",
+        "symfony/filesystem": "^2.8|^3.0",
+        "symfony/dependency-injection": "^2.8|^3.0",
+        "symfony/config": "^2.8|^3.0",
+        "symfony/routing": "^2.8|^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.5",
-        "satooshi/php-coveralls": "~1.0",
+        "phpunit/phpunit": "^4.5",
+        "satooshi/php-coveralls": "^1.0",
         "contao/core-bundle": "^4.3.3"
     },
     "autoload": {
@@ -29,7 +29,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Contao\\ManagerPlugin\\Test\\": "tests/"
+            "Contao\\ManagerPlugin\\Tests\\": "tests/"
         }
     },
     "extra": {

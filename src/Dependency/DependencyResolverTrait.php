@@ -22,11 +22,12 @@ trait DependencyResolverTrait
      * @param array $dependencies
      *
      * @return array
+     *
      * @throws UnresolvableDependenciesException
      */
     protected function orderByDependencies(array $dependencies)
     {
-        $ordered   = [];
+        $ordered = [];
         $available = array_keys($dependencies);
 
         while (0 !== count($dependencies)) {
@@ -34,7 +35,7 @@ trait DependencyResolverTrait
 
             if (false === $success) {
                 throw new UnresolvableDependenciesException(
-                    "The dependencies order could not be resolved.\n" . print_r($dependencies, true)
+                    "The dependencies order could not be resolved.\n".print_r($dependencies, true)
                 );
             }
         }
@@ -43,7 +44,7 @@ trait DependencyResolverTrait
     }
 
     /**
-     * Resolve the dependency order
+     * Resolve the dependency order.
      *
      * @param array $dependencies
      * @param array $ordered
@@ -57,7 +58,7 @@ trait DependencyResolverTrait
 
         foreach ($dependencies as $name => $requires) {
             if (true === $this->canBeResolved($requires, $available, $ordered)) {
-                $failed    = false;
+                $failed = false;
                 $ordered[] = $name;
 
                 unset($dependencies[$name]);
@@ -68,7 +69,7 @@ trait DependencyResolverTrait
     }
 
     /**
-     * Checks whether the requirements can be resolved
+     * Checks whether the requirements can be resolved.
      *
      * @param array $requires
      * @param array $available
@@ -82,6 +83,6 @@ trait DependencyResolverTrait
             return true;
         }
 
-        return (0 === count(array_diff(array_intersect($requires, $available), $ordered)));
+        return 0 === count(array_diff(array_intersect($requires, $available), $ordered));
     }
 }

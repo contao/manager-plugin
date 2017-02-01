@@ -11,7 +11,7 @@
 namespace Contao\ManagerPlugin\Bundle\Config;
 
 /**
- * Factory for ConfigResolverInterface
+ * Factory for ConfigResolverInterface.
  *
  * @author Andreas Schempp <https://github.com/aschempp>
  */

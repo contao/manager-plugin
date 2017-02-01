@@ -13,7 +13,7 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
 
 /**
- * Converts an INI configuration file into a ConfigInterface instance
+ * Converts an INI configuration file into a ConfigInterface instance.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  * @author Andreas Schempp <https://github.com/aschempp>
@@ -51,7 +51,7 @@ class IniParser implements ParserInterface
 
         $this->loaded[$resource] = true;
 
-        $path = $this->modulesDir . '/' . $resource . '/config/autoload.ini';
+        $path = $this->modulesDir.'/'.$resource.'/config/autoload.ini';
 
         if (file_exists($path)) {
             $requires = $this->parseIniFile($path);
@@ -63,7 +63,7 @@ class IniParser implements ParserInterface
                         $module = substr($module, 1);
 
                         // Do not add optional modules that are not installed, ContaoModuleBundle would throw exception
-                        if (!is_dir($this->modulesDir . '/' . $module)) {
+                        if (!is_dir($this->modulesDir.'/'.$module)) {
                             continue;
                         }
                     }
@@ -83,15 +83,15 @@ class IniParser implements ParserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supports($resource, $type = null)
     {
-        return 'ini' === $type || is_dir($this->modulesDir . '/' . (string) $resource);
+        return 'ini' === $type || is_dir($this->modulesDir.'/'.(string) $resource);
     }
 
     /**
-     * Parses the file and returns the configuration array
+     * Parses the file and returns the configuration array.
      *
      * @param string $file The file path
      *

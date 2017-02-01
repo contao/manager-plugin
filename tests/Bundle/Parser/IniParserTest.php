@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle\Parser;
+namespace Contao\ManagerPlugin\Tests\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Parser\IniParser;
@@ -21,13 +21,13 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
     private $parser;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->parser = new IniParser(__DIR__ . '/../../Fixtures/Bundle/IniParser');
+        $this->parser = new IniParser(__DIR__.'/../../Fixtures/Bundle/IniParser');
     }
 
     public function testInstantiation()
@@ -123,7 +123,7 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseBrokenIni()
     {
-        /**
+        /*
          * refs php - test the return value of a method that triggers an error with PHPUnit - Stack Overflow
          * http://stackoverflow.com/questions/1225776/test-the-return-value-of-a-method-that-triggers-an-error-with-phpunit
          */
