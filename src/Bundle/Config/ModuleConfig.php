@@ -18,7 +18,11 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ModuleConfig extends BundleConfig
 {
-    const LEGACY_MODULES = [
+    /**
+     * Old module names
+     * @var array
+     */
+    private static $legacy = [
         'core',
         'calendar',
         'comments',
@@ -47,7 +51,7 @@ class ModuleConfig extends BundleConfig
 
     private function setLoadAfterLegacyModules()
     {
-        $modules = array_merge(self::LEGACY_MODULES, [$this->getName()]);
+        $modules = array_merge(self::$legacy, [$this->getName()]);
         sort($modules);
         $modules = array_values($modules);
         array_splice($modules, array_search($this->getName(), $modules, true));
