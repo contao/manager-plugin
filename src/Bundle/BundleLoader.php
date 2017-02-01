@@ -45,7 +45,7 @@ class BundleLoader
     private $filesystem;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param PluginLoader          $pluginLoader
      * @param ConfigResolverFactory $resolverFactory
@@ -69,7 +69,7 @@ class BundleLoader
     }
 
     /**
-     * Returns an ordered bundle map
+     * Returns an ordered bundle map.
      *
      * @param bool        $development
      * @param string|null $cacheFile
@@ -86,7 +86,7 @@ class BundleLoader
     }
 
     /**
-     * Loads the bundle cache
+     * Loads the bundle cache.
      *
      * @param bool        $development
      * @param string|null $cacheFile
@@ -105,7 +105,7 @@ class BundleLoader
     }
 
     /**
-     * Generates the bundles map
+     * Generates the bundles map.
      *
      * @param bool        $development
      * @param string|null $cacheFile

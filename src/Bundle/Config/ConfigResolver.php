@@ -13,7 +13,7 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 
 /**
- * Resolves the bundles map from the configuration objects
+ * Resolves the bundles map from the configuration objects.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  */
@@ -27,7 +27,7 @@ class ConfigResolver implements ConfigResolverInterface
     protected $configs = [];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function add(ConfigInterface $config)
     {
@@ -37,7 +37,7 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBundleConfigs($development)
     {
@@ -50,16 +50,16 @@ class ConfigResolver implements ConfigResolverInterface
             }
         }
 
-        $loadingOrder    = $this->buildLoadingOrder();
-        $replaces        = $this->buildReplaceMap();
+        $loadingOrder = $this->buildLoadingOrder();
+        $replaces = $this->buildReplaceMap();
         $normalizedOrder = $this->normalizeLoadingOrder($loadingOrder, $replaces);
-        $resolvedOrder   = $this->orderByDependencies($normalizedOrder);
+        $resolvedOrder = $this->orderByDependencies($normalizedOrder);
 
         return $this->order($bundles, $resolvedOrder);
     }
 
     /**
-     * Builds the replaces from the configuration objects
+     * Builds the replaces from the configuration objects.
      *
      * @return array
      */
@@ -79,7 +79,7 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Builds the loading order from the configuration objects
+     * Builds the loading order from the configuration objects.
      *
      * @return array
      */
@@ -88,7 +88,7 @@ class ConfigResolver implements ConfigResolverInterface
         // Make sure the core bundle comes first
         // TODO is this still correct?
         $loadingOrder = [
-            'ContaoCoreBundle' => []
+            'ContaoCoreBundle' => [],
         ];
 
         foreach ($this->configs as $bundle) {
@@ -105,7 +105,7 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Orders the bundles in a given order
+     * Orders the bundles in a given order.
      *
      * @param array $bundles
      * @param array $ordered
@@ -114,7 +114,7 @@ class ConfigResolver implements ConfigResolverInterface
      */
     private function order(array $bundles, array $ordered)
     {
-        $return  = [];
+        $return = [];
 
         foreach ($ordered as $package) {
             if (array_key_exists($package, $bundles)) {
@@ -126,7 +126,7 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Normalizes the loading order array
+     * Normalizes the loading order array.
      *
      * @param array $loadingOrder
      * @param array $replace
@@ -147,7 +147,7 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Replaces the legacy bundle names with their new name
+     * Replaces the legacy bundle names with their new name.
      *
      * @param array $loadAfter
      * @param array $replace

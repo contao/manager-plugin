@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle\Config;
+namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverFactory;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverInterface;

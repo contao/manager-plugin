@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of Contao.
+ *
+ * Copyright (c) 2005-2016 Leo Feyer
+ *
+ * @license LGPL-3.0+
+ */
+
 namespace Contao\ManagerPlugin\Test;
 
 use Contao\ManagerPlugin\PluginLoader;
@@ -20,9 +28,9 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadsPlugin()
     {
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooBarPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/installed.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/installed.json');
 
         $plugins = $pluginLoader->getInstances();
 
@@ -38,7 +46,7 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadFailsWhenPluginDoesNotExist()
     {
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/not-installed.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/not-installed.json');
 
         $pluginLoader->getInstances();
     }
@@ -48,10 +56,10 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetInstancesOfChecksInterface()
     {
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooBarPlugin.php';
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooConfigPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooConfigPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/mixed.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/mixed.json');
 
         $plugins = $pluginLoader->getInstancesOf(PluginLoader::CONFIG_PLUGINS);
 
@@ -66,9 +74,9 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadsGlobalManagerPlugin()
     {
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/ContaoManagerPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/ContaoManagerPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/empty.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/empty.json');
 
         $plugins = $pluginLoader->getInstances();
 
@@ -82,10 +90,10 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadsManagerBundlePluginFirst()
     {
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooBarPlugin.php';
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooConfigPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooConfigPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/manager-bundle.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/manager-bundle.json');
 
         $plugins = $pluginLoader->getInstances();
 
@@ -100,10 +108,10 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadOrdersPluginByDependencies()
     {
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooBarPlugin.php';
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooDependendPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooDependendPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/dependencies.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/dependencies.json');
 
         $plugins = $pluginLoader->getInstances();
 
@@ -118,12 +126,12 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadIsOnlyRunOnce()
     {
-        include_once __DIR__ . '/' . self::FIXTURES_DIR . '/FooBarPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
 
         /** @var PluginLoader|\PHPUnit_Framework_MockObject_MockObject $pluginLoader */
         $pluginLoader = $this->getMockBuilder(PluginLoader::class)
             ->setMethods(['orderPlugins'])
-            ->setConstructorArgs([__DIR__ . '/' . self::FIXTURES_DIR . '/installed.json'])
+            ->setConstructorArgs([__DIR__.'/'.self::FIXTURES_DIR.'/installed.json'])
             ->getMock()
         ;
 
@@ -143,7 +151,7 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadMissingFile()
     {
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/missing.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/missing.json');
 
         $pluginLoader->getInstances();
     }
@@ -153,7 +161,7 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadInvalidJson()
     {
-        $pluginLoader = new PluginLoader(__DIR__ . '/' . self::FIXTURES_DIR . '/invalid.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/invalid.json');
 
         $pluginLoader->getInstances();
     }

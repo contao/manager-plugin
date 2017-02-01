@@ -13,7 +13,7 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 
 /**
- * Configuration parser interface
+ * Configuration parser interface.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  * @author Andreas Schempp <https://github.com/aschempp>

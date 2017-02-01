@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle\Config;
+namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolver;
@@ -21,7 +21,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
     private $resolver;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -100,7 +100,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'name1' => $config1,
-                ]
+                ],
             ],
             'Test load after order' => [
                 [
@@ -109,8 +109,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'name1' => $config1,
-                    'name2' => $config2
-                ]
+                    'name2' => $config2,
+                ],
             ],
             'Test replaces' => [
                 [
@@ -119,8 +119,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                     $config3,
                 ],
                 [
-                    'name3' => $config3
-                ]
+                    'name3' => $config3,
+                ],
             ],
             'Test load after a module that does not exist but is replaced by new one' => [
                 [
@@ -129,8 +129,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'name5' => $config5,
-                    'name4' => $config4
-                ]
+                    'name4' => $config4,
+                ],
             ],
         ];
     }

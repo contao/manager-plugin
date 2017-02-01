@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * This file is part of Contao.
+ *
+ * Copyright (c) 2005-2016 Leo Feyer
+ *
+ * @license LGPL-3.0+
+ */
+
 /**
  * This file is part of Contao.
  *
@@ -8,7 +16,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle\Config;
+namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle;
@@ -116,7 +124,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $kernel = $this->getMock(KernelInterface::class);
         $kernel
             ->method('getRootDir')
-            ->willReturn(__DIR__ . self::FIXTURES_DIR . '/app')
+            ->willReturn(__DIR__.self::FIXTURES_DIR.'/app')
         ;
 
         $config = ModuleConfig::create('foobar');
@@ -125,7 +133,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
         $this->assertEquals(
-            __DIR__ . self::FIXTURES_DIR . '/system/modules/foobar',
+            __DIR__.self::FIXTURES_DIR.'/system/modules/foobar',
             $bundle->getPath()
         );
     }
@@ -138,11 +146,27 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $kernel = $this->getMock(KernelInterface::class);
         $kernel
             ->method('getRootDir')
-            ->willReturn(__DIR__ . self::FIXTURES_DIR . '/app')
+            ->willReturn(__DIR__.self::FIXTURES_DIR.'/app')
         ;
 
         $config = ModuleConfig::create('barfoo');
 
         $config->getBundleInstance($kernel);
+    }
+
+    public function testModuelConfigLoadsAfterLegacyModules()
+    {
+        $config = ModuleConfig::create('foobar');
+        $this->assertContains('core', $config->getLoadAfter());
+        $this->assertNotContains('foobar', $config->getLoadAfter());
+        $this->assertNotContains('news', $config->getLoadAfter());
+
+        $config = ModuleConfig::create('a_module');
+        $this->assertContains('core', $config->getLoadAfter());
+        $this->assertNotContains('calendar', $config->getLoadAfter());
+
+        $config = ModuleConfig::create('z_custom');
+        $this->assertContains('core', $config->getLoadAfter());
+        $this->assertContains('news', $config->getLoadAfter());
     }
 }
