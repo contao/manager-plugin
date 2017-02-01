@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle\Parser;
+namespace Contao\ManagerPlugin\Tests\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Parser\DelegatingParser;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -21,7 +21,7 @@ class DelegatingParserTest extends \PHPUnit_Framework_TestCase
     private $parser;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {

@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle;
+namespace Contao\ManagerPlugin\Tests\Bundle;
 
 use Contao\ManagerPlugin\Bundle\BundleLoader;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
@@ -81,7 +81,7 @@ class BundleLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBundleConfigsDumpsToCacheFile()
     {
-        $cacheFile = sys_get_temp_dir() . '/' . uniqid('BundleLoader_', false);
+        $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', false);
         $configs = [new BundleConfig('foobar')];
 
         $this->assertFalse(file_exists($cacheFile));
@@ -111,25 +111,25 @@ class BundleLoaderTest extends \PHPUnit_Framework_TestCase
             'Test correctly calls development mode' => [
                 [$this->mockBundlePlugin([new BundleConfig('foobar')])],
                 1,
-                true
+                true,
             ],
             'Test correctly calls production mode' => [
                 [$this->mockBundlePlugin([new BundleConfig('foobar')])],
                 1,
-                false
+                false,
             ],
             'Test correctly adds multiple configs from a plugin' => [
                 [$this->mockBundlePlugin([new BundleConfig('foo'), new BundleConfig('bar')])],
                 2,
-                true
+                true,
             ],
             'Test correctly adds config from multiple plugins' => [
                 [
                     $this->mockBundlePlugin([new BundleConfig('foo')]),
-                    $this->mockBundlePlugin([new BundleConfig('bar')])
+                    $this->mockBundlePlugin([new BundleConfig('bar')]),
                 ],
                 2,
-                false
+                false,
             ],
             'Test ignores plugin without bundles' => [
                 [
@@ -138,7 +138,7 @@ class BundleLoaderTest extends \PHPUnit_Framework_TestCase
                     $this->mockBundlePlugin(),
                 ],
                 2,
-                false
+                false,
             ],
         ];
     }

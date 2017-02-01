@@ -13,7 +13,7 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 
 /**
- * Converts a JSON configuration file into a configuration array
+ * Converts a JSON configuration file into a configuration array.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  * @author Andreas Schempp <https://github.com/aschempp>
@@ -34,7 +34,7 @@ class JsonParser implements ParserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supports($resource, $type = null)
     {
@@ -42,7 +42,7 @@ class JsonParser implements ParserInterface
     }
 
     /**
-     * Parses the file and returns the configuration array
+     * Parses the file and returns the configuration array.
      *
      * @param string $file The absolute file path
      *

@@ -13,7 +13,7 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
- * Provides methods to access the configuration
+ * Provides methods to access the configuration.
  *
  * @author Leo Feyer <https://github.com/leofeyer>
  * @author Andreas Schempp <https://github.com/aschempp>
@@ -100,7 +100,7 @@ class BundleConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadInProduction()
     {
@@ -108,7 +108,7 @@ class BundleConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setLoadInProduction($loadInProduction)
     {
@@ -118,7 +118,7 @@ class BundleConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadInDevelopment()
     {
@@ -126,7 +126,7 @@ class BundleConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setLoadInDevelopment($loadInDevelopment)
     {
@@ -136,11 +136,11 @@ class BundleConfig implements ConfigInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBundleInstance(KernelInterface $kernel)
     {
-        return new $this->name;
+        return new $this->name();
     }
 
     /**

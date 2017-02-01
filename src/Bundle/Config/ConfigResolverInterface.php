@@ -17,7 +17,6 @@ use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
  */
 interface ConfigResolverInterface
 {
-
     /**
      * Adds a configuration object.
      *

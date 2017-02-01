@@ -47,7 +47,7 @@ class DelegatingParser implements ParserInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function supports($resource, $type = null)
     {

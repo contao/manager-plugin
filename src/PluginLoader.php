@@ -15,7 +15,7 @@ use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
 
 /**
- * Finds Contao manager plugins from Composer's installed.json
+ * Finds Contao manager plugins from Composer's installed.json.
  *
  * @author Andreas Schempp <https://github.com/aschempp>
  */
@@ -80,7 +80,7 @@ class PluginLoader
     }
 
     /**
-     * Loads plugins from Composer's installed.json
+     * Loads plugins from Composer's installed.json.
      *
      * @throws \RuntimeException
      * @throws \InvalidArgumentException

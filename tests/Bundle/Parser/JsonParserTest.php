@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace Contao\ManagerPlugin\Test\Bundle\Parser;
+namespace Contao\ManagerPlugin\Tests\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Parser\JsonParser;
@@ -24,7 +24,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
     private $parser;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -49,7 +49,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
 
     public function testParseSimpleObject()
     {
-        $configs = $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/simple-object.json');
+        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/simple-object.json');
 
         $this->assertCount(1, $configs);
 
@@ -66,7 +66,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
 
     public function testParseSimpleString()
     {
-        $configs = $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/simple-string.json');
+        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/simple-string.json');
 
         $this->assertCount(1, $configs);
 
@@ -84,7 +84,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
     public function testParseDevelopmentAndProduction()
     {
         /** @var ConfigInterface[] $configs */
-        $configs = $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/dev-prod.json');
+        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/dev-prod.json');
 
         $this->assertCount(3, $configs);
 
@@ -104,7 +104,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
     public function testParseOptional()
     {
         /** @var ConfigInterface[] $configs */
-        $configs = $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/optional.json');
+        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/optional.json');
 
         $this->assertCount(2, $configs);
 
@@ -121,7 +121,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseNoBundle()
     {
-        $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/no-bundle.json');
+        $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/no-bundle.json');
     }
 
     /**
@@ -129,7 +129,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseMissingFile()
     {
-        $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/missing.json');
+        $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/missing.json');
     }
 
     /**
@@ -137,7 +137,7 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseInvalidJson()
     {
-        $this->parser->parse(__DIR__ . self::FIXTURES_DIR . '/invalid.json');
+        $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/invalid.json');
     }
 
     /**
