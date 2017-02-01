@@ -19,7 +19,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class ModuleConfig extends BundleConfig
 {
     /**
-     * Old module names
      * @var array
      */
     private static $legacy = [
@@ -32,6 +31,11 @@ class ModuleConfig extends BundleConfig
         'newsletter',
     ];
 
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     */
     public function __construct($name)
     {
         parent::__construct($name);
@@ -49,6 +53,9 @@ class ModuleConfig extends BundleConfig
         return new ContaoModuleBundle($this->name, $kernel->getRootDir());
     }
 
+    /**
+     * Adjust the configuraton so the module is loaded after the legacy modules.
+     */
     private function setLoadAfterLegacyModules()
     {
         $modules = array_merge(self::$legacy, [$this->getName()]);
