@@ -85,11 +85,7 @@ class ConfigResolver implements ConfigResolverInterface
      */
     private function buildLoadingOrder()
     {
-        // Make sure the core bundle comes first
-        // TODO is this still correct?
-        $loadingOrder = [
-            'ContaoCoreBundle' => [],
-        ];
+        $loadingOrder = [];
 
         foreach ($this->configs as $bundle) {
             $name = $bundle->getName();
