@@ -140,6 +140,10 @@ class BundleConfig implements ConfigInterface
      */
     public function getBundleInstance(KernelInterface $kernel)
     {
+        if (!class_exists($this->name)) {
+            throw new \LogicException(sprintf('The Symfony bundle "%s" does not exist.', $this->name));
+        }
+
         return new $this->name();
     }
 
