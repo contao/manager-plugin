@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -80,6 +80,43 @@ class PluginLoader
     }
 
     /**
+     * @param array $plugins
+     *
+     * @throws UnresolvableDependenciesException
+     *
+     * @return array
+     */
+    protected function orderPlugins(array $plugins)
+    {
+        $this->plugins = [];
+
+        $ordered = [];
+        $dependencies = [];
+        $packages = array_keys($plugins);
+
+        // Load the manager bundle first
+        if (isset($plugins['contao/manager-bundle'])) {
+            array_unshift($packages, 'contao/manager-bundle');
+            $packages = array_unique($packages);
+        }
+
+        // Walk through the packages
+        foreach ($packages as $packageName) {
+            $dependencies[$packageName] = [];
+
+            if ($plugins[$packageName] instanceof DependentPluginInterface) {
+                $dependencies[$packageName] = $plugins[$packageName]->getPackageDependencies();
+            }
+        }
+
+        foreach ($this->orderByDependencies($dependencies) as $packageName) {
+            $ordered[$packageName] = $plugins[$packageName];
+        }
+
+        return $ordered;
+    }
+
+    /**
      * Loads plugins from Composer's installed.json.
      *
      * @throws \RuntimeException
@@ -124,42 +161,5 @@ class PluginLoader
         if (class_exists($appPlugin)) {
             $this->plugins['app'] = new $appPlugin();
         }
-    }
-
-    /**
-     * @param array $plugins
-     *
-     * @return array
-     *
-     * @throws UnresolvableDependenciesException
-     */
-    protected function orderPlugins(array $plugins)
-    {
-        $this->plugins = [];
-
-        $ordered = [];
-        $dependencies = [];
-        $packages = array_keys($plugins);
-
-        // Load the manager bundle first
-        if (isset($plugins['contao/manager-bundle'])) {
-            array_unshift($packages, 'contao/manager-bundle');
-            $packages = array_unique($packages);
-        }
-
-        // Walk through the packages
-        foreach ($packages as $packageName) {
-            $dependencies[$packageName] = [];
-
-            if ($plugins[$packageName] instanceof DependentPluginInterface) {
-                $dependencies[$packageName] = $plugins[$packageName]->getPackageDependencies();
-            }
-        }
-
-        foreach ($this->orderByDependencies($dependencies) as $packageName) {
-            $ordered[$packageName] = $plugins[$packageName];
-        }
-
-        return $ordered;
     }
 }
