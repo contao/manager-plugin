@@ -93,6 +93,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $config4 = (new BundleConfig('name4'))->setLoadAfter(['core']);
         $config5 = (new BundleConfig('name5'))->setReplace(['core']);
         $config6 = (new BundleConfig('name6'))->setReplace(['name2']);
+        $config7a = (new BundleConfig('name7'));
+        $config7b = (new BundleConfig('name7'));
 
         return [
             'Test default configs' => [
@@ -143,7 +145,16 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                     'name1' => $config1,
                     'name6' => $config6,
                 ]
-            ]
+            ],
+            'Test latter config overrides previous one with the same name' => [
+                [
+                    $config7a,
+                    $config7b,
+                ],
+                [
+                    'name7' => $config7b
+                ]
+            ],
         ];
     }
 }
