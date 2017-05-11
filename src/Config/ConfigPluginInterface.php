@@ -18,7 +18,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 interface ConfigPluginInterface
 {
     /**
-     * Allows a plugin to load the container configuration.
+     * Allows a plugin to load container configuration.
      *
      * @param LoaderInterface $loader
      * @param array           $managerConfig

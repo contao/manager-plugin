@@ -143,7 +143,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 [
                     'name1' => $config1,
                     'name6' => $config6,
-                ]
+                ],
             ],
             'Test latter config overrides previous one with the same name' => [
                 [
@@ -151,8 +151,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                     $config7b,
                 ],
                 [
-                    'name7' => $config7b
-                ]
+                    'name7' => $config7b,
+                ],
             ],
         ];
     }

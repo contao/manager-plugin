@@ -25,6 +25,7 @@ class PluginLoader
 
     const BUNDLE_PLUGINS = 'Contao\ManagerPlugin\Bundle\BundlePluginInterface';
     const CONFIG_PLUGINS = 'Contao\ManagerPlugin\Config\ConfigPluginInterface';
+    const EXTENSION_PLUGINS = 'Contao\ManagerPlugin\Config\ExtensionPluginInterface';
     const ROUTING_PLUGINS = 'Contao\ManagerPlugin\Routing\RoutingPluginInterface';
 
     /**
