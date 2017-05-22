@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -95,9 +95,9 @@ class IniParser implements ParserInterface
      *
      * @param string $file The file path
      *
-     * @return array The configuration array
-     *
      * @throws \RuntimeException If the file cannot be decoded
+     *
+     * @return array The configuration array
      */
     private function parseIniFile($file)
     {

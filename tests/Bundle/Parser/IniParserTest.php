@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -51,9 +51,9 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(4, $configs);
         $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
 
-        $this->assertEquals('with-requires', $configs[0]->getName());
-        $this->assertEquals([], $configs[0]->getReplace());
-        $this->assertEquals(['core', 'news', 'without-ini', 'calendar'], $configs[0]->getLoadAfter());
+        $this->assertSame('with-requires', $configs[0]->getName());
+        $this->assertSame([], $configs[0]->getReplace());
+        $this->assertSame(['core', 'news', 'without-ini', 'calendar'], $configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
@@ -66,8 +66,8 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $configs);
         $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
 
-        $this->assertEquals('without-ini', $configs[0]->getName());
-        $this->assertEquals([], $configs[0]->getReplace());
+        $this->assertSame('without-ini', $configs[0]->getName());
+        $this->assertSame([], $configs[0]->getReplace());
         $this->assertNotEmpty($configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
@@ -81,8 +81,8 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $configs);
         $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
 
-        $this->assertEquals('without-requires', $configs[0]->getName());
-        $this->assertEquals([], $configs[0]->getReplace());
+        $this->assertSame('without-requires', $configs[0]->getName());
+        $this->assertSame([], $configs[0]->getReplace());
         $this->assertNotEmpty($configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
@@ -96,8 +96,8 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $configs);
         $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
 
-        $this->assertEquals('foobar', $configs[0]->getName());
-        $this->assertEquals([], $configs[0]->getReplace());
+        $this->assertSame('foobar', $configs[0]->getName());
+        $this->assertSame([], $configs[0]->getReplace());
         $this->assertNotEmpty($configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
@@ -112,17 +112,17 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
         $this->assertInstanceOf(ConfigInterface::class, $configs[1]);
 
-        $this->assertEquals(['recursion2'], $configs[0]->getLoadAfter());
-        $this->assertEquals(['recursion1'], $configs[1]->getLoadAfter());
+        $this->assertSame(['recursion2'], $configs[0]->getLoadAfter());
+        $this->assertSame(['recursion1'], $configs[1]->getLoadAfter());
     }
 
     /**
      * @runInSeparateProcess
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage cannot be decoded
      */
     public function testParseBrokenIni()
     {
+        $this->setExpectedException('RuntimeException', 'cannot be decoded');
+
         /*
          * refs php - test the return value of a method that triggers an error with PHPUnit - Stack Overflow
          * http://stackoverflow.com/questions/1225776/test-the-return-value-of-a-method-that-triggers-an-error-with-phpunit

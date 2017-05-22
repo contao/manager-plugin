@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -39,13 +39,10 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Foo\Bar\FooBarPlugin', $plugins['foo/bar-bundle']);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Bar\Foo\BarFooPlugin
-     * @expectedExceptionMessage not found
-     */
     public function testLoadFailsWhenPluginDoesNotExist()
     {
+        $this->setExpectedException('RuntimeException', 'Bar\Foo\BarFooPlugin');
+
         $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/not-installed.json');
 
         $pluginLoader->getInstances();
@@ -100,7 +97,7 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $plugins);
         $this->assertArrayHasKey('foo/bar-bundle', $plugins);
         $this->assertArrayHasKey('contao/manager-bundle', $plugins);
-        $this->assertEquals(['contao/manager-bundle', 'foo/bar-bundle'], array_keys($plugins));
+        $this->assertSame(['contao/manager-bundle', 'foo/bar-bundle'], array_keys($plugins));
     }
 
     /**
@@ -118,7 +115,7 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $plugins);
         $this->assertArrayHasKey('foo/bar-bundle', $plugins);
         $this->assertArrayHasKey('foo/dependend-bundle', $plugins);
-        $this->assertEquals(['foo/bar-bundle', 'foo/dependend-bundle'], array_keys($plugins));
+        $this->assertSame(['foo/bar-bundle', 'foo/dependend-bundle'], array_keys($plugins));
     }
 
     /**
@@ -145,22 +142,19 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $pluginLoader->getInstances();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage not found
-     */
     public function testLoadMissingFile()
     {
+        $this->setExpectedException('InvalidArgumentException', 'not found');
+
         $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/missing.json');
 
         $pluginLoader->getInstances();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testLoadInvalidJson()
     {
+        $this->setExpectedException('RuntimeException');
+
         $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/invalid.json');
 
         $pluginLoader->getInstances();

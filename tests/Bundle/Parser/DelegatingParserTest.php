@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -41,11 +41,10 @@ class DelegatingParserTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testParseWithoutParsers()
     {
+        $this->setExpectedException('InvalidArgumentException');
+
         $this->assertFalse($this->parser->parse('foobar'));
     }
 
@@ -79,14 +78,13 @@ class DelegatingParserTest extends \PHPUnit_Framework_TestCase
 
         $this->parser->addParser($parser);
 
-        $this->assertEquals([], $this->parser->parse('foobar'));
+        $this->assertSame([], $this->parser->parse('foobar'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testParseWithUnsupportedParser()
     {
+        $this->setExpectedException('InvalidArgumentException');
+
         $parser = $this->getMock(ParserInterface::class);
         $parser->expects($this->once())->method('supports')->willReturn(false);
         $parser->expects($this->never())->method('parse');

@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -57,11 +57,11 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $config = reset($configs);
 
         $this->assertInstanceOf(ConfigInterface::class, $config);
-        $this->assertEquals('Contao\CoreBundle\ContaoCoreBundle', $config->getName());
-        $this->assertEquals([], $config->getReplace());
+        $this->assertSame('Contao\CoreBundle\ContaoCoreBundle', $config->getName());
+        $this->assertSame([], $config->getReplace());
         $this->assertTrue($config->loadInProduction());
         $this->assertTrue($config->loadInDevelopment());
-        $this->assertEquals([], $config->getLoadAfter());
+        $this->assertSame([], $config->getLoadAfter());
     }
 
     public function testParseSimpleString()
@@ -74,11 +74,11 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $config = reset($configs);
 
         $this->assertInstanceOf(ConfigInterface::class, $config);
-        $this->assertEquals('Contao\CoreBundle\ContaoCoreBundle', $config->getName());
-        $this->assertEquals([], $config->getReplace());
+        $this->assertSame('Contao\CoreBundle\ContaoCoreBundle', $config->getName());
+        $this->assertSame([], $config->getReplace());
         $this->assertTrue($config->loadInProduction());
         $this->assertTrue($config->loadInDevelopment());
-        $this->assertEquals([], $config->getLoadAfter());
+        $this->assertSame([], $config->getLoadAfter());
     }
 
     public function testParseDevelopmentAndProduction()
@@ -109,42 +109,38 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $configs);
 
         $this->assertInstanceOf(ConfigInterface::class, $configs[1]);
-        $this->assertEquals('Contao\CoreBundle\ContaoCoreBundle', $configs[1]->getName());
-        $this->assertEquals(['core'], $configs[1]->getReplace());
+        $this->assertSame('Contao\CoreBundle\ContaoCoreBundle', $configs[1]->getName());
+        $this->assertSame(['core'], $configs[1]->getReplace());
         $this->assertTrue($configs[1]->loadInProduction());
         $this->assertTrue($configs[1]->loadInDevelopment());
-        $this->assertEquals(['Foo\BarBundle\FooBarBundle'], $configs[1]->getLoadAfter());
+        $this->assertSame(['Foo\BarBundle\FooBarBundle'], $configs[1]->getLoadAfter());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testParseNoBundle()
     {
+        $this->setExpectedException('RuntimeException');
+
         $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/no-bundle.json');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testParseMissingFile()
     {
+        $this->setExpectedException('InvalidArgumentException');
+
         $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/missing.json');
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testParseInvalidJson()
     {
+        $this->setExpectedException('RuntimeException');
+
         $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/invalid.json');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testWillThrowExceptionIfFileNotExists()
     {
+        $this->setExpectedException('InvalidArgumentException');
+
         $file = new SplFileInfo('iDoNotExist', 'relativePath', 'relativePathName');
 
         $this->parser->parse($file);

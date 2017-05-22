@@ -3,7 +3,7 @@
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2016 Leo Feyer
+ * Copyright (c) 2005-2017 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -72,11 +72,10 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $this->resolver->getBundleConfigs(true));
     }
 
-    /**
-     * @expectedException \Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException
-     */
     public function testCannotBeResolved()
     {
+        $this->setExpectedException('Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException');
+
         $this->resolver
             ->add((new BundleConfig('name1'))->setLoadAfter(['name2']))
             ->add((new BundleConfig('name2'))->setLoadAfter(['name1']))
@@ -144,7 +143,7 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 [
                     'name1' => $config1,
                     'name6' => $config6,
-                ]
+                ],
             ],
             'Test latter config overrides previous one with the same name' => [
                 [
@@ -152,8 +151,8 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                     $config7b,
                 ],
                 [
-                    'name7' => $config7b
-                ]
+                    'name7' => $config7b,
+                ],
             ],
         ];
     }
