@@ -39,6 +39,11 @@ class PluginLoader
     private $plugins;
 
     /**
+     * @var array
+     */
+    private $disabled = [];
+
+    /**
      * Constructor.
      *
      * @param string $installedJson
@@ -57,7 +62,7 @@ class PluginLoader
     {
         $this->load();
 
-        return $this->plugins;
+        return array_diff_key($this->plugins, $this->disabled);
     }
 
     /**
@@ -77,7 +82,29 @@ class PluginLoader
             }
         );
 
-        return $reverseOrder ? array_reverse($plugins) : $plugins;
+        $plugins = $reverseOrder ? array_reverse($plugins, true) : $plugins;
+
+        return array_diff_key($plugins, $this->disabled);
+    }
+
+    /**
+     * Gets the list of disabled Composer packages.
+     *
+     * @return array
+     */
+    public function getDisabledPackages()
+    {
+        return array_values(array_flip($this->disabled));
+    }
+
+    /**
+     * Sets the list of disabled Composer packages.
+     *
+     * @param array $plugins
+     */
+    public function setDisabledPackages(array $plugins)
+    {
+        $this->disabled = array_flip(array_values($plugins));
     }
 
     /**

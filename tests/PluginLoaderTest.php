@@ -118,9 +118,6 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo/bar-bundle', 'foo/dependend-bundle'], array_keys($plugins));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testLoadIsOnlyRunOnce()
     {
         include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
@@ -158,5 +155,28 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/invalid.json');
 
         $pluginLoader->getInstances();
+    }
+
+    public function testReturnsDisabledPackages()
+    {
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/empty.json');
+
+        $pluginLoader->setDisabledPackages(['foo', 'bar']);
+        $this->assertSame(['foo', 'bar'], $pluginLoader->getDisabledPackages());
+    }
+
+    public function testSkipsDisabledPackages()
+    {
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
+        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooConfigPlugin.php';
+
+        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/manager-bundle.json');
+
+        $pluginLoader->setDisabledPackages(['foo/bar-bundle']);
+
+        $plugins = $pluginLoader->getInstances();
+
+        $this->assertArrayHasKey('contao/manager-bundle', $plugins);
+        $this->assertArrayNotHasKey('foo/bar-bundle', $plugins);
     }
 }
