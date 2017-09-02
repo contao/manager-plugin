@@ -54,7 +54,7 @@ class ModuleConfig extends BundleConfig
     }
 
     /**
-     * Adjust the configuraton so the module is loaded after the legacy modules.
+     * Adjust the configuration so the module is loaded after the legacy modules.
      */
     private function setLoadAfterLegacyModules()
     {
