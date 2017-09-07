@@ -47,6 +47,8 @@ class ConfigResolver implements ConfigResolverInterface
         foreach ($this->configs as $config) {
             if (($development && $config->loadInDevelopment()) || (!$development && $config->loadInProduction())) {
                 $bundles[$config->getName()] = $config;
+            } else {
+                unset($bundles[$config->getName()]);
             }
         }
 

@@ -72,6 +72,14 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $this->resolver->getBundleConfigs(true));
     }
 
+    public function testSecondaryPluginCanUnsetBundle()
+    {
+        $this->resolver->add(new BundleConfig('name1'));
+        $this->resolver->add((new BundleConfig('name1'))->setLoadInProduction(false));
+
+        $this->assertCount(0, $this->resolver->getBundleConfigs(false));
+    }
+
     public function testCannotBeResolved()
     {
         $this->setExpectedException('Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException');
