@@ -22,7 +22,7 @@ interface RoutingPluginInterface
      * @param LoaderResolverInterface $resolver
      * @param KernelInterface         $kernel
      *
-     * @return null|RouteCollection
+     * @return RouteCollection|null
      */
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel);
 }

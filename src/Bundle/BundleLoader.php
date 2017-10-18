@@ -57,7 +57,7 @@ class BundleLoader
     }
 
     /**
-     * Returns an ordered bundle map.
+     * Returns an ordered bundles map.
      *
      * @param bool        $development
      * @param string|null $cacheFile
@@ -74,7 +74,7 @@ class BundleLoader
     }
 
     /**
-     * Loads the bundle cache.
+     * Loads the bundles map from cache.
      *
      * @param bool        $development
      * @param string|null $cacheFile

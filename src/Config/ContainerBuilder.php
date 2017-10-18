@@ -11,10 +11,10 @@
 namespace Contao\ManagerPlugin\Config;
 
 use Contao\ManagerPlugin\PluginLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder as BaseContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerBuilder as SymfonyContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class ContainerBuilder extends BaseContainerBuilder
+class ContainerBuilder extends SymfonyContainerBuilder
 {
     /**
      * @var PluginLoader

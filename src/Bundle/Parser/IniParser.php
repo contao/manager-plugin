@@ -56,7 +56,7 @@ class IniParser implements ParserInterface
                     if (0 === strpos($module, '*')) {
                         $module = substr($module, 1);
 
-                        // Do not add optional modules that are not installed, ContaoModuleBundle would throw exception
+                        // Do not add optional modules that are not installed
                         if (!is_dir($this->modulesDir.'/'.$module)) {
                             continue;
                         }

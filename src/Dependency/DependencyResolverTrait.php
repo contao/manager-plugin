@@ -13,7 +13,7 @@ namespace Contao\ManagerPlugin\Dependency;
 trait DependencyResolverTrait
 {
     /**
-     * Returns list of array keys ordered by their dependencies.
+     * Returns a list of array keys ordered by their dependencies.
      *
      * @param array $dependencies
      *
@@ -40,7 +40,7 @@ trait DependencyResolverTrait
     }
 
     /**
-     * Resolve the dependency order.
+     * Resolves the dependency order.
      *
      * @param array $dependencies
      * @param array $ordered

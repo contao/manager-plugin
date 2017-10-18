@@ -14,9 +14,6 @@ use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
 
-/**
- * Finds Contao Manager plugins from Composer's installed.json.
- */
 class PluginLoader
 {
     use DependencyResolverTrait;
@@ -143,7 +140,7 @@ class PluginLoader
     }
 
     /**
-     * Loads plugins from Composer's installed.json.
+     * Loads the plugins from the Composer installed.json file.
      *
      * @throws \RuntimeException
      * @throws \InvalidArgumentException

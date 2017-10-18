@@ -10,13 +10,10 @@
 
 namespace Contao\ManagerPlugin\Bundle\Config;
 
-/**
- * Factory for ConfigResolverInterface.
- */
 class ConfigResolverFactory
 {
     /**
-     * Creates an instance of ConfigResolverInterface.
+     * Creates a ConfigResolver instance.
      *
      * @return ConfigResolverInterface
      */

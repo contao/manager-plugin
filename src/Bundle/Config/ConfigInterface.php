@@ -55,14 +55,14 @@ interface ConfigInterface
     public function setLoadAfter(array $loadAfter);
 
     /**
-     * Returns if the bundle should be loaded in "prod" environment.
+     * Returns true if the bundle should be loaded in "prod" environment.
      *
      * @return bool
      */
     public function loadInProduction();
 
     /**
-     * Sets if bundle should be loaded in "prod" environment.
+     * Sets if the bundle should be loaded in "prod" environment.
      *
      * @param bool $loadInProduction
      *
@@ -71,14 +71,14 @@ interface ConfigInterface
     public function setLoadInProduction($loadInProduction);
 
     /**
-     * Returns if the bundle should be loaded in "dev" environment.
+     * Returns true if the bundle should be loaded in "dev" environment.
      *
      * @return bool
      */
     public function loadInDevelopment();
 
     /**
-     * Sets if bundle should be loaded in "dev" environment.
+     * Sets if the bundle should be loaded in "dev" environment.
      *
      * @param bool $loadInDevelopment
      *

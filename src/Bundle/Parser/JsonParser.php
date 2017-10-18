@@ -12,6 +12,8 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 
+@trigger_error('Using a bundles.json file has been deprecated and will no longer work in version 3.0. Use the Plugin::getBundles() method to define your bundles instead.', E_USER_DEPRECATED);
+
 class JsonParser implements ParserInterface
 {
     /**

@@ -11,8 +11,9 @@
 namespace Contao\ManagerPlugin\Test;
 
 use Contao\ManagerPlugin\PluginLoader;
+use PHPUnit\Framework\TestCase;
 
-class PluginLoaderTest extends \PHPUnit_Framework_TestCase
+class PluginLoaderTest extends TestCase
 {
     public function testCanBeInstantiated()
     {

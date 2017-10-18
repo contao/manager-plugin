@@ -27,7 +27,7 @@ interface ParserInterface
     public function parse($resource, $type = null);
 
     /**
-     * Returns whether this class supports the given config file.
+     * Returns true if the class supports the given config file.
      *
      * @param string      $resource
      * @param string|null $type
