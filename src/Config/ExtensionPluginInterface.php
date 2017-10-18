@@ -10,9 +10,6 @@
 
 namespace Contao\ManagerPlugin\Config;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 interface ExtensionPluginInterface
 {
     /**
@@ -22,7 +19,7 @@ interface ExtensionPluginInterface
      * @param array            $extensionConfigs
      * @param ContainerBuilder $container
      *
-     * @return
+     * @return array
      */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container);
 }

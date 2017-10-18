@@ -16,12 +16,6 @@ use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\PluginLoader;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * Finds bundles from Contao Manager plugins.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 class BundleLoader
 {
     /**
@@ -45,19 +39,13 @@ class BundleLoader
     private $filesystem;
 
     /**
-     * Constructor.
-     *
      * @param PluginLoader          $pluginLoader
      * @param ConfigResolverFactory $resolverFactory
      * @param ParserInterface       $parser
      * @param Filesystem            $filesystem
      */
-    public function __construct(
-        PluginLoader $pluginLoader,
-        ConfigResolverFactory $resolverFactory,
-        ParserInterface $parser,
-        Filesystem $filesystem = null
-    ) {
+    public function __construct(PluginLoader $pluginLoader, ConfigResolverFactory $resolverFactory, ParserInterface $parser, Filesystem $filesystem = null)
+    {
         $this->pluginLoader = $pluginLoader;
         $this->resolverFactory = $resolverFactory;
         $this->parser = $parser;
@@ -97,7 +85,7 @@ class BundleLoader
     {
         $bundleConfigs = is_file($cacheFile) ? unserialize(file_get_contents($cacheFile)) : null;
 
-        if (!is_array($bundleConfigs) || 0 === count($bundleConfigs)) {
+        if (!\is_array($bundleConfigs) || 0 === \count($bundleConfigs)) {
             $bundleConfigs = $this->loadFromPlugins($development, $cacheFile);
         }
 

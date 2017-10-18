@@ -13,11 +13,6 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * Autoload configuration interface.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- */
 interface ConfigInterface
 {
     /**
@@ -69,7 +64,7 @@ interface ConfigInterface
     /**
      * Sets if bundle should be loaded in "prod" environment.
      *
-     * @param bool $loadInDevelopment
+     * @param bool $loadInProduction
      *
      * @return $this
      */

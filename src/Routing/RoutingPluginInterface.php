@@ -8,23 +8,12 @@
  * @license LGPL-3.0+
  */
 
-/**
- * This file is part of Contao.
- *
- * Copyright (c) 2005-2016 Leo Feyer
- *
- * @license LGPL-3.0+
- */
-
 namespace Contao\ManagerPlugin\Routing;
 
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouteCollection;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 interface RoutingPluginInterface
 {
     /**

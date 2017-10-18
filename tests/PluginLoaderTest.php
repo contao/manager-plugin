@@ -14,9 +14,7 @@ use Contao\ManagerPlugin\PluginLoader;
 
 class PluginLoaderTest extends \PHPUnit_Framework_TestCase
 {
-    const FIXTURES_DIR = 'Fixtures/PluginLoader';
-
-    public function testInstantiation()
+    public function testCanBeInstantiated()
     {
         $pluginLoader = new PluginLoader('foobar');
 
@@ -26,12 +24,11 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testLoadsPlugin()
+    public function testReturnsTheActivePlugins()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/installed.json');
-
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/installed.json');
         $plugins = $pluginLoader->getInstances();
 
         $this->assertCount(1, $plugins);
@@ -39,11 +36,11 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Foo\Bar\FooBarPlugin', $plugins['foo/bar-bundle']);
     }
 
-    public function testLoadFailsWhenPluginDoesNotExist()
+    public function testFailsIfAPluginDoesNotExist()
     {
-        $this->setExpectedException('RuntimeException', 'Bar\Foo\BarFooPlugin');
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/not-installed.json');
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/not-installed.json');
+        $this->expectException('RuntimeException');
 
         $pluginLoader->getInstances();
     }
@@ -51,13 +48,12 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testGetInstancesOfChecksInterface()
+    public function testReturnsTheActiveConfigPlugins()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooConfigPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/mixed.json');
-
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/mixed.json');
         $plugins = $pluginLoader->getInstancesOf(PluginLoader::CONFIG_PLUGINS);
 
         $this->assertCount(1, $plugins);
@@ -69,12 +65,11 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testLoadsGlobalManagerPlugin()
+    public function testLoadsTheContaoManagerPlugin()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/ContaoManagerPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/ContaoManagerPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/empty.json');
-
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/empty.json');
         $plugins = $pluginLoader->getInstances();
 
         $this->assertCount(1, $plugins);
@@ -85,13 +80,12 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testLoadsManagerBundlePluginFirst()
+    public function testLoadsTheManagerBundlePluginFirst()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooConfigPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/manager-bundle.json');
-
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/manager-bundle.json');
         $plugins = $pluginLoader->getInstances();
 
         $this->assertCount(2, $plugins);
@@ -103,13 +97,12 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testLoadOrdersPluginByDependencies()
+    public function testOrdersThePluginsByTheirDependencies()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooDependendPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooDependendPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/dependencies.json');
-
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/dependencies.json');
         $plugins = $pluginLoader->getInstances();
 
         $this->assertCount(2, $plugins);
@@ -118,14 +111,15 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foo/bar-bundle', 'foo/dependend-bundle'], array_keys($plugins));
     }
 
-    public function testLoadIsOnlyRunOnce()
+    public function testOrdersThePluginsOnlyOnce()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
         /** @var PluginLoader|\PHPUnit_Framework_MockObject_MockObject $pluginLoader */
-        $pluginLoader = $this->getMockBuilder(PluginLoader::class)
+        $pluginLoader = $this
+            ->getMockBuilder(PluginLoader::class)
             ->setMethods(['orderPlugins'])
-            ->setConstructorArgs([__DIR__.'/'.self::FIXTURES_DIR.'/installed.json'])
+            ->setConstructorArgs([__DIR__.'/Fixtures/PluginLoader/installed.json'])
             ->getMock()
         ;
 
@@ -139,38 +133,38 @@ class PluginLoaderTest extends \PHPUnit_Framework_TestCase
         $pluginLoader->getInstances();
     }
 
-    public function testLoadMissingFile()
+    public function testFailsIfTheJsonFileDoesNotExist()
     {
-        $this->setExpectedException('InvalidArgumentException', 'not found');
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/missing.json');
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/missing.json');
+        $this->expectException('InvalidArgumentException');
 
         $pluginLoader->getInstances();
     }
 
-    public function testLoadInvalidJson()
+    public function testFailsIfTheJsonDataIsInvalid()
     {
-        $this->setExpectedException('RuntimeException');
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/invalid.json');
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/invalid.json');
+        $this->expectException('RuntimeException');
 
         $pluginLoader->getInstances();
     }
 
     public function testReturnsDisabledPackages()
     {
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/empty.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/empty.json');
 
         $pluginLoader->setDisabledPackages(['foo', 'bar']);
         $this->assertSame(['foo', 'bar'], $pluginLoader->getDisabledPackages());
     }
 
-    public function testSkipsDisabledPackages()
+    public function testDoesNotLoadDisabledPackages()
     {
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooBarPlugin.php';
-        include_once __DIR__.'/'.self::FIXTURES_DIR.'/FooConfigPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/'.self::FIXTURES_DIR.'/manager-bundle.json');
+        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/manager-bundle.json');
 
         $pluginLoader->setDisabledPackages(['foo/bar-bundle']);
 

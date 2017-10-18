@@ -12,8 +12,10 @@ namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolver;
+use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
+use PHPUnit\Framework\TestCase;
 
-class ConfigResolverTest extends \PHPUnit_Framework_TestCase
+class ConfigResolverTest extends TestCase
 {
     /**
      * @var ConfigResolver
@@ -30,12 +32,12 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver = new ConfigResolver();
     }
 
-    public function testInstantiation()
+    public function testCanBeInstantiated()
     {
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Config\ConfigResolver', $this->resolver);
     }
 
-    public function testAddIsFluent()
+    public function testDefinesAFluentInterface()
     {
         $result = $this->resolver->add(new BundleConfig('foobar'));
 
@@ -43,9 +45,12 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getBundleConfigsProvider
+     * @param array $configs
+     * @param array $expectedResult
+     *
+     * @dataProvider getBundleConfigs
      */
-    public function testGetBundleConfigs(array $configs, array $expectedResult)
+    public function testAddsTheBundleConfigs(array $configs, array $expectedResult)
     {
         foreach ($configs as $config) {
             $this->resolver->add($config);
@@ -56,43 +61,10 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedResult, $actualResult);
     }
 
-    public function testGetBundleConfigsIgnoresDevInProd()
-    {
-        $this->resolver->add(new BundleConfig('name1'));
-        $this->resolver->add((new BundleConfig('name2'))->setLoadInProduction(false));
-
-        $this->assertCount(1, $this->resolver->getBundleConfigs(false));
-    }
-
-    public function testGetBundleConfigsIgnoresProdInDev()
-    {
-        $this->resolver->add(new BundleConfig('name1'));
-        $this->resolver->add((new BundleConfig('name2'))->setLoadInDevelopment(false));
-
-        $this->assertCount(1, $this->resolver->getBundleConfigs(true));
-    }
-
-    public function testSecondaryPluginCanUnsetBundle()
-    {
-        $this->resolver->add(new BundleConfig('name1'));
-        $this->resolver->add((new BundleConfig('name1'))->setLoadInProduction(false));
-
-        $this->assertCount(0, $this->resolver->getBundleConfigs(false));
-    }
-
-    public function testCannotBeResolved()
-    {
-        $this->setExpectedException('Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException');
-
-        $this->resolver
-            ->add((new BundleConfig('name1'))->setLoadAfter(['name2']))
-            ->add((new BundleConfig('name2'))->setLoadAfter(['name1']))
-        ;
-
-        $this->resolver->getBundleConfigs(false);
-    }
-
-    public function getBundleConfigsProvider()
+    /**
+     * @return array
+     */
+    public function getBundleConfigs()
     {
         $config1 = new BundleConfig('name1');
         $config2 = (new BundleConfig('name2'))->setLoadAfter(['name1']);
@@ -163,5 +135,41 @@ class ConfigResolverTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
+    }
+
+    public function testIgnoresDevelopmentBundlesInProduction()
+    {
+        $this->resolver->add(new BundleConfig('name1'));
+        $this->resolver->add((new BundleConfig('name2'))->setLoadInProduction(false));
+
+        $this->assertCount(1, $this->resolver->getBundleConfigs(false));
+    }
+
+    public function testIgnoresProductionBundlesInDevelopment()
+    {
+        $this->resolver->add(new BundleConfig('name1'));
+        $this->resolver->add((new BundleConfig('name2'))->setLoadInDevelopment(false));
+
+        $this->assertCount(1, $this->resolver->getBundleConfigs(true));
+    }
+
+    public function testSupportsUnsettingABundle()
+    {
+        $this->resolver->add(new BundleConfig('name1'));
+        $this->resolver->add((new BundleConfig('name1'))->setLoadInProduction(false));
+
+        $this->assertCount(0, $this->resolver->getBundleConfigs(false));
+    }
+
+    public function testFailsIfTheDependenciesCannotBeResolved()
+    {
+        $this->resolver
+            ->add((new BundleConfig('name1'))->setLoadAfter(['name2']))
+            ->add((new BundleConfig('name2'))->setLoadAfter(['name1']))
+        ;
+
+        $this->expectException(UnresolvableDependenciesException::class);
+
+        $this->resolver->getBundleConfigs(false);
     }
 }

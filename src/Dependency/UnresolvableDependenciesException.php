@@ -10,9 +10,6 @@
 
 namespace Contao\ManagerPlugin\Dependency;
 
-/**
- * @author Leo Feyer <https://github.com/leofeyer>
- */
 class UnresolvableDependenciesException extends \RuntimeException
 {
 }

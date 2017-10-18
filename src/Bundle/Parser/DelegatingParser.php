@@ -10,11 +10,6 @@
 
 namespace Contao\ManagerPlugin\Bundle\Parser;
 
-/**
- * Delegates parsing to child parsers.
- *
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 class DelegatingParser implements ParserInterface
 {
     /**

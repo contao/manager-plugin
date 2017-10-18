@@ -12,12 +12,6 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * Provides methods to access the configuration.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 class BundleConfig implements ConfigInterface
 {
     /**
@@ -46,8 +40,6 @@ class BundleConfig implements ConfigInterface
     protected $loadInDevelopment = true;
 
     /**
-     * Constructor.
-     *
      * @param string $name
      */
     public function __construct($name)

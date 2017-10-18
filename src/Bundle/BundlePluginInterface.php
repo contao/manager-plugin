@@ -13,9 +13,6 @@ namespace Contao\ManagerPlugin\Bundle;
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 interface BundlePluginInterface
 {
     /**

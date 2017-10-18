@@ -15,9 +15,7 @@ use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
 
 /**
- * Finds Contao manager plugins from Composer's installed.json.
- *
- * @author Andreas Schempp <https://github.com/aschempp>
+ * Finds Contao Manager plugins from Composer's installed.json.
  */
 class PluginLoader
 {
@@ -44,8 +42,6 @@ class PluginLoader
     private $disabled = [];
 
     /**
-     * Constructor.
-     *
      * @param string $installedJson
      */
     public function __construct($installedJson)
@@ -54,7 +50,7 @@ class PluginLoader
     }
 
     /**
-     * Gets instances of manager plugins.
+     * Returns all active plugin instances.
      *
      * @return array
      */
@@ -66,7 +62,7 @@ class PluginLoader
     }
 
     /**
-     * Gets instances of manager plugins of given type (see class constants).
+     * Returns the active plugin instances of a given type (see class constants).
      *
      * @param string $type
      * @param bool   $reverseOrder
@@ -108,6 +104,8 @@ class PluginLoader
     }
 
     /**
+     * Orders the plugins.
+     *
      * @param array $plugins
      *
      * @throws UnresolvableDependenciesException
@@ -174,7 +172,7 @@ class PluginLoader
             if (isset($package['extra']['contao-manager-plugin'])) {
                 if (!class_exists($package['extra']['contao-manager-plugin'])) {
                     throw new \RuntimeException(
-                        sprintf('Contao Manager Plugin "%s" was not found.', $package['extra']['contao-manager-plugin'])
+                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
                     );
                 }
 
@@ -186,6 +184,7 @@ class PluginLoader
 
         // Instantiate a global plugin to load AppBundle or other customizations
         $appPlugin = '\ContaoManagerPlugin';
+
         if (class_exists($appPlugin)) {
             $this->plugins['app'] = new $appPlugin();
         }

@@ -8,14 +8,6 @@
  * @license LGPL-3.0+
  */
 
-/**
- * This file is part of Contao.
- *
- * Copyright (c) 2005-2016 Leo Feyer
- *
- * @license LGPL-3.0+
- */
-
 namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\CoreBundle\ContaoCoreBundle;
@@ -27,9 +19,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
-    const FIXTURES_DIR = '/../../Fixtures/Bundle/Config';
-
-    public function testInstantiation()
+    public function testCanBeInstantiated()
     {
         $config = new BundleConfig('foobar');
 
@@ -37,7 +27,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Config\ConfigInterface', $config);
     }
 
-    public function testStaticCreate()
+    public function testCreatesABundleConfigObject()
     {
         $config = BundleConfig::create('foobar');
 
@@ -45,14 +35,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ConfigInterface::class, $config);
     }
 
-    public function testSetAndGetName()
+    public function testReadsAndWritesTheName()
     {
         $config = new BundleConfig('foobar');
 
         $this->assertSame('foobar', $config->getName());
     }
 
-    public function testSetAndGetReplace()
+    public function testReadsAndWritesTheReplaces()
     {
         $config = new BundleConfig('foobar');
 
@@ -63,7 +53,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foobar'], $config->getReplace());
     }
 
-    public function testSetAndGetLoadAfter()
+    public function testReadsAndWritesTheLoadAfter()
     {
         $config = new BundleConfig('foobar');
 
@@ -74,7 +64,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['foobar'], $config->getLoadAfter());
     }
 
-    public function testSetAndGetLoadInProduction()
+    public function testDisablesLoadingInProduction()
     {
         $config = new BundleConfig('foobar');
 
@@ -87,7 +77,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($config->loadInProduction());
     }
 
-    public function testSetAndGetLoadInDevelopment()
+    public function testDisablesLoadingInDevelopment()
     {
         $config = new BundleConfig('foobar');
 
@@ -100,71 +90,61 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($config->loadInProduction());
     }
 
-    public function testBundleConfigInstance()
+    public function testReturnsTheBundleInstances()
     {
-        $kernel = $this->getMock(KernelInterface::class);
         $config = BundleConfig::create(ContaoCoreBundle::class);
-
-        $bundle = $config->getBundleInstance($kernel);
+        $bundle = $config->getBundleInstance($this->createMock(KernelInterface::class));
 
         $this->assertInstanceOf(ContaoCoreBundle::class, $bundle);
     }
 
-    public function testModuleConfigExtendsBundleConfig()
+    public function testReturnsTheBundlePath()
     {
-        $config = new ModuleConfig('foobar');
+        $kernel = $this->createMock(KernelInterface::class);
 
-        $this->assertInstanceOf(ModuleConfig::class, $config);
-        $this->assertInstanceOf(BundleConfig::class, $config);
-        $this->assertInstanceOf(ConfigInterface::class, $config);
-    }
-
-    public function testModuleConfigInstance()
-    {
-        $kernel = $this->getMock(KernelInterface::class);
         $kernel
             ->method('getRootDir')
-            ->willReturn(__DIR__.self::FIXTURES_DIR.'/app')
+            ->willReturn(__DIR__.'/../../Fixtures/Bundle/Config/app')
         ;
 
         $config = ModuleConfig::create('foobar');
-
         $bundle = $config->getBundleInstance($kernel);
 
         $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
-        $this->assertSame(
-            __DIR__.self::FIXTURES_DIR.'/system/modules/foobar',
-            $bundle->getPath()
-        );
+        $this->assertSame(__DIR__.'/../../Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
     }
 
-    public function testModuleConfigInstanceWithInvalidNameThrowsException()
+    public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid()
     {
-        $this->setExpectedException('LogicException');
+        $kernel = $this->createMock(KernelInterface::class);
 
-        $kernel = $this->getMock(KernelInterface::class);
         $kernel
             ->method('getRootDir')
-            ->willReturn(__DIR__.self::FIXTURES_DIR.'/app')
+            ->willReturn(__DIR__.'/../../Fixtures/Bundle/Config/app')
         ;
 
         $config = ModuleConfig::create('barfoo');
 
+        $this->expectException('LogicException');
+
         $config->getBundleInstance($kernel);
     }
 
-    public function testModuelConfigLoadsAfterLegacyModules()
+    public function testLoadsTheModuleConfigurationAfterTheLegacyModules()
     {
         $config = ModuleConfig::create('foobar');
+
         $this->assertContains('core', $config->getLoadAfter());
         $this->assertNotContains('foobar', $config->getLoadAfter());
         $this->assertNotContains('news', $config->getLoadAfter());
 
         $config = ModuleConfig::create('a_module');
+
         $this->assertContains('core', $config->getLoadAfter());
         $this->assertNotContains('calendar', $config->getLoadAfter());
 
         $config = ModuleConfig::create('z_custom');
+
         $this->assertContains('core', $config->getLoadAfter());
         $this->assertContains('news', $config->getLoadAfter());
     }

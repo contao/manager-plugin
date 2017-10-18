@@ -13,9 +13,6 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 use Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 class ModuleConfig extends BundleConfig
 {
     /**
@@ -45,8 +42,6 @@ class ModuleConfig extends BundleConfig
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \LogicException
      */
     public function getBundleInstance(KernelInterface $kernel)
     {
@@ -63,7 +58,7 @@ class ModuleConfig extends BundleConfig
         $modules = array_values($modules);
         array_splice($modules, array_search($this->getName(), $modules, true));
 
-        if (!in_array('core', $modules, true)) {
+        if (!\in_array('core', $modules, true)) {
             $modules[] = 'core';
         }
 

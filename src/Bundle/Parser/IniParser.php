@@ -12,12 +12,6 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
 
-/**
- * Converts an INI configuration file into a ConfigInterface instance.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 class IniParser implements ParserInterface
 {
     /**
@@ -56,7 +50,7 @@ class IniParser implements ParserInterface
         if (file_exists($path)) {
             $requires = $this->parseIniFile($path);
 
-            if (0 !== count($requires)) {
+            if (0 !== \count($requires)) {
                 // Recursively load all modules that are required by other modules
                 foreach ($requires as &$module) {
                     if (0 === strpos($module, '*')) {
@@ -107,7 +101,7 @@ class IniParser implements ParserInterface
             throw new \RuntimeException("File $file cannot be decoded");
         }
 
-        if (!isset($ini['requires']) || !is_array($ini['requires'])) {
+        if (!isset($ini['requires']) || !\is_array($ini['requires'])) {
             return [];
         }
 

@@ -12,9 +12,6 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 interface ConfigResolverInterface
 {
     /**

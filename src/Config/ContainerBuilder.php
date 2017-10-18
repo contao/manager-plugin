@@ -27,8 +27,6 @@ class ContainerBuilder extends BaseContainerBuilder
     private $managerConfig;
 
     /**
-     * Constructor.
-     *
      * @param PluginLoader               $pluginLoader
      * @param array                      $managerConfig
      * @param ParameterBagInterface|null $parameterBag
@@ -57,10 +55,9 @@ class ContainerBuilder extends BaseContainerBuilder
     public function getExtensionConfig($name)
     {
         $configs = parent::getExtensionConfig($name);
-
-        /** @var ExtensionPluginInterface[] $plugins */
         $plugins = $this->pluginLoader->getInstancesOf(PluginLoader::EXTENSION_PLUGINS);
 
+        /** @var ExtensionPluginInterface[] $plugins */
         foreach ($plugins as $plugin) {
             $configs = $plugin->getExtensionConfig($name, $configs, $this);
         }

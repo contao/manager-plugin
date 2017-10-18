@@ -10,9 +10,6 @@
 
 namespace Contao\ManagerPlugin\Dependency;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 interface DependentPluginInterface
 {
     /**

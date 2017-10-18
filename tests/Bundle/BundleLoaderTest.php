@@ -17,109 +17,64 @@ use Contao\ManagerPlugin\Bundle\Config\ConfigResolverFactory;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverInterface;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\PluginLoader;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-class BundleLoaderTest extends \PHPUnit_Framework_TestCase
+class BundleLoaderTest extends TestCase
 {
-    public function testInstantiation()
+    public function testCanBeInstantiated()
     {
         $bundleLoader = new BundleLoader(
             $this->mockPluginLoader($this->never()),
             $this->mockConfigResolverFactory(0, false),
-            $this->mockParser()
+            $this->createMock(ParserInterface::class)
         );
 
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\BundleLoader', $bundleLoader);
     }
 
     /**
-     * @dataProvider bundleConfigsProvider
+     * @param array $plugins
+     * @param int   $configCount
+     * @param bool  $development
+     *
+     * @dataProvider getBundleConfigs
      */
-    public function testGetBundleConfigs($plugins, $configCount, $development)
+    public function testReturnsTheBundleConfigs(array $plugins, $configCount, $development)
     {
         $bundleLoader = new BundleLoader(
             $this->mockPluginLoader($this->atLeastOnce(), $plugins),
             $this->mockConfigResolverFactory($configCount, $development),
-            $this->mockParser()
+            $this->createMock(ParserInterface::class)
         );
 
         $bundleLoader->getBundleConfigs($development);
     }
 
-    public function testGetBundleConfigsReadsFromCacheFile()
-    {
-        $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
-
-        file_put_contents($cacheFile, serialize([new BundleConfig('foobar')]));
-
-        $bundleLoader = new BundleLoader(
-            $this->mockPluginLoader($this->never()),
-            $this->mockConfigResolverFactory(0, false),
-            $this->mockParser()
-        );
-
-        $configs = $bundleLoader->getBundleConfigs(false, $cacheFile);
-
-        $this->assertCount(1, $configs);
-        $this->assertInstanceOf(BundleConfig::class, $configs[0]);
-    }
-
-    public function testGetBundleConfigsIgnoresEmptyCacheFile()
-    {
-        // Empty file does not contain valid cache
-        $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
-
-        $bundleLoader = new BundleLoader(
-            $this->mockPluginLoader($this->atLeastOnce(), [$this->mockBundlePlugin([new BundleConfig('foobar')])]),
-            $this->mockConfigResolverFactory(1, false),
-            $this->mockParser(),
-            $this->getMock(Filesystem::class)
-        );
-
-        $bundleLoader->getBundleConfigs(false, $cacheFile);
-    }
-
-    public function testGetBundleConfigsDumpsToCacheFile()
-    {
-        $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', false);
-        $configs = [new BundleConfig('foobar')];
-
-        $this->assertFileNotExists($cacheFile);
-
-        $filesystem = $this->getMock(Filesystem::class);
-        $filesystem
-            ->expects($this->once())
-            ->method('dumpFile')
-            ->with($cacheFile)
-        ;
-
-        $bundleLoader = new BundleLoader(
-            $this->mockPluginLoader($this->atLeastOnce(), [$this->mockBundlePlugin($configs)]),
-            $this->mockConfigResolverFactory(1, false),
-            $this->mockParser(),
-            $filesystem
-        );
-
-        $bundleLoader->getBundleConfigs(false, $cacheFile);
-
-        $this->assertFileNotExists($cacheFile);
-    }
-
-    public function bundleConfigsProvider()
+    /**
+     * @return array
+     */
+    public function getBundleConfigs()
     {
         return [
             'Test correctly calls development mode' => [
-                [$this->mockBundlePlugin([new BundleConfig('foobar')])],
+                [
+                    $this->mockBundlePlugin([new BundleConfig('foobar')]),
+                ],
                 1,
                 true,
             ],
             'Test correctly calls production mode' => [
-                [$this->mockBundlePlugin([new BundleConfig('foobar')])],
+                [
+                    $this->mockBundlePlugin([new BundleConfig('foobar')]),
+                ],
                 1,
                 false,
             ],
             'Test correctly adds multiple configs from a plugin' => [
-                [$this->mockBundlePlugin([new BundleConfig('foo'), new BundleConfig('bar')])],
+                [
+                    $this->mockBundlePlugin([new BundleConfig('foo'), new BundleConfig('bar')]),
+                ],
                 2,
                 true,
             ],
@@ -143,9 +98,74 @@ class BundleLoaderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    private function mockBundlePlugin($configs = [])
+    public function testReadsTheCacheFile()
     {
-        $mock = $this->getMock(BundlePluginInterface::class);
+        $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
+
+        file_put_contents($cacheFile, serialize([new BundleConfig('foobar')]));
+
+        $bundleLoader = new BundleLoader(
+            $this->mockPluginLoader($this->never()),
+            $this->mockConfigResolverFactory(0, false),
+            $this->createMock(ParserInterface::class)
+        );
+
+        $configs = $bundleLoader->getBundleConfigs(false, $cacheFile);
+
+        $this->assertCount(1, $configs);
+        $this->assertInstanceOf(BundleConfig::class, $configs[0]);
+    }
+
+    public function testIgnoresTheCacheFileIfItIsEmpty()
+    {
+        $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
+
+        $bundleLoader = new BundleLoader(
+            $this->mockPluginLoader($this->atLeastOnce(), [$this->mockBundlePlugin([new BundleConfig('foobar')])]),
+            $this->mockConfigResolverFactory(1, false),
+            $this->createMock(ParserInterface::class),
+            $this->createMock(Filesystem::class)
+        );
+
+        $bundleLoader->getBundleConfigs(false, $cacheFile);
+    }
+
+    public function testWritesTheCacheFile()
+    {
+        $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', false);
+
+        $this->assertFileNotExists($cacheFile);
+
+        $filesystem = $this->createMock(Filesystem::class);
+
+        $filesystem
+            ->expects($this->once())
+            ->method('dumpFile')
+            ->with($cacheFile)
+        ;
+
+        $bundleLoader = new BundleLoader(
+            $this->mockPluginLoader($this->atLeastOnce(), [$this->mockBundlePlugin([new BundleConfig('foobar')])]),
+            $this->mockConfigResolverFactory(1, false),
+            $this->createMock(ParserInterface::class),
+            $filesystem
+        );
+
+        $bundleLoader->getBundleConfigs(false, $cacheFile);
+
+        $this->assertFileNotExists($cacheFile);
+    }
+
+    /**
+     * Mocks the bundle plugin.
+     *
+     * @param array $configs
+     *
+     * @return BundlePluginInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function mockBundlePlugin(array $configs = [])
+    {
+        $mock = $this->createMock(BundlePluginInterface::class);
 
         $mock
             ->method('getBundles')
@@ -155,34 +175,39 @@ class BundleLoaderTest extends \PHPUnit_Framework_TestCase
         return $mock;
     }
 
-    private function mockPluginLoader(
-        \PHPUnit_Framework_MockObject_Matcher_InvokedRecorder $expects,
-        array $plugins = []
-    ) {
-        $mock = $this->getMockBuilder(PluginLoader::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+    /**
+     * Mocks the plugin loader.
+     *
+     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedRecorder $expects
+     * @param array                                                 $plugins
+     *
+     * @return PluginLoader|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function mockPluginLoader(\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder $expects, array $plugins = [])
+    {
+        $pluginLoader = $this->createMock(PluginLoader::class);
 
-        $mock
+        $pluginLoader
             ->expects($expects)
             ->method('getInstancesOf')
             ->with(PluginLoader::BUNDLE_PLUGINS)
             ->willReturn($plugins)
         ;
 
-        return $mock;
+        return $pluginLoader;
     }
 
+    /**
+     * Mocks the config resolver factory.
+     *
+     * @param int  $addCount
+     * @param bool $development
+     *
+     * @return ConfigResolverFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
     private function mockConfigResolverFactory($addCount, $development)
     {
-        $factory = $this->getMock(ConfigResolverFactory::class);
-        $resolver = $this->getMock(ConfigResolverInterface::class);
-
-        $factory
-            ->method('create')
-            ->willReturn($resolver)
-        ;
+        $resolver = $this->createMock(ConfigResolverInterface::class);
 
         $resolver
             ->expects($this->exactly($addCount))
@@ -196,11 +221,13 @@ class BundleLoaderTest extends \PHPUnit_Framework_TestCase
             ->willReturn([])
         ;
 
-        return $factory;
-    }
+        $factory = $this->createMock(ConfigResolverFactory::class);
 
-    private function mockParser()
-    {
-        return $this->getMock(ParserInterface::class);
+        $factory
+            ->method('create')
+            ->willReturn($resolver)
+        ;
+
+        return $factory;
     }
 }

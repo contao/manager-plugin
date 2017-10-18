@@ -10,10 +10,6 @@
 
 namespace Contao\ManagerPlugin\Dependency;
 
-/**
- * @author Leo Feyer <https://github.com/leofeyer>
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 trait DependencyResolverTrait
 {
     /**
@@ -30,7 +26,7 @@ trait DependencyResolverTrait
         $ordered = [];
         $available = array_keys($dependencies);
 
-        while (0 !== count($dependencies)) {
+        while (0 !== \count($dependencies)) {
             $success = $this->doResolve($dependencies, $ordered, $available);
 
             if (false === $success) {
@@ -79,10 +75,10 @@ trait DependencyResolverTrait
      */
     private function canBeResolved(array $requires, array $available, array $ordered)
     {
-        if (0 === count($requires)) {
+        if (0 === \count($requires)) {
             return true;
         }
 
-        return 0 === count(array_diff(array_intersect($requires, $available), $ordered));
+        return 0 === \count(array_diff(array_intersect($requires, $available), $ordered));
     }
 }

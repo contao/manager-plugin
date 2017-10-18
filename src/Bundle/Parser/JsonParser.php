@@ -12,12 +12,6 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 
-/**
- * Converts a JSON configuration file into a configuration array.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 class JsonParser implements ParserInterface
 {
     /**
@@ -38,7 +32,7 @@ class JsonParser implements ParserInterface
      */
     public function supports($resource, $type = null)
     {
-        return is_string($resource) && 'json' === pathinfo($resource, PATHINFO_EXTENSION);
+        return \is_string($resource) && 'json' === pathinfo($resource, PATHINFO_EXTENSION);
     }
 
     /**
@@ -78,12 +72,14 @@ class JsonParser implements ParserInterface
     {
         foreach ($bundles as $options) {
             // Only one value given, must be class name
-            if (!is_array($options)) {
+            if (!\is_array($options)) {
                 $options = ['bundle' => $options];
             }
 
             if (!isset($options['bundle'])) {
-                throw new \RuntimeException(sprintf('Missing class name for bundle config (%s)', json_encode($options)));
+                throw new \RuntimeException(
+                    sprintf('Missing class name for bundle config (%s)', json_encode($options))
+                );
             }
 
             if (isset($options['optional']) && $options['optional'] && !class_exists($options['bundle'])) {

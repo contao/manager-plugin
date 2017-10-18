@@ -12,11 +12,6 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 
-/**
- * Resolves the bundles map from the configuration objects.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- */
 class ConfigResolver implements ConfigResolverInterface
 {
     use DependencyResolverTrait;

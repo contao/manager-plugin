@@ -12,17 +12,18 @@ namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverFactory;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverInterface;
+use PHPUnit\Framework\TestCase;
 
-class ConfigResolverFactoryTest extends \PHPUnit_Framework_TestCase
+class ConfigResolverFactoryTest extends TestCase
 {
-    public function testInstantiation()
+    public function testCanBeInstantiated()
     {
         $factory = new ConfigResolverFactory();
 
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Config\ConfigResolverFactory', $factory);
     }
 
-    public function testCreate()
+    public function testCreatesAConfigResolverObject()
     {
         $factory = new ConfigResolverFactory();
         $resolver = $factory->create();

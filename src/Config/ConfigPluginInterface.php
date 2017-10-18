@@ -12,9 +12,6 @@ namespace Contao\ManagerPlugin\Config;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
 
-/**
- * @author Andreas Schempp <https://github.com/aschempp>
- */
 interface ConfigPluginInterface
 {
     /**

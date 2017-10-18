@@ -12,12 +12,10 @@ namespace Contao\ManagerPlugin\Tests\Bundle\Parser;
 
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Parser\JsonParser;
-use Symfony\Component\Finder\SplFileInfo;
+use PHPUnit\Framework\TestCase;
 
-class JsonParserTest extends \PHPUnit_Framework_TestCase
+class JsonParserTest extends TestCase
 {
-    const FIXTURES_DIR = '/../../Fixtures/Bundle/JsonParser';
-
     /**
      * @var JsonParser
      */
@@ -33,13 +31,13 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->parser = new JsonParser();
     }
 
-    public function testInstantiation()
+    public function testCanBeInstantiated()
     {
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\JsonParser', $this->parser);
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\ParserInterface', $this->parser);
     }
 
-    public function testSupports()
+    public function testSupportsJsonFiles()
     {
         $this->assertTrue($this->parser->supports('foobar.json', 'json'));
         $this->assertTrue($this->parser->supports('foobar.json', null));
@@ -47,9 +45,9 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
-    public function testParseSimpleObject()
+    public function testParsesSimpleObjects()
     {
-        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/simple-object.json');
+        $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/simple-object.json');
 
         $this->assertCount(1, $configs);
 
@@ -64,9 +62,9 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([], $config->getLoadAfter());
     }
 
-    public function testParseSimpleString()
+    public function testParsesSimpleStrings()
     {
-        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/simple-string.json');
+        $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/simple-string.json');
 
         $this->assertCount(1, $configs);
 
@@ -81,10 +79,10 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([], $config->getLoadAfter());
     }
 
-    public function testParseDevelopmentAndProduction()
+    public function testParsesTheBundleEnvironment()
     {
         /** @var ConfigInterface[] $configs */
-        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/dev-prod.json');
+        $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/dev-prod.json');
 
         $this->assertCount(3, $configs);
 
@@ -101,10 +99,10 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($configs[2]->loadInDevelopment());
     }
 
-    public function testParseOptional()
+    public function testParsesOptionalBundles()
     {
         /** @var ConfigInterface[] $configs */
-        $configs = $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/optional.json');
+        $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/optional.json');
 
         $this->assertCount(2, $configs);
 
@@ -116,33 +114,24 @@ class JsonParserTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['Foo\BarBundle\FooBarBundle'], $configs[1]->getLoadAfter());
     }
 
-    public function testParseNoBundle()
+    public function testFailsToParseAFileWithNoBundles()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->expectException('RuntimeException');
 
-        $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/no-bundle.json');
+        $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/no-bundle.json');
     }
 
-    public function testParseMissingFile()
+    public function testFailsToParseAMissingFile()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
-        $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/missing.json');
+        $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/missing.json');
     }
 
-    public function testParseInvalidJson()
+    public function testFailsToParseInvalidJsonData()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->expectException('RuntimeException');
 
-        $this->parser->parse(__DIR__.self::FIXTURES_DIR.'/invalid.json');
-    }
-
-    public function testWillThrowExceptionIfFileNotExists()
-    {
-        $this->setExpectedException('InvalidArgumentException');
-
-        $file = new SplFileInfo('iDoNotExist', 'relativePath', 'relativePathName');
-
-        $this->parser->parse($file);
+        $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/invalid.json');
     }
 }
