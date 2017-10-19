@@ -102,7 +102,10 @@ class BundleLoaderTest extends TestCase
     {
         $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
 
-        file_put_contents($cacheFile, serialize([new BundleConfig('foobar')]));
+        file_put_contents(
+            $cacheFile,
+            sprintf('<?php return %s;', var_export([new BundleConfig('foobar')], true))
+        );
 
         $bundleLoader = new BundleLoader(
             $this->mockPluginLoader($this->never()),
@@ -121,7 +124,10 @@ class BundleLoaderTest extends TestCase
         $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
 
         $bundleLoader = new BundleLoader(
-            $this->mockPluginLoader($this->atLeastOnce(), [$this->mockBundlePlugin([new BundleConfig('foobar')])]),
+            $this->mockPluginLoader(
+                $this->atLeastOnce(),
+                [$this->mockBundlePlugin([new BundleConfig('foobar')])]
+            ),
             $this->mockConfigResolverFactory(1, false),
             $this->createMock(ParserInterface::class),
             $this->createMock(Filesystem::class)
@@ -134,26 +140,25 @@ class BundleLoaderTest extends TestCase
     {
         $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', false);
 
-        $this->assertFileNotExists($cacheFile);
-
         $filesystem = $this->createMock(Filesystem::class);
 
         $filesystem
             ->expects($this->once())
             ->method('dumpFile')
-            ->with($cacheFile)
+            ->with($cacheFile, "<?php return array (\n);")
         ;
 
         $bundleLoader = new BundleLoader(
-            $this->mockPluginLoader($this->atLeastOnce(), [$this->mockBundlePlugin([new BundleConfig('foobar')])]),
+            $this->mockPluginLoader(
+                $this->atLeastOnce(),
+                [$this->mockBundlePlugin([new BundleConfig('foobar')])]
+            ),
             $this->mockConfigResolverFactory(1, false),
             $this->createMock(ParserInterface::class),
             $filesystem
         );
 
         $bundleLoader->getBundleConfigs(false, $cacheFile);
-
-        $this->assertFileNotExists($cacheFile);
     }
 
     /**

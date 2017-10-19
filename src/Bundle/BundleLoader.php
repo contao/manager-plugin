@@ -83,7 +83,7 @@ class BundleLoader
      */
     private function loadFromCache($development, $cacheFile)
     {
-        $bundleConfigs = is_file($cacheFile) ? unserialize(file_get_contents($cacheFile)) : null;
+        $bundleConfigs = is_file($cacheFile) ? include $cacheFile : null;
 
         if (!\is_array($bundleConfigs) || 0 === \count($bundleConfigs)) {
             $bundleConfigs = $this->loadFromPlugins($development, $cacheFile);
@@ -116,7 +116,7 @@ class BundleLoader
         $bundleConfigs = $resolver->getBundleConfigs($development);
 
         if (null !== $cacheFile) {
-            $this->filesystem->dumpFile($cacheFile, serialize($bundleConfigs));
+            $this->filesystem->dumpFile($cacheFile, sprintf('<?php return %s;', var_export($bundleConfigs, true)));
         }
 
         return $bundleConfigs;
