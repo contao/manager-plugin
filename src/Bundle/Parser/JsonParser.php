@@ -84,7 +84,7 @@ class JsonParser implements ParserInterface
                 );
             }
 
-            if (isset($options['optional']) && $options['optional'] && !class_exists($options['bundle'])) {
+            if (!empty($options['optional']) && !class_exists($options['bundle'])) {
                 continue;
             }
 

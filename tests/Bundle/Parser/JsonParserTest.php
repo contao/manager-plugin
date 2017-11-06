@@ -40,7 +40,7 @@ class JsonParserTest extends TestCase
     public function testSupportsJsonFiles()
     {
         $this->assertTrue($this->parser->supports('foobar.json', 'json'));
-        $this->assertTrue($this->parser->supports('foobar.json', null));
+        $this->assertTrue($this->parser->supports('foobar.json'));
         $this->assertFalse($this->parser->supports([]));
         $this->assertFalse($this->parser->supports('foobar'));
     }

@@ -72,8 +72,8 @@ class ConfigResolverTest extends TestCase
         $config4 = (new BundleConfig('name4'))->setLoadAfter(['core']);
         $config5 = (new BundleConfig('name5'))->setReplace(['core']);
         $config6 = (new BundleConfig('name6'))->setReplace(['name2']);
-        $config7a = (new BundleConfig('name7'));
-        $config7b = (new BundleConfig('name7'));
+        $config7a = new BundleConfig('name7');
+        $config7b = new BundleConfig('name7');
 
         return [
             'Test default configs' => [

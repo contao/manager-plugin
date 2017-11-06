@@ -160,7 +160,7 @@ class BundleConfig implements ConfigInterface
      */
     public static function __set_state(array $properties)
     {
-        $config = new static($properties['name']);
+        $config = new self($properties['name']);
         $config->setReplace($properties['replace']);
         $config->setLoadAfter($properties['loadAfter']);
         $config->setLoadInProduction($properties['loadInProduction']);

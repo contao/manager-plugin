@@ -40,8 +40,8 @@ class IniParserTest extends TestCase
     public function testSupportsIniFiles()
     {
         $this->assertTrue($this->parser->supports('foobar', 'ini'));
-        $this->assertTrue($this->parser->supports('with-requires', null));
-        $this->assertFalse($this->parser->supports('foobar', null));
+        $this->assertTrue($this->parser->supports('with-requires'));
+        $this->assertFalse($this->parser->supports('foobar'));
     }
 
     public function testParsesRequires()
