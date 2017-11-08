@@ -15,6 +15,7 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverFactory;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolverInterface;
+use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\PluginLoader;
 use PHPUnit\Framework\TestCase;
@@ -104,7 +105,10 @@ class BundleLoaderTest extends TestCase
 
         file_put_contents(
             $cacheFile,
-            sprintf('<?php return %s;', var_export([new BundleConfig('foobar')], true))
+            sprintf('<?php return %s;', var_export([
+                new BundleConfig('foobar'),
+                new ModuleConfig('legacy'),
+            ], true))
         );
 
         $bundleLoader = new BundleLoader(
@@ -115,8 +119,11 @@ class BundleLoaderTest extends TestCase
 
         $configs = $bundleLoader->getBundleConfigs(false, $cacheFile);
 
-        $this->assertCount(1, $configs);
+        $this->assertCount(2, $configs);
         $this->assertInstanceOf(BundleConfig::class, $configs[0]);
+        $this->assertInstanceOf(ModuleConfig::class, $configs[1]);
+        $this->assertSame('foobar', $configs[0]->getName());
+        $this->assertSame('legacy', $configs[1]->getName());
     }
 
     public function testIgnoresTheCacheFileIfItIsEmpty()
