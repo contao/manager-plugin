@@ -48,6 +48,24 @@ class BundleConfig implements ConfigInterface
     }
 
     /**
+     * Create a new config instance from properties.
+     *
+     * @param array $properties
+     *
+     * @return static
+     */
+    public static function __set_state(array $properties)
+    {
+        $config = new static($properties['name']);
+        $config->setReplace($properties['replace']);
+        $config->setLoadAfter($properties['loadAfter']);
+        $config->setLoadInProduction($properties['loadInProduction']);
+        $config->setLoadInDevelopment($properties['loadInDevelopment']);
+
+        return $config;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
@@ -149,23 +167,5 @@ class BundleConfig implements ConfigInterface
     public static function create($name)
     {
         return new static($name);
-    }
-
-    /**
-     * Create a new config instance from properties.
-     *
-     * @param array $properties
-     *
-     * @return static
-     */
-    public static function __set_state(array $properties)
-    {
-        $config = new static($properties['name']);
-        $config->setReplace($properties['replace']);
-        $config->setLoadAfter($properties['loadAfter']);
-        $config->setLoadInProduction($properties['loadInProduction']);
-        $config->setLoadInDevelopment($properties['loadInDevelopment']);
-
-        return $config;
     }
 }
