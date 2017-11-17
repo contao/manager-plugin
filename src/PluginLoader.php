@@ -55,7 +55,7 @@ class PluginLoader
     {
         $this->load();
 
-        return array_diff_key($this->plugins, $this->disabled);
+        return array_diff_key($this->plugins, array_flip($this->disabled));
     }
 
     /**
@@ -77,7 +77,7 @@ class PluginLoader
 
         $plugins = $reverseOrder ? array_reverse($plugins, true) : $plugins;
 
-        return array_diff_key($plugins, $this->disabled);
+        return array_diff_key($plugins, array_flip($this->disabled));
     }
 
     /**
@@ -87,7 +87,7 @@ class PluginLoader
      */
     public function getDisabledPackages()
     {
-        return array_values(array_flip($this->disabled));
+        return $this->disabled;
     }
 
     /**
@@ -97,7 +97,7 @@ class PluginLoader
      */
     public function setDisabledPackages(array $plugins)
     {
-        $this->disabled = array_flip(array_values($plugins));
+        $this->disabled = $plugins;
     }
 
     /**
