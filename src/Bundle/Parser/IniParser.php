@@ -103,7 +103,7 @@ class IniParser implements ParserInterface
     {
         $ini = parse_ini_file($file, true);
 
-        if (false === $ini) {
+        if (!is_array($ini)) {
             throw new \RuntimeException("File $file cannot be decoded");
         }
 
