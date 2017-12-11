@@ -22,6 +22,14 @@ class Installer
     private static $generatedClassTemplate = <<<'PHP'
 <?php
 
+/*
+ * This file is part of Contao.
+ *
+ * Copyright (c) 2005-2017 Leo Feyer
+ *
+ * @license LGPL-3.0+
+ */
+
 namespace Contao\ManagerPlugin;
 
 /**
@@ -146,10 +154,13 @@ PHP;
      */
     public function dumpClass()
     {
+        $plugins = var_export($this->plugins, true);
+        $plugins = preg_replace('{(=>[ \n]+)([^\\\\]+)}', '$1\\$2', $plugins);
+
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla' . 'ss ' . 'PluginLoader', // note: workaround for regex-based code parsers :-(
-            var_export($this->plugins, true),
+            $plugins,
             var_export($this->disabled, true)
         );
 
