@@ -10,10 +10,11 @@
 
 namespace Contao\ManagerPlugin\Composer;
 
+use Composer\Package\Locker;
+use Composer\Package\RootPackageInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
-use Contao\ManagerPlugin\PluginLoader;
 
 class Installer
 {
@@ -51,17 +52,11 @@ namespace Contao\ManagerPlugin;
     private $plugins;
 
     /**
-     * @var array
-     */
-    private $disabled;
-
-    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->plugins = %s;
-        $this->disabled = %s;
     }
 
     /**
@@ -71,7 +66,7 @@ namespace Contao\ManagerPlugin;
      */
     public function getInstances()
     {
-        return array_diff_key($this->plugins, array_flip($this->disabled));
+        return $this->plugins;
     }
 
     /**
@@ -93,78 +88,82 @@ namespace Contao\ManagerPlugin;
 
         $plugins = $reverseOrder ? array_reverse($plugins, true) : $plugins;
 
-        return array_diff_key($plugins, array_flip($this->disabled));
+        return $plugins;
     }
 }
 
 PHP;
 
-    private $pluginLoader;
-    private $ref;
-
-    private $plugins;
-    private $disabled;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->pluginLoader = new PluginLoader();
-        $this->ref = new \ReflectionClass($this->pluginLoader);
-
-        $plugins = $this->ref->getProperty('plugins');
-        $plugins->setAccessible(true);
-        $this->plugins = $plugins->getValue($this->pluginLoader);
-
-        $disabled = $this->ref->getProperty('disabled');
-        $disabled->setAccessible(true);
-        $this->disabled = $disabled->getValue($this->pluginLoader);
-    }
-
     /**
      * Sets the Contao Manager plugins.
      *
-     * @param array $plugins
+     * @param Locker               $locker
+     * @param RootPackageInterface $rootPackage
+     *
+     * @throws \RuntimeException
      */
-    public function setPlugins(array $plugins)
+    public function dumpPlugins(Locker $locker, RootPackageInterface $rootPackage)
     {
-        $this->plugins = $this->orderPlugins($plugins);
+        $plugins = [];
+
+        $disabled = $this->getDisabledPackages($rootPackage);
+        $lockData = $locker->getLockData();
+        $lockData['packages-dev'] = isset($lockData['packages-dev']) ? $lockData['packages-dev'] : [];
+
+        foreach (array_merge($lockData['packages'], $lockData['packages-dev']) as $package) {
+            if (in_array($package['name'], $disabled, true)) {
+                continue;
+            }
+
+            if (isset($package['extra']['contao-manager-plugin'])) {
+                if (!class_exists($package['extra']['contao-manager-plugin'])) {
+                    throw new \RuntimeException(
+                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
+                    );
+                }
+
+                $plugins[$package['name']] = new $package['extra']['contao-manager-plugin']();
+            }
+        }
+
+        $plugins = $this->orderPlugins($plugins);
 
         // Instantiate a global plugin to load AppBundle or other customizations
         $appPlugin = '\ContaoManagerPlugin';
 
         if (class_exists($appPlugin)) {
-            $this->plugins['app'] = new $appPlugin();
+            $plugins['app'] = new $appPlugin();
         }
+
+        $this->dumpClass($plugins);
     }
 
-    /**
-     * Sets the disabled packages.
-     *
-     * @param array $disabled
-     */
-    public function setDisabled(array $disabled)
+    private function getDisabledPackages(RootPackageInterface $rootPackage)
     {
-        $this->disabled = $disabled;
+        $extra = $rootPackage->getExtra();
+
+        if (!isset($extra['contao-manager']['disabled-packages'])) {
+            return [];
+        }
+
+        return (array) $extra['contao-manager']['disabled-packages'];
     }
 
     /**
      * Dumps the PluginLoader class.
      */
-    public function dumpClass()
+    private function dumpClass(array $plugins)
     {
-        $plugins = var_export($this->plugins, true);
-        $plugins = preg_replace('{(=>[ \n]+)([^\\\\]+)}', '$1\\$2', $plugins);
+        $plugins = var_export($plugins, true);
+        $plugins = preg_replace('{(=>[ \n]+)([^\\\\]+)}', '$1\\\\$2', $plugins);
 
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla' . 'ss ' . 'PluginLoader', // note: workaround for regex-based code parsers :-(
-            $plugins,
-            var_export($this->disabled, true)
+            $plugins
         );
 
-        file_put_contents($this->ref->getFileName(), $content);
+        file_put_contents(__DIR__.'/../PluginLoader.php', $content);
     }
 
     /**
@@ -176,10 +175,8 @@ PHP;
      *
      * @return array
      */
-    protected function orderPlugins(array $plugins)
+    private function orderPlugins(array $plugins)
     {
-        $this->plugins = [];
-
         $ordered = [];
         $dependencies = [];
         $packages = array_keys($plugins);

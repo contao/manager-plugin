@@ -24,17 +24,11 @@ class PluginLoader
     private $plugins;
 
     /**
-     * @var array
-     */
-    private $disabled;
-
-    /**
      * Constructor.
      */
     public function __construct()
     {
         $this->plugins = [];
-        $this->disabled = [];
     }
 
     /**
@@ -44,7 +38,7 @@ class PluginLoader
      */
     public function getInstances()
     {
-        return array_diff_key($this->plugins, array_flip($this->disabled));
+        return $this->plugins;
     }
 
     /**
@@ -66,6 +60,6 @@ class PluginLoader
 
         $plugins = $reverseOrder ? array_reverse($plugins, true) : $plugins;
 
-        return array_diff_key($plugins, array_flip($this->disabled));
+        return $plugins;
     }
 }

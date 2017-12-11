@@ -27,28 +27,21 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         // Nothing to do here, as all features are provided through event listeners
     }
 
-    public function dumpPluginLoader(Event $event)
+    /**
+     * Dumps the Contao Manager plugins.
+     *
+     * @param Event $event
+     */
+    public function dumpPlugins(Event $event)
     {
-        $plugins = [];
-        $lockData = $event->getComposer()->getLocker()->getLockData();
-
-        $lockData['packages-dev'] = isset($lockData['packages-dev']) ? $lockData['packages-dev'] : [];
-
-        foreach (array_merge($lockData['packages'], $lockData['packages-dev']) as $package) {
-            if (isset($package['extra']['contao-manager-plugin'])) {
-                if (!class_exists($package['extra']['contao-manager-plugin'])) {
-                    throw new \RuntimeException(
-                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
-                    );
-                }
-
-                $plugins[$package['name']] = new $package['extra']['contao-manager-plugin']();
-            }
-        }
+        $composer = $event->getComposer();
 
         $installer = new Installer();
-        $installer->setPlugins($plugins);
-        $installer->dumpClass();
+        $installer->dumpPlugins($composer->getLocker(), $composer->getPackage());
+
+        $event->getIO()->write('Dumped Contao Manager plugins');
+
+
     }
 
     /**
@@ -57,8 +50,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ScriptEvents::POST_INSTALL_CMD => 'dumpPluginLoader',
-            ScriptEvents::POST_UPDATE_CMD  => 'dumpPluginLoader',
+            ScriptEvents::POST_INSTALL_CMD => 'dumpPlugins',
+            ScriptEvents::POST_UPDATE_CMD  => 'dumpPlugins',
         ];
     }
 }
