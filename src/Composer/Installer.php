@@ -40,12 +40,21 @@ class PluginLoader
     /**
      * @var array
      */
-    private $plugins = %s;
+    private $plugins;
 
     /**
      * @var array
      */
-    private $disabled = %s;
+    private $disabled;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->plugins = %s;
+        $this->disabled = %s;
+    }
 
     /**
      * Returns all active plugin instances.

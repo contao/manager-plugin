@@ -10,6 +10,7 @@
 
 namespace Contao\ManagerPlugin;
 
+
 class PluginLoader
 {
     const BUNDLE_PLUGINS = 'Contao\ManagerPlugin\Bundle\BundlePluginInterface';
@@ -20,12 +21,21 @@ class PluginLoader
     /**
      * @var array
      */
-    private $plugins = [];
+    private $plugins;
 
     /**
      * @var array
      */
-    private $disabled = [];
+    private $disabled;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->plugins = [];
+        $this->disabled = [];
+    }
 
     /**
      * Returns all active plugin instances.
