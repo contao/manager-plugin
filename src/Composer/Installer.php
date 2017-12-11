@@ -30,7 +30,7 @@ namespace Contao\ManagerPlugin;
  *
  * This file is overwritten at every run of `composer install` or `composer update`.
  */
-class PluginLoader
+%s
 {
     const BUNDLE_PLUGINS = 'Contao\ManagerPlugin\Bundle\BundlePluginInterface';
     const CONFIG_PLUGINS = 'Contao\ManagerPlugin\Config\ConfigPluginInterface';
@@ -148,6 +148,7 @@ PHP;
     {
         $content = sprintf(
             static::$generatedClassTemplate,
+            'cla' . 'ss ' . 'PluginLoader', // note: workaround for regex-based code parsers :-(
             var_export($this->plugins, true),
             var_export($this->disabled, true)
         );
