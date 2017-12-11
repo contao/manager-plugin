@@ -10,7 +10,6 @@
 
 namespace Contao\ManagerPlugin;
 
-
 class PluginLoader
 {
     const BUNDLE_PLUGINS = 'Contao\ManagerPlugin\Bundle\BundlePluginInterface';

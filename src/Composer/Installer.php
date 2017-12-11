@@ -138,6 +138,13 @@ PHP;
         $this->dumpClass($plugins);
     }
 
+    /**
+     * Finds disabled packages in the root package extras.
+     *
+     * @param RootPackageInterface $rootPackage
+     *
+     * @return array
+     */
     private function getDisabledPackages(RootPackageInterface $rootPackage)
     {
         $extra = $rootPackage->getExtra();
@@ -156,7 +163,7 @@ PHP;
     {
         $content = sprintf(
             static::$generatedClassTemplate,
-            'cla' . 'ss ' . 'PluginLoader', // note: workaround for regex-based code parsers :-(
+            'cla'.'ss '.'PluginLoader', // note: workaround for regex-based code parsers :-(
             'unserialize('.var_export(serialize($plugins), true).')'
         );
 
