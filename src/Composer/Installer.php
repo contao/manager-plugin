@@ -154,13 +154,10 @@ PHP;
      */
     private function dumpClass(array $plugins)
     {
-        $plugins = var_export($plugins, true);
-        $plugins = preg_replace('{(=>[ \n]+)([^\\\\]+)}', '$1\\\\$2', $plugins);
-
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla' . 'ss ' . 'PluginLoader', // note: workaround for regex-based code parsers :-(
-            $plugins
+            'unserialize('.var_export(serialize($plugins), true).')'
         );
 
         file_put_contents(__DIR__.'/../PluginLoader.php', $content);
