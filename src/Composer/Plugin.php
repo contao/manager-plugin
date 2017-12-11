@@ -36,11 +36,11 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         foreach (array_merge($lockData['packages'], $lockData['packages-dev']) as $package) {
             if (isset($package['extra']['contao-manager-plugin'])) {
-//                if (!class_exists($package['extra']['contao-manager-plugin'])) {
-//                    throw new \RuntimeException(
-//                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
-//                    );
-//                }
+                if (!class_exists($package['extra']['contao-manager-plugin'])) {
+                    throw new \RuntimeException(
+                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
+                    );
+                }
 
                 $plugins[$package['name']] = new $package['extra']['contao-manager-plugin']();
             }
