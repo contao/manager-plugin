@@ -26,7 +26,7 @@ class Installer
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2017 Leo Feyer
+ * Copyright (c) 2005-%s Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -163,6 +163,7 @@ PHP;
     {
         $content = sprintf(
             static::$generatedClassTemplate,
+            date('Y'),
             'cla'.'ss '.'PluginLoader', // note: workaround for regex-based code parsers :-(
             'unserialize('.var_export(serialize($plugins), true).')'
         );
