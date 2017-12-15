@@ -1,6 +1,6 @@
 {
     "name": "contao/manager-plugin",
-    "type": "library",
+    "type": "composer-plugin",
     "description": "Contao 4 manager plugin",
     "license": "LGPL-3.0+",
     "authors": [
@@ -11,13 +11,15 @@
     ],
     "require": {
         "php": "^5.6|^7.0",
-        "symfony/config": "^2.8|^3.0",
-        "symfony/dependency-injection": "^2.8|^3.0",
-        "symfony/filesystem": "^2.8|^3.0",
-        "symfony/http-kernel": "^2.8|^3.0",
-        "symfony/routing": "^2.8|^3.0"
+        "composer-plugin-api": "^1.1",
+        "symfony/config": "^3.3",
+        "symfony/dependency-injection": "^3.3",
+        "symfony/filesystem": "^3.3",
+        "symfony/http-kernel": "^3.3",
+        "symfony/routing": "^3.3"
     },
     "require-dev": {
+        "composer/composer": "^1.1",
         "contao/core-bundle": "^4.3.3",
         "friendsofphp/php-cs-fixer": "^2.0",
         "phpunit/phpunit": "^5.7",
@@ -36,6 +38,7 @@
     "extra": {
         "branch-alias": {
             "dev-develop": "2.2.x-dev"
-        }
+        },
+        "class": "Contao\\ManagerPlugin\\Composer\\Plugin"
     }
 }
