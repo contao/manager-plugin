@@ -36,9 +36,9 @@
         }
     },
     "extra": {
-        "class": "Contao\\ManagerPlugin\\Composer\\Plugin",
         "branch-alias": {
             "dev-develop": "2.2.x-dev"
-        }
+        },
+        "class": "Contao\\ManagerPlugin\\Composer\\Plugin"
     }
 }
