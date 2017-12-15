@@ -15,6 +15,10 @@ use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 
+/**
+ * This is a stub class which will be replaced during `composer install` or
+ * `composer update` unless Composer is run with the `--no-scripts` flag.
+ */
 class PluginLoader
 {
     const BUNDLE_PLUGINS = BundlePluginInterface::class;
@@ -27,9 +31,12 @@ class PluginLoader
      */
     private $plugins;
 
-    public function __construct()
+    /**
+     * @param array $plugins
+     */
+    public function __construct(array $plugins = [])
     {
-        $this->plugins = [];
+        $this->plugins = $plugins;
     }
 
     /**
@@ -59,7 +66,9 @@ class PluginLoader
             }
         );
 
-        $plugins = $reverseOrder ? array_reverse($plugins, true) : $plugins;
+        if ($reverseOrder) {
+            $plugins = array_reverse($plugins, true);
+        }
 
         return $plugins;
     }
