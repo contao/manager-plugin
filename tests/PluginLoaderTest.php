@@ -151,27 +151,4 @@ class PluginLoaderTest extends TestCase
 
         $pluginLoader->getInstances();
     }
-
-    public function testReturnsDisabledPackages()
-    {
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/empty.json');
-
-        $pluginLoader->setDisabledPackages(['foo', 'bar']);
-        $this->assertSame(['foo', 'bar'], $pluginLoader->getDisabledPackages());
-    }
-
-    public function testDoesNotLoadDisabledPackages()
-    {
-        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
-        include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
-
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/manager-bundle.json');
-
-        $pluginLoader->setDisabledPackages(['foo/bar-bundle']);
-
-        $plugins = $pluginLoader->getInstances();
-
-        $this->assertArrayHasKey('contao/manager-bundle', $plugins);
-        $this->assertArrayNotHasKey('foo/bar-bundle', $plugins);
-    }
 }
