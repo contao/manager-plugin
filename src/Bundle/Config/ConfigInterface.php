@@ -69,7 +69,7 @@ interface ConfigInterface
     /**
      * Sets if bundle should be loaded in "prod" environment.
      *
-     * @param bool $loadInDevelopment
+     * @param bool $loadInProduction
      *
      * @return $this
      */

@@ -22,7 +22,7 @@ interface ExtensionPluginInterface
      * @param array            $extensionConfigs
      * @param ContainerBuilder $container
      *
-     * @return
+     * @return array
      */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container);
 }
