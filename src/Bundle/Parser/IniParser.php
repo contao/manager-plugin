@@ -59,7 +59,7 @@ class IniParser implements ParserInterface
             if (0 !== count($requires)) {
                 // Recursively load all modules that are required by other modules
                 foreach ($requires as &$module) {
-                    if (0 === strpos($module, '*')) {
+                    if (0 === strncmp($module, '*', 1)) {
                         $module = substr($module, 1);
 
                         // Do not add optional modules that are not installed, ContaoModuleBundle would throw exception
