@@ -10,18 +10,22 @@
 
 namespace Contao\ManagerPlugin;
 
+use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
+use Contao\ManagerPlugin\Config\ConfigPluginInterface;
+use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
+use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 
 class PluginLoader
 {
     use DependencyResolverTrait;
 
-    const BUNDLE_PLUGINS = 'Contao\ManagerPlugin\Bundle\BundlePluginInterface';
-    const CONFIG_PLUGINS = 'Contao\ManagerPlugin\Config\ConfigPluginInterface';
-    const EXTENSION_PLUGINS = 'Contao\ManagerPlugin\Config\ExtensionPluginInterface';
-    const ROUTING_PLUGINS = 'Contao\ManagerPlugin\Routing\RoutingPluginInterface';
+    const BUNDLE_PLUGINS = BundlePluginInterface::class;
+    const CONFIG_PLUGINS = ConfigPluginInterface::class;
+    const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
+    const ROUTING_PLUGINS = RoutingPluginInterface::class;
 
     /**
      * @var string

@@ -145,7 +145,7 @@ class BundleLoaderTest extends TestCase
 
     public function testWritesTheCacheFile()
     {
-        $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_');
+        $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', true);
 
         $filesystem = $this->createMock(Filesystem::class);
 
