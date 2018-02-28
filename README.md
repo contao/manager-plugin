@@ -1,5 +1,4 @@
-Contao 4 manager plugin
-=======================
+# Contao 4 manager plugin
 
 [![](https://img.shields.io/travis/contao/manager-plugin/master.svg?style=flat-square)](https://travis-ci.org/contao/manager-plugin/)
 [![](https://img.shields.io/coveralls/contao/manager-plugin/master.svg?style=flat-square)](https://coveralls.io/github/contao/manager-plugin)
@@ -8,9 +7,7 @@ The Contao managed edition is a self-configuring application, which registers
 bundles automatically based on their plugin class. The Contao manager bundle
 is required to create this class.  
 
-
-The plugin class
-----------------
+## The plugin class
 
 It is recommended to create the plugin in `src/ContaoManager/Plugin.php`.
 
@@ -24,13 +21,10 @@ class Plugin
 }
 ```
 
-
-composer.json
--------------
+## composer.json
 
 The plugin class then needs to be registered in the `composer.json` extra
 section. You also have to add a dev requirement and a conflict as shown below.
-
 
 ```json
 {
@@ -46,9 +40,7 @@ section. You also have to add a dev requirement and a conflict as shown below.
 }
 ```
 
-
-Registering bundles
--------------------
+## Registering bundles
 
 If your bundle uses other bundles, which are not yet registered in the kernel,
 you can add them by implementing the `BundlePluginInterface` interface. The
@@ -79,9 +71,7 @@ This is the equivalent of registering the `KnpMenuBundle` class in the
 `registerBundles()` method of the regular Symfony app kernel, except it is done
 automatically as soon as your bundle is installed.
 
-
-Configuring the container
--------------------------
+## Configuring the container
 
 If your bundle adds configuration options to the Symfony kernel or if you want
 to adjust the existing configuration, you can do so by implementing the
@@ -133,9 +123,7 @@ class Plugin implements ConfigPluginInterface
 This is the equivalent of adjusting the `app/config/config.yml` file of a
 regular Symfony application.
 
-
-Adding custom routes
---------------------
+## Adding custom routes
 
 If your bundle adds custom routes to the Symfony router, you can implement the
 `RoutingPluginInterface` interface.
@@ -167,9 +155,7 @@ class Plugin implements RoutingPluginInterface
 This is the equivalent of adjusting the `app/config/routing.yml` file of a
 regular Symfony application.
 
-
-Loading dependencies
---------------------
+## Loading dependencies
 
 If your bundle depends on one or more other bundles to be loaded first, so it
 can override certain parts of them, you can ensure that these bundles are
@@ -194,12 +180,9 @@ class Plugin implements DependentPluginInterface
 This is the equivalent of adding `requires[] = "news"` in the `autoload.ini`
 file of a Contao 3 extension.
 
-
-More information
-----------------
+## More information
 
 For more information about the Contao managed edition, please read the
 [manual][1].
-
 
 [1]: https://docs.contao.org/books/extending-contao4/managed-edition/
