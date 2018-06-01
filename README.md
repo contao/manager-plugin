@@ -136,7 +136,6 @@ namespace Vendor\SomeBundle\ContaoManager;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\RouteCollection;
 
 class Plugin implements RoutingPluginInterface
 {
@@ -144,10 +143,7 @@ class Plugin implements RoutingPluginInterface
     {
         $file = '@VendorSomeBundle/Resources/config/routing.yml';
 
-        /** @var RouteCollection $collection */
-        $collection = $resolver->resolve($file)->load($file);
-        
-        return $collection;
+        return $resolver->resolve($file)->load($file);
     }
 }
 ```
