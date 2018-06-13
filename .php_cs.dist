@@ -30,6 +30,9 @@ return PhpCsFixer\Config::create()
         'header_comment' => ['header' => $header],
         'heredoc_to_nowdoc' => true,
         'linebreak_after_opening_tag' => true,
+        'native_function_invocation' => [
+            'include' => ['@compiler_optimized'],
+        ],
         'no_superfluous_elseif' => true,
         'no_unreachable_default_argument_value' => true,
         'no_useless_else' => true,
