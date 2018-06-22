@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -18,21 +20,21 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class ContainerBuilderTest extends TestCase
 {
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $container = new ContainerBuilder($this->mockPluginLoader($this->never()), []);
 
         $this->assertInstanceOf('Contao\ManagerPlugin\Config\ContainerBuilder', $container);
     }
 
-    public function testReturnsTheManagerConfig()
+    public function testReturnsTheManagerConfig(): void
     {
         $container = new ContainerBuilder($this->mockPluginLoader($this->never()), ['foo' => 'bar']);
 
         $this->assertSame(['foo' => 'bar'], $container->getManagerConfig());
     }
 
-    public function testReturnsTheExtensionConfig()
+    public function testReturnsTheExtensionConfig(): void
     {
         $plugin = $this->createMock(ExtensionPluginInterface::class);
 
@@ -65,7 +67,7 @@ class ContainerBuilderTest extends TestCase
      *
      * @return PluginLoader|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockPluginLoader(\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder $expects, array $plugins = [])
+    private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = [])
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -24,20 +26,20 @@ class DelegatingParserTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->parser = new DelegatingParser();
     }
 
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\DelegatingParser', $this->parser);
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\ParserInterface', $this->parser);
     }
 
-    public function testDelegatesTheSupportsCalls()
+    public function testDelegatesTheSupportsCalls(): void
     {
         $parser = $this->createMock(ParserInterface::class);
 
@@ -51,7 +53,7 @@ class DelegatingParserTest extends TestCase
         $this->assertTrue($this->parser->supports('foobar'));
     }
 
-    public function testDelegatesTheParseCalls()
+    public function testDelegatesTheParseCalls(): void
     {
         $parser = $this->createMock(ParserInterface::class);
 
@@ -70,19 +72,19 @@ class DelegatingParserTest extends TestCase
         $this->assertSame([], $this->parser->parse('foobar'));
     }
 
-    public function testDoesNotSupportAnythingIfThereAreNoParsers()
+    public function testDoesNotSupportAnythingIfThereAreNoParsers(): void
     {
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
-    public function testFailsToParseAResourceIfThereAreNoParsers()
+    public function testFailsToParseAResourceIfThereAreNoParsers(): void
     {
         $this->expectException('InvalidArgumentException');
 
         $this->parser->parse('foobar');
     }
 
-    public function testDoesNotSupportAnythingIfThereIsNoMatchingParser()
+    public function testDoesNotSupportAnythingIfThereIsNoMatchingParser(): void
     {
         $parser = $this->createMock(ParserInterface::class);
 
@@ -96,7 +98,7 @@ class DelegatingParserTest extends TestCase
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
-    public function testFailsToParseAResourceIfThereIsNoMatchingParser()
+    public function testFailsToParseAResourceIfThereIsNoMatchingParser(): void
     {
         $parser = $this->createMock(ParserInterface::class);
 

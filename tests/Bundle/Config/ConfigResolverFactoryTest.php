@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -16,14 +18,14 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigResolverFactoryTest extends TestCase
 {
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $factory = new ConfigResolverFactory();
 
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Config\ConfigResolverFactory', $factory);
     }
 
-    public function testCreatesAConfigResolverObject()
+    public function testCreatesAConfigResolverObject(): void
     {
         $factory = new ConfigResolverFactory();
         $resolver = $factory->create();

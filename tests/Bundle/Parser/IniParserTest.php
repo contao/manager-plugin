@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -24,27 +26,27 @@ class IniParserTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->parser = new IniParser(__DIR__.'/../../Fixtures/Bundle/IniParser');
     }
 
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\IniParser', $this->parser);
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\ParserInterface', $this->parser);
     }
 
-    public function testSupportsIniFiles()
+    public function testSupportsIniFiles(): void
     {
         $this->assertTrue($this->parser->supports('foobar', 'ini'));
         $this->assertTrue($this->parser->supports('with-requires'));
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
-    public function testParsesRequires()
+    public function testParsesRequires(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse('with-requires');
@@ -59,7 +61,7 @@ class IniParserTest extends TestCase
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
 
-    public function testParsesRecursiveRequires()
+    public function testParsesRecursiveRequires(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse('recursion1');
@@ -72,7 +74,7 @@ class IniParserTest extends TestCase
         $this->assertSame(['recursion1'], $configs[1]->getLoadAfter());
     }
 
-    public function testParsesDirectoriesWithoutIniFile()
+    public function testParsesDirectoriesWithoutIniFile(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse('without-ini');
@@ -87,7 +89,7 @@ class IniParserTest extends TestCase
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
 
-    public function testParsesIniFilesWithoutRequires()
+    public function testParsesIniFilesWithoutRequires(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse('without-requires');
@@ -102,7 +104,7 @@ class IniParserTest extends TestCase
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
 
-    public function testParsesNonExistingDirectories()
+    public function testParsesNonExistingDirectories(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse('foobar');
@@ -120,11 +122,11 @@ class IniParserTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testFailsParsingABrokenIniFile()
+    public function testFailsParsingABrokenIniFile(): void
     {
         // http://stackoverflow.com/questions/1225776/test-the-return-value-of-a-method-that-triggers-an-error-with-phpunit
-        \PHPUnit_Framework_Error_Warning::$enabled = false;
-        \PHPUnit_Framework_Error_Notice::$enabled = false;
+        \PHPUnit\Framework\Error\Warning::$enabled = false;
+        \PHPUnit\Framework\Error\Notice::$enabled = false;
         error_reporting(0);
 
         $this->expectException('RuntimeException');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -22,10 +24,10 @@ class PluginLoader
 {
     use DependencyResolverTrait;
 
-    const BUNDLE_PLUGINS = BundlePluginInterface::class;
-    const CONFIG_PLUGINS = ConfigPluginInterface::class;
-    const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
-    const ROUTING_PLUGINS = RoutingPluginInterface::class;
+    public const BUNDLE_PLUGINS = BundlePluginInterface::class;
+    public const CONFIG_PLUGINS = ConfigPluginInterface::class;
+    public const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
+    public const ROUTING_PLUGINS = RoutingPluginInterface::class;
 
     /**
      * @var string
@@ -127,7 +129,7 @@ class PluginLoader
      * @throws \InvalidArgumentException
      * @throws UnresolvableDependenciesException
      */
-    private function load()
+    private function load(): void
     {
         if (null !== $this->plugins) {
             return;

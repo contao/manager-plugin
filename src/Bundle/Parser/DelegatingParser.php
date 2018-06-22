@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -22,7 +24,7 @@ class DelegatingParser implements ParserInterface
      *
      * @param ParserInterface $parser
      */
-    public function addParser(ParserInterface $parser)
+    public function addParser(ParserInterface $parser): void
     {
         $this->parsers[] = $parser;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -145,7 +147,7 @@ class ConfigResolver implements ConfigResolverInterface
      * @param array $loadAfter
      * @param array $replace
      */
-    private function replaceBundleNames(array &$loadAfter, array $replace)
+    private function replaceBundleNames(array &$loadAfter, array $replace): void
     {
         foreach ($loadAfter as &$bundleName) {
             if (isset($replace[$bundleName])) {

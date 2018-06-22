@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -20,7 +22,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ConfigTest extends TestCase
 {
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $config = new BundleConfig('foobar');
 
@@ -28,7 +30,7 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Config\ConfigInterface', $config);
     }
 
-    public function testCreatesABundleConfigObject()
+    public function testCreatesABundleConfigObject(): void
     {
         $config = BundleConfig::create('foobar');
 
@@ -36,14 +38,14 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(ConfigInterface::class, $config);
     }
 
-    public function testReadsAndWritesTheName()
+    public function testReadsAndWritesTheName(): void
     {
         $config = new BundleConfig('foobar');
 
         $this->assertSame('foobar', $config->getName());
     }
 
-    public function testReadsAndWritesTheReplaces()
+    public function testReadsAndWritesTheReplaces(): void
     {
         $config = new BundleConfig('foobar');
 
@@ -54,7 +56,7 @@ class ConfigTest extends TestCase
         $this->assertSame(['foobar'], $config->getReplace());
     }
 
-    public function testReadsAndWritesTheLoadAfter()
+    public function testReadsAndWritesTheLoadAfter(): void
     {
         $config = new BundleConfig('foobar');
 
@@ -65,7 +67,7 @@ class ConfigTest extends TestCase
         $this->assertSame(['foobar'], $config->getLoadAfter());
     }
 
-    public function testDisablesLoadingInProduction()
+    public function testDisablesLoadingInProduction(): void
     {
         $config = new BundleConfig('foobar');
 
@@ -78,7 +80,7 @@ class ConfigTest extends TestCase
         $this->assertFalse($config->loadInProduction());
     }
 
-    public function testDisablesLoadingInDevelopment()
+    public function testDisablesLoadingInDevelopment(): void
     {
         $config = new BundleConfig('foobar');
 
@@ -91,7 +93,7 @@ class ConfigTest extends TestCase
         $this->assertTrue($config->loadInProduction());
     }
 
-    public function testReturnsTheBundleInstances()
+    public function testReturnsTheBundleInstances(): void
     {
         $config = BundleConfig::create(ContaoCoreBundle::class);
         $bundle = $config->getBundleInstance($this->createMock(KernelInterface::class));
@@ -99,7 +101,7 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(ContaoCoreBundle::class, $bundle);
     }
 
-    public function testReturnsTheBundlePath()
+    public function testReturnsTheBundlePath(): void
     {
         $kernel = $this->createMock(KernelInterface::class);
 
@@ -115,7 +117,7 @@ class ConfigTest extends TestCase
         $this->assertSame(__DIR__.'/../../Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
     }
 
-    public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid()
+    public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid(): void
     {
         $kernel = $this->createMock(KernelInterface::class);
 
@@ -131,7 +133,7 @@ class ConfigTest extends TestCase
         $config->getBundleInstance($kernel);
     }
 
-    public function testLoadsTheModuleConfigurationAfterTheLegacyModules()
+    public function testLoadsTheModuleConfigurationAfterTheLegacyModules(): void
     {
         $config = ModuleConfig::create('foobar');
 

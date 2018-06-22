@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -23,7 +25,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class BundleLoaderTest extends TestCase
 {
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $bundleLoader = new BundleLoader(
             $this->mockPluginLoader($this->never()),
@@ -41,7 +43,7 @@ class BundleLoaderTest extends TestCase
      *
      * @dataProvider getBundleConfigs
      */
-    public function testReturnsTheBundleConfigs(array $plugins, $configCount, $development)
+    public function testReturnsTheBundleConfigs(array $plugins, $configCount, $development): void
     {
         $bundleLoader = new BundleLoader(
             $this->mockPluginLoader($this->atLeastOnce(), $plugins),
@@ -99,7 +101,7 @@ class BundleLoaderTest extends TestCase
         ];
     }
 
-    public function testReadsTheCacheFile()
+    public function testReadsTheCacheFile(): void
     {
         $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
 
@@ -126,7 +128,7 @@ class BundleLoaderTest extends TestCase
         $this->assertSame('legacy', $configs[1]->getName());
     }
 
-    public function testIgnoresTheCacheFileIfItIsEmpty()
+    public function testIgnoresTheCacheFileIfItIsEmpty(): void
     {
         $cacheFile = tempnam(sys_get_temp_dir(), 'BundleLoader_');
 
@@ -143,7 +145,7 @@ class BundleLoaderTest extends TestCase
         $bundleLoader->getBundleConfigs(false, $cacheFile);
     }
 
-    public function testWritesTheCacheFile()
+    public function testWritesTheCacheFile(): void
     {
         $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', true);
 
@@ -195,7 +197,7 @@ class BundleLoaderTest extends TestCase
      *
      * @return PluginLoader|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockPluginLoader(\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder $expects, array $plugins = [])
+    private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = [])
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
 

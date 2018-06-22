@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -24,20 +26,20 @@ class JsonParserTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->parser = new JsonParser();
     }
 
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\JsonParser', $this->parser);
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Parser\ParserInterface', $this->parser);
     }
 
-    public function testSupportsJsonFiles()
+    public function testSupportsJsonFiles(): void
     {
         $this->assertTrue($this->parser->supports('foobar.json', 'json'));
         $this->assertTrue($this->parser->supports('foobar.json'));
@@ -45,7 +47,7 @@ class JsonParserTest extends TestCase
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
-    public function testParsesSimpleObjects()
+    public function testParsesSimpleObjects(): void
     {
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/simple-object.json');
 
@@ -62,7 +64,7 @@ class JsonParserTest extends TestCase
         $this->assertSame([], $config->getLoadAfter());
     }
 
-    public function testParsesSimpleStrings()
+    public function testParsesSimpleStrings(): void
     {
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/simple-string.json');
 
@@ -79,7 +81,7 @@ class JsonParserTest extends TestCase
         $this->assertSame([], $config->getLoadAfter());
     }
 
-    public function testParsesTheBundleEnvironment()
+    public function testParsesTheBundleEnvironment(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/dev-prod.json');
@@ -99,7 +101,7 @@ class JsonParserTest extends TestCase
         $this->assertFalse($configs[2]->loadInDevelopment());
     }
 
-    public function testParsesOptionalBundles()
+    public function testParsesOptionalBundles(): void
     {
         /** @var ConfigInterface[] $configs */
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/optional.json');
@@ -114,21 +116,21 @@ class JsonParserTest extends TestCase
         $this->assertSame(['Foo\BarBundle\FooBarBundle'], $configs[1]->getLoadAfter());
     }
 
-    public function testFailsToParseAFileWithNoBundles()
+    public function testFailsToParseAFileWithNoBundles(): void
     {
         $this->expectException('RuntimeException');
 
         $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/no-bundle.json');
     }
 
-    public function testFailsToParseAMissingFile()
+    public function testFailsToParseAMissingFile(): void
     {
         $this->expectException('InvalidArgumentException');
 
         $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/missing.json');
     }
 
-    public function testFailsToParseInvalidJsonData()
+    public function testFailsToParseInvalidJsonData(): void
     {
         $this->expectException('RuntimeException');
 

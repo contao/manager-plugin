@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -51,7 +53,7 @@ class ModuleConfig extends BundleConfig
     /**
      * Adjusts the configuration so the module is loaded after the legacy modules.
      */
-    private function setLoadAfterLegacyModules()
+    private function setLoadAfterLegacyModules(): void
     {
         $modules = array_merge(self::$legacy, [$this->getName()]);
         sort($modules);

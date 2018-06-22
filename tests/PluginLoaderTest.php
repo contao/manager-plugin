@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -15,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class PluginLoaderTest extends TestCase
 {
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $pluginLoader = new PluginLoader('foobar');
 
@@ -25,7 +27,7 @@ class PluginLoaderTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testReturnsTheActivePlugins()
+    public function testReturnsTheActivePlugins(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
@@ -37,7 +39,7 @@ class PluginLoaderTest extends TestCase
         $this->assertInstanceOf('Foo\Bar\FooBarPlugin', $plugins['foo/bar-bundle']);
     }
 
-    public function testFailsIfAPluginDoesNotExist()
+    public function testFailsIfAPluginDoesNotExist(): void
     {
         $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/not-installed.json');
 
@@ -49,7 +51,7 @@ class PluginLoaderTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testReturnsTheActiveConfigPlugins()
+    public function testReturnsTheActiveConfigPlugins(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
@@ -66,7 +68,7 @@ class PluginLoaderTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testLoadsTheContaoManagerPlugin()
+    public function testLoadsTheContaoManagerPlugin(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/ContaoManagerPlugin.php';
 
@@ -81,7 +83,7 @@ class PluginLoaderTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testLoadsTheManagerBundlePluginFirst()
+    public function testLoadsTheManagerBundlePluginFirst(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
@@ -98,7 +100,7 @@ class PluginLoaderTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testOrdersThePluginsByTheirDependencies()
+    public function testOrdersThePluginsByTheirDependencies(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooDependendPlugin.php';
@@ -112,7 +114,7 @@ class PluginLoaderTest extends TestCase
         $this->assertSame(['foo/bar-bundle', 'foo/dependend-bundle'], array_keys($plugins));
     }
 
-    public function testOrdersThePluginsOnlyOnce()
+    public function testOrdersThePluginsOnlyOnce(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
@@ -134,7 +136,7 @@ class PluginLoaderTest extends TestCase
         $pluginLoader->getInstances();
     }
 
-    public function testFailsIfTheJsonFileDoesNotExist()
+    public function testFailsIfTheJsonFileDoesNotExist(): void
     {
         $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/missing.json');
 
@@ -143,7 +145,7 @@ class PluginLoaderTest extends TestCase
         $pluginLoader->getInstances();
     }
 
-    public function testFailsIfTheJsonDataIsInvalid()
+    public function testFailsIfTheJsonDataIsInvalid(): void
     {
         $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/invalid.json');
 

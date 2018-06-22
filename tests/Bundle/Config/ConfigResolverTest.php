@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -25,19 +27,19 @@ class ConfigResolverTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->resolver = new ConfigResolver();
     }
 
-    public function testCanBeInstantiated()
+    public function testCanBeInstantiated(): void
     {
         $this->assertInstanceOf('Contao\ManagerPlugin\Bundle\Config\ConfigResolver', $this->resolver);
     }
 
-    public function testDefinesAFluentInterface()
+    public function testDefinesAFluentInterface(): void
     {
         $result = $this->resolver->add(new BundleConfig('foobar'));
 
@@ -50,7 +52,7 @@ class ConfigResolverTest extends TestCase
      *
      * @dataProvider getBundleConfigs
      */
-    public function testAddsTheBundleConfigs(array $configs, array $expectedResult)
+    public function testAddsTheBundleConfigs(array $configs, array $expectedResult): void
     {
         foreach ($configs as $config) {
             $this->resolver->add($config);
@@ -137,7 +139,7 @@ class ConfigResolverTest extends TestCase
         ];
     }
 
-    public function testIgnoresDevelopmentBundlesInProduction()
+    public function testIgnoresDevelopmentBundlesInProduction(): void
     {
         $this->resolver->add(new BundleConfig('name1'));
         $this->resolver->add((new BundleConfig('name2'))->setLoadInProduction(false));
@@ -145,7 +147,7 @@ class ConfigResolverTest extends TestCase
         $this->assertCount(1, $this->resolver->getBundleConfigs(false));
     }
 
-    public function testIgnoresProductionBundlesInDevelopment()
+    public function testIgnoresProductionBundlesInDevelopment(): void
     {
         $this->resolver->add(new BundleConfig('name1'));
         $this->resolver->add((new BundleConfig('name2'))->setLoadInDevelopment(false));
@@ -153,7 +155,7 @@ class ConfigResolverTest extends TestCase
         $this->assertCount(1, $this->resolver->getBundleConfigs(true));
     }
 
-    public function testSupportsUnsettingABundle()
+    public function testSupportsUnsettingABundle(): void
     {
         $this->resolver->add(new BundleConfig('name1'));
         $this->resolver->add((new BundleConfig('name1'))->setLoadInProduction(false));
@@ -161,7 +163,7 @@ class ConfigResolverTest extends TestCase
         $this->assertCount(0, $this->resolver->getBundleConfigs(false));
     }
 
-    public function testFailsIfTheDependenciesCannotBeResolved()
+    public function testFailsIfTheDependenciesCannotBeResolved(): void
     {
         $this->resolver
             ->add((new BundleConfig('name1'))->setLoadAfter(['name2']))

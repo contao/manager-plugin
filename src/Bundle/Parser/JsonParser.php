@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
@@ -70,7 +72,7 @@ class JsonParser implements ParserInterface
      *
      * @throws \RuntimeException
      */
-    private function parseBundles(array $bundles, array &$configs)
+    private function parseBundles(array $bundles, array &$configs): void
     {
         foreach ($bundles as $options) {
             // Only one value given, must be class name
