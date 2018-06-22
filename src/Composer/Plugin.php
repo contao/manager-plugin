@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-2017 Leo Feyer
+ * (c) Leo Feyer
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace Contao\ManagerPlugin\Composer;
@@ -22,7 +24,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public function activate(Composer $composer, IOInterface $io)
+    public function activate(Composer $composer, IOInterface $io): void
     {
         // Nothing to do here, as all features are provided through event listeners
     }
@@ -32,7 +34,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      *
      * @param Event $event
      */
-    public function dumpPlugins(Event $event)
+    public function dumpPlugins(Event $event): void
     {
         $composer = $event->getComposer();
 

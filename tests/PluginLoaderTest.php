@@ -12,145 +12,71 @@ declare(strict_types=1);
 
 namespace Contao\ManagerPlugin\Test;
 
+use Contao\ManagerPlugin\Config\ConfigPluginInterface;
+use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Contao\ManagerPlugin\PluginLoader;
+use Foo\Bar\FooBarPlugin;
+use Foo\Config\FooConfigPlugin;
+use Foo\Dependend\FooDependendPlugin;
 use PHPUnit\Framework\TestCase;
 
 class PluginLoaderTest extends TestCase
 {
     public function testCanBeInstantiated(): void
     {
-        $pluginLoader = new PluginLoader('foobar');
+        $pluginLoader = new PluginLoader();
 
         $this->assertInstanceOf('Contao\ManagerPlugin\PluginLoader', $pluginLoader);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
-    public function testReturnsTheActivePlugins(): void
+    public function testReturnsPlugins(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/installed.json');
-        $plugins = $pluginLoader->getInstances();
+        $pluginLoader = new PluginLoader([
+            'foo/bar-bundle' => new FooBarPlugin(),
+        ]);
 
-        $this->assertCount(1, $plugins);
-        $this->assertArrayHasKey('foo/bar-bundle', $plugins);
-        $this->assertInstanceOf('Foo\Bar\FooBarPlugin', $plugins['foo/bar-bundle']);
+        $this->assertArrayHasKey('foo/bar-bundle', $pluginLoader->getInstances());
+        $this->assertInstanceOf(FooBarPlugin::class, $pluginLoader->getInstances()['foo/bar-bundle']);
     }
 
-    public function testFailsIfAPluginDoesNotExist(): void
-    {
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/not-installed.json');
-
-        $this->expectException('RuntimeException');
-
-        $pluginLoader->getInstances();
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testReturnsTheActiveConfigPlugins(): void
+    public function testReturnsPluginsByType(): void
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
-
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/mixed.json');
-        $plugins = $pluginLoader->getInstancesOf(PluginLoader::CONFIG_PLUGINS);
-
-        $this->assertCount(1, $plugins);
-        $this->assertArrayHasKey('foo/config-bundle', $plugins);
-        $this->assertArrayNotHasKey('foo/bar-bundle', $plugins);
-        $this->assertInstanceOf('Foo\Config\FooConfigPlugin', $plugins['foo/config-bundle']);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testLoadsTheContaoManagerPlugin(): void
-    {
-        include_once __DIR__.'/Fixtures/PluginLoader/ContaoManagerPlugin.php';
-
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/empty.json');
-        $plugins = $pluginLoader->getInstances();
-
-        $this->assertCount(1, $plugins);
-        $this->assertArrayHasKey('app', $plugins);
-        $this->assertInstanceOf('ContaoManagerPlugin', $plugins['app']);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testLoadsTheManagerBundlePluginFirst(): void
-    {
-        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
-        include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
-
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/manager-bundle.json');
-        $plugins = $pluginLoader->getInstances();
-
-        $this->assertCount(2, $plugins);
-        $this->assertArrayHasKey('foo/bar-bundle', $plugins);
-        $this->assertArrayHasKey('contao/manager-bundle', $plugins);
-        $this->assertSame(['contao/manager-bundle', 'foo/bar-bundle'], array_keys($plugins));
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testOrdersThePluginsByTheirDependencies(): void
-    {
-        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooDependendPlugin.php';
 
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/dependencies.json');
-        $plugins = $pluginLoader->getInstances();
+        $pluginLoader = new PluginLoader([
+            'foo/bar-bundle' => new FooBarPlugin(),
+            'foo/config-bundle' => new FooConfigPlugin(),
+            'foo/dependent-bundle' => new FooDependendPlugin(),
+        ]);
 
-        $this->assertCount(2, $plugins);
-        $this->assertArrayHasKey('foo/bar-bundle', $plugins);
-        $this->assertArrayHasKey('foo/dependend-bundle', $plugins);
-        $this->assertSame(['foo/bar-bundle', 'foo/dependend-bundle'], array_keys($plugins));
+        $this->assertArrayHasKey('foo/config-bundle', $pluginLoader->getInstancesOf(ConfigPluginInterface::class));
+        $this->assertInstanceOf(FooConfigPlugin::class, $pluginLoader->getInstances()['foo/config-bundle']);
+        $this->assertArrayNotHasKey('foo/bar-bundle', $pluginLoader->getInstancesOf(ConfigPluginInterface::class));
+        $this->assertArrayNotHasKey('foo/dependent-bundle', $pluginLoader->getInstancesOf(ConfigPluginInterface::class));
+
+        $this->assertArrayHasKey('foo/dependent-bundle', $pluginLoader->getInstancesOf(DependentPluginInterface::class));
+        $this->assertInstanceOf(FooDependendPlugin::class, $pluginLoader->getInstances()['foo/dependent-bundle']);
+        $this->assertArrayNotHasKey('foo/bar-bundle', $pluginLoader->getInstancesOf(DependentPluginInterface::class));
+        $this->assertArrayNotHasKey('foo/config-bundle', $pluginLoader->getInstancesOf(DependentPluginInterface::class));
     }
 
-    public function testOrdersThePluginsOnlyOnce(): void
+    public function testReturnsReversedPluginOrder(): void
     {
-        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
+        $pluginLoader = new PluginLoader([
+            'foo/config1-bundle' => new FooConfigPlugin(),
+            'foo/config2-bundle' => new FooConfigPlugin(),
+            'foo/config3-bundle' => new FooConfigPlugin(),
+        ]);
 
-        /** @var PluginLoader|\PHPUnit_Framework_MockObject_MockObject $pluginLoader */
-        $pluginLoader = $this
-            ->getMockBuilder(PluginLoader::class)
-            ->setMethods(['orderPlugins'])
-            ->setConstructorArgs([__DIR__.'/Fixtures/PluginLoader/installed.json'])
-            ->getMock()
-        ;
+        $keys = array_keys($pluginLoader->getInstancesOf(ConfigPluginInterface::class, true));
 
-        $pluginLoader
-            ->expects($this->once())
-            ->method('orderPlugins')
-            ->willReturnArgument(0)
-        ;
-
-        $pluginLoader->getInstances();
-        $pluginLoader->getInstances();
-    }
-
-    public function testFailsIfTheJsonFileDoesNotExist(): void
-    {
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/missing.json');
-
-        $this->expectException('InvalidArgumentException');
-
-        $pluginLoader->getInstances();
-    }
-
-    public function testFailsIfTheJsonDataIsInvalid(): void
-    {
-        $pluginLoader = new PluginLoader(__DIR__.'/Fixtures/PluginLoader/invalid.json');
-
-        $this->expectException('RuntimeException');
-
-        $pluginLoader->getInstances();
+        $this->assertCount(3, $keys);
+        $this->assertSame('foo/config3-bundle', $keys[0]);
+        $this->assertSame('foo/config2-bundle', $keys[1]);
+        $this->assertSame('foo/config1-bundle', $keys[2]);
     }
 }
