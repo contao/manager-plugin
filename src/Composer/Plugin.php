@@ -39,7 +39,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $composer = $event->getComposer();
 
         $installer = new Installer();
-        $installer->dumpPlugins($composer->getLocker(), $composer->getPackage());
+        $installer->dumpPlugins($composer->getLocker());
 
         $event->getIO()->write('Dumped Contao Manager plugins');
     }

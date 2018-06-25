@@ -34,6 +34,11 @@ class PluginLoader
     private $plugins;
 
     /**
+     * @var array
+     */
+    private $disabled = [];
+
+    /**
      * @param array $plugins
      */
     public function __construct(array $plugins = [])
@@ -48,7 +53,7 @@ class PluginLoader
      */
     public function getInstances()
     {
-        return $this->plugins;
+        return array_diff_key($this->plugins, array_flip($this->disabled));
     }
 
     /**
@@ -72,6 +77,26 @@ class PluginLoader
             $plugins = array_reverse($plugins, true);
         }
 
-        return $plugins;
+        return array_diff_key($plugins, array_flip($this->disabled));
+    }
+
+    /**
+     * Gets the list of disabled Composer packages.
+     *
+     * @return array
+     */
+    public function getDisabledPackages()
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * Sets the list of disabled Composer packages.
+     *
+     * @param array $packages
+     */
+    public function setDisabledPackages(array $packages)
+    {
+        $this->disabled = $packages;
     }
 }

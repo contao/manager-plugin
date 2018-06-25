@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use Composer\Package\Locker;
-use Composer\Package\RootPackageInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 
@@ -27,12 +26,14 @@ class Installer
     private static $generatedClassTemplate = <<<'PHP'
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Contao.
  *
- * Copyright (c) 2005-%s Leo Feyer
+ * (c) Leo Feyer
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace Contao\ManagerPlugin;
@@ -50,15 +51,20 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
  */
 %s
 {
-    const BUNDLE_PLUGINS = BundlePluginInterface::class;
-    const CONFIG_PLUGINS = ConfigPluginInterface::class;
-    const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
-    const ROUTING_PLUGINS = RoutingPluginInterface::class;
+    public const BUNDLE_PLUGINS = BundlePluginInterface::class;
+    public const CONFIG_PLUGINS = ConfigPluginInterface::class;
+    public const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
+    public const ROUTING_PLUGINS = RoutingPluginInterface::class;
 
     /**
      * @var array
      */
     private $plugins;
+
+    /**
+     * @var array
+     */
+    private $disabled = [];
 
     public function __construct()
     {
@@ -72,7 +78,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      */
     public function getInstances()
     {
-        return $this->plugins;
+        return array_diff_key($this->plugins, array_flip($this->disabled));
     }
 
     /**
@@ -96,7 +102,27 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
             $plugins = array_reverse($plugins, true);
         }
 
-        return $plugins;
+        return array_diff_key($plugins, array_flip($this->disabled));
+    }
+
+    /**
+     * Gets the list of disabled Composer packages.
+     *
+     * @return array
+     */
+    public function getDisabledPackages()
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * Sets the list of disabled Composer packages.
+     *
+     * @param array $packages
+     */
+    public function setDisabledPackages(array $packages)
+    {
+        $this->disabled = $packages;
     }
 }
 
@@ -105,15 +131,13 @@ PHP;
     /**
      * Sets the Contao Manager plugins.
      *
-     * @param Locker               $locker
-     * @param RootPackageInterface $rootPackage
+     * @param Locker $locker
      *
      * @throws \RuntimeException
      */
-    public function dumpPlugins(Locker $locker, RootPackageInterface $rootPackage): void
+    public function dumpPlugins(Locker $locker): void
     {
         $plugins = [];
-        $disabled = $this->getDisabledPackages($rootPackage);
         $lockData = $locker->getLockData();
 
         if (!isset($lockData['packages-dev'])) {
@@ -121,10 +145,6 @@ PHP;
         }
 
         foreach (array_merge($lockData['packages'], $lockData['packages-dev']) as $package) {
-            if (\in_array($package['name'], $disabled, true)) {
-                continue;
-            }
-
             if (isset($package['extra']['contao-manager-plugin'])) {
                 if (!class_exists($package['extra']['contao-manager-plugin'])) {
                     throw new \RuntimeException(
@@ -146,24 +166,6 @@ PHP;
         }
 
         $this->dumpClass($plugins);
-    }
-
-    /**
-     * Finds disabled packages in the root package extras.
-     *
-     * @param RootPackageInterface $rootPackage
-     *
-     * @return array
-     */
-    private function getDisabledPackages(RootPackageInterface $rootPackage)
-    {
-        $extra = $rootPackage->getExtra();
-
-        if (!isset($extra['contao-manager']['disabled-packages'])) {
-            return [];
-        }
-
-        return (array) $extra['contao-manager']['disabled-packages'];
     }
 
     /**
