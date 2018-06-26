@@ -48,7 +48,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ScriptEvents::POST_INSTALL_CMD => 'dumpPlugins',

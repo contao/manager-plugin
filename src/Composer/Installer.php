@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use Composer\IO\IOInterface;
-use Composer\Package\Locker;
 use Composer\Repository\RepositoryInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
@@ -77,7 +76,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
         if (null !== $installedJson) {
             trigger_error('Argument $installedJson is no longer supported in PluginLoader v2.3', E_USER_DEPRECATED);
         }
-        
+
         $this->plugins = $plugins ?: %s;
     }
 
@@ -86,7 +85,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      *
      * @return array
      */
-    public function getInstances()
+    public function getInstances(): array
     {
         return array_diff_key($this->plugins, array_flip($this->disabled));
     }
@@ -99,7 +98,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      *
      * @return array
      */
-    public function getInstancesOf($type, $reverseOrder = false)
+    public function getInstancesOf(string $type, bool $reverseOrder = false): array
     {
         $plugins = array_filter(
             $this->getInstances(),
@@ -120,7 +119,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      *
      * @return array
      */
-    public function getDisabledPackages()
+    public function getDisabledPackages(): array
     {
         return $this->disabled;
     }
@@ -130,7 +129,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      *
      * @param array $packages
      */
-    public function setDisabledPackages(array $packages)
+    public function setDisabledPackages(array $packages): void
     {
         $this->disabled = $packages;
     }
@@ -141,9 +140,8 @@ PHP;
     /**
      * Sets the Contao Manager plugins.
      *
-     * @param Locker $locker
-     *
-     * @throws \RuntimeException
+     * @param RepositoryInterface $repository
+     * @param IOInterface         $io
      */
     public function dumpPlugins(RepositoryInterface $repository, IOInterface $io): void
     {
@@ -179,13 +177,15 @@ PHP;
 
     /**
      * Dumps the PluginLoader class.
+     *
+     * @param array $plugins
      */
     private function dumpClass(array $plugins): void
     {
         $load = [];
 
         foreach ($plugins as $package => $plugin) {
-            $class = get_class($plugin);
+            $class = \get_class($plugin);
             $load[] = "            '$package' => new \\$class()";
         }
 
@@ -205,7 +205,7 @@ PHP;
      *
      * @return array
      */
-    private function orderPlugins(array $plugins)
+    private function orderPlugins(array $plugins): array
     {
         $ordered = [];
         $dependencies = [];

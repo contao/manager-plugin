@@ -56,7 +56,7 @@ class PluginLoader
      *
      * @return array
      */
-    public function getInstances()
+    public function getInstances(): array
     {
         return array_diff_key($this->plugins, array_flip($this->disabled));
     }
@@ -69,7 +69,7 @@ class PluginLoader
      *
      * @return array
      */
-    public function getInstancesOf($type, $reverseOrder = false)
+    public function getInstancesOf(string $type, bool $reverseOrder = false): array
     {
         $plugins = array_filter(
             $this->getInstances(),
@@ -90,7 +90,7 @@ class PluginLoader
      *
      * @return array
      */
-    public function getDisabledPackages()
+    public function getDisabledPackages(): array
     {
         return $this->disabled;
     }
@@ -100,7 +100,7 @@ class PluginLoader
      *
      * @param array $packages
      */
-    public function setDisabledPackages(array $packages)
+    public function setDisabledPackages(array $packages): void
     {
         $this->disabled = $packages;
     }
