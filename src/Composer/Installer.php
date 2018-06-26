@@ -47,7 +47,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
  * This class has been auto-generated. It will be overwritten at every run of
  * `composer install` or `composer update`.
  * 
- * @see \Contao\ManagerBundle\Composer\Installer
+ * @see \Contao\ManagerPlugin\Composer\Installer
  */
 %s
 {
@@ -66,7 +66,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      */
     private $disabled = [];
 
-    public function __construct()
+    public function __construct(/* array $plugins = [] */)
     {
         $this->plugins = %s;
     }
@@ -173,11 +173,17 @@ PHP;
      */
     private function dumpClass(array $plugins): void
     {
+        $load = [];
+
+        foreach ($plugins as $package => $plugin) {
+            $class = get_class($plugin);
+            $load[] = "            '$package' => new \\$class()";
+        }
+
         $content = sprintf(
             static::$generatedClassTemplate,
-            date('Y'),
             'cla'.'ss '.'PluginLoader', // note: workaround for regex-based code parsers :-(
-            'unserialize('.var_export(serialize($plugins), true).')'
+            sprintf("[\n%s\n        ]", implode(",\n", $load))
         );
 
         file_put_contents(__DIR__.'/../PluginLoader.php', $content);
