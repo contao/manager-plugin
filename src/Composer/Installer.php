@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Contao\ManagerPlugin\Composer;
 
+use Composer\IO\IOInterface;
 use Composer\Package\Locker;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
@@ -135,7 +136,7 @@ PHP;
      *
      * @throws \RuntimeException
      */
-    public function dumpPlugins(Locker $locker): void
+    public function dumpPlugins(Locker $locker, IOInterface $io): void
     {
         $plugins = [];
         $lockData = $locker->getLockData();
@@ -151,6 +152,8 @@ PHP;
                         sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
                     );
                 }
+
+                $io->write(' - Added Contao Manager plugin for '.$package['name'], true, IOInterface::VERY_VERBOSE);
 
                 $plugins[$package['name']] = new $package['extra']['contao-manager-plugin']();
             }
