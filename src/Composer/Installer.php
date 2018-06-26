@@ -66,9 +66,9 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      */
     private $disabled = [];
 
-    public function __construct(/* array $plugins = [] */)
+    public function __construct(array $plugins = null)
     {
-        $this->plugins = %s;
+        $this->plugins = $plugins ?: %s;
     }
 
     /**

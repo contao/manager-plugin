@@ -41,9 +41,9 @@ class PluginLoader
     /**
      * @param array $plugins
      */
-    public function __construct(array $plugins = [])
+    public function __construct(array $plugins = null)
     {
-        $this->plugins = $plugins;
+        $this->plugins = $plugins ?: [];
     }
 
     /**
