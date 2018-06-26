@@ -14,6 +14,7 @@ namespace Contao\ManagerPlugin\Composer;
 
 use Composer\IO\IOInterface;
 use Composer\Package\Locker;
+use Composer\Repository\RepositoryInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 
@@ -144,26 +145,23 @@ PHP;
      *
      * @throws \RuntimeException
      */
-    public function dumpPlugins(Locker $locker, IOInterface $io): void
+    public function dumpPlugins(RepositoryInterface $repository, IOInterface $io): void
     {
         $plugins = [];
-        $lockData = $locker->getLockData();
 
-        if (!isset($lockData['packages-dev'])) {
-            $lockData['packages-dev'] = [];
-        }
+        foreach ($repository->getPackages() as $package) {
+            $extra = $package->getExtra();
 
-        foreach (array_merge($lockData['packages'], $lockData['packages-dev']) as $package) {
-            if (isset($package['extra']['contao-manager-plugin'])) {
-                if (!class_exists($package['extra']['contao-manager-plugin'])) {
+            if (isset($extra['contao-manager-plugin'])) {
+                if (!class_exists($extra['contao-manager-plugin'])) {
                     throw new \RuntimeException(
-                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
+                        sprintf('Plugin class "%s" not found', $extra['contao-manager-plugin'])
                     );
                 }
 
-                $io->write(' - Added Contao Manager plugin for '.$package['name'], true, IOInterface::VERY_VERBOSE);
+                $io->write(' - Added plugin for '.$package->getName(), true, IOInterface::VERY_VERBOSE);
 
-                $plugins[$package['name']] = new $package['extra']['contao-manager-plugin']();
+                $plugins[$package->getName()] = new $extra['contao-manager-plugin']();
             }
         }
 
