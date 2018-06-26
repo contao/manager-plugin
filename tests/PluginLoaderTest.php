@@ -33,7 +33,7 @@ class PluginLoaderTest extends TestCase
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
-        $pluginLoader = new PluginLoader([
+        $pluginLoader = new PluginLoader(null, [
             'foo/bar-bundle' => new FooBarPlugin(),
         ]);
 
@@ -47,7 +47,7 @@ class PluginLoaderTest extends TestCase
         include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooDependendPlugin.php';
 
-        $pluginLoader = new PluginLoader([
+        $pluginLoader = new PluginLoader(null, [
             'foo/bar-bundle' => new FooBarPlugin(),
             'foo/config-bundle' => new FooConfigPlugin(),
             'foo/dependent-bundle' => new FooDependendPlugin(),
@@ -66,7 +66,7 @@ class PluginLoaderTest extends TestCase
 
     public function testReturnsReversedPluginOrder(): void
     {
-        $pluginLoader = new PluginLoader([
+        $pluginLoader = new PluginLoader(null, [
             'foo/config1-bundle' => new FooConfigPlugin(),
             'foo/config2-bundle' => new FooConfigPlugin(),
             'foo/config3-bundle' => new FooConfigPlugin(),

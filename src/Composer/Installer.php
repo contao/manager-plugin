@@ -67,8 +67,16 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      */
     private $disabled = [];
 
-    public function __construct(array $plugins = null)
+    /**
+     * @param string|null $installedJson
+     * @param array       $plugins
+     */
+    public function __construct($installedJson = null, array $plugins = null)
     {
+        if (null !== $installedJson) {
+            trigger_error('Argument $installedJson is no longer supported in PluginLoader v2.3', E_USER_DEPRECATED);
+        }
+        
         $this->plugins = $plugins ?: %s;
     }
 
