@@ -33,9 +33,12 @@ class PluginLoaderTest extends TestCase
     {
         include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
 
-        $pluginLoader = new PluginLoader(null, [
-            'foo/bar-bundle' => new FooBarPlugin(),
-        ]);
+        $pluginLoader = new PluginLoader(
+            null,
+            [
+                'foo/bar-bundle' => new FooBarPlugin(),
+            ]
+        );
 
         $this->assertArrayHasKey('foo/bar-bundle', $pluginLoader->getInstances());
         $this->assertInstanceOf(FooBarPlugin::class, $pluginLoader->getInstances()['foo/bar-bundle']);
@@ -47,11 +50,14 @@ class PluginLoaderTest extends TestCase
         include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
         include_once __DIR__.'/Fixtures/PluginLoader/FooDependendPlugin.php';
 
-        $pluginLoader = new PluginLoader(null, [
-            'foo/bar-bundle' => new FooBarPlugin(),
-            'foo/config-bundle' => new FooConfigPlugin(),
-            'foo/dependent-bundle' => new FooDependendPlugin(),
-        ]);
+        $pluginLoader = new PluginLoader(
+            null,
+            [
+                'foo/bar-bundle' => new FooBarPlugin(),
+                'foo/config-bundle' => new FooConfigPlugin(),
+                'foo/dependent-bundle' => new FooDependendPlugin(),
+            ]
+        );
 
         $this->assertArrayHasKey('foo/config-bundle', $pluginLoader->getInstancesOf(ConfigPluginInterface::class));
         $this->assertInstanceOf(FooConfigPlugin::class, $pluginLoader->getInstances()['foo/config-bundle']);
@@ -66,11 +72,14 @@ class PluginLoaderTest extends TestCase
 
     public function testReturnsReversedPluginOrder(): void
     {
-        $pluginLoader = new PluginLoader(null, [
-            'foo/config1-bundle' => new FooConfigPlugin(),
-            'foo/config2-bundle' => new FooConfigPlugin(),
-            'foo/config3-bundle' => new FooConfigPlugin(),
-        ]);
+        $pluginLoader = new PluginLoader(
+            null,
+            [
+                'foo/config1-bundle' => new FooConfigPlugin(),
+                'foo/config2-bundle' => new FooConfigPlugin(),
+                'foo/config3-bundle' => new FooConfigPlugin(),
+            ]
+        );
 
         $keys = array_keys($pluginLoader->getInstancesOf(ConfigPluginInterface::class, true));
 

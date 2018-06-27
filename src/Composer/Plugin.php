@@ -38,8 +38,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $event->getIO()->write('<info>Dumping Contao Manager plugins</info>');
 
-        $installer = new Installer();
-        $installer->dumpPlugins(
+        (new Installer())->dumpPlugins(
             $event->getComposer()->getRepositoryManager()->getLocalRepository(),
             $event->getIO()
         );

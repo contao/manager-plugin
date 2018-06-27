@@ -46,7 +46,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 
 /**
  * This class has been auto-generated. It will be overwritten at every run of
- * `composer install` or `composer update`.
+ * "composer install" or "composer update".
  * 
  * @see \Contao\ManagerPlugin\Composer\Installer
  */
@@ -74,7 +74,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
     public function __construct(string $installedJson = null, array $plugins = null)
     {
         if (null !== $installedJson) {
-            @trigger_error('Argument $installedJson is no longer supported in PluginLoader v2.3', E_USER_DEPRECATED);
+            @trigger_error('Passing the path to the Composer installed.json as first argument is no longer supported in version 2.3.', E_USER_DEPRECATED);
         }
 
         $this->plugins = $plugins ?: %s;
@@ -115,7 +115,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
     }
 
     /**
-     * Gets the list of disabled Composer packages.
+     * Returns the list of disabled Composer packages.
      *
      * @return array
      */
@@ -191,7 +191,7 @@ PHP;
 
         $content = sprintf(
             static::$generatedClassTemplate,
-            'cla'.'ss '.'PluginLoader', // note: workaround for regex-based code parsers :-(
+            'cla'.'ss '.'PluginLoader', // workaround for regex-based code parsers :-(
             sprintf("[\n%s\n        ]", implode(",\n", $load))
         );
 
