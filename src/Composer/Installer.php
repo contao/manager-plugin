@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use Composer\IO\IOInterface;
+use Composer\Package\CompletePackage;
 use Composer\Repository\RepositoryInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
@@ -162,6 +163,10 @@ PHP;
         $plugins = [];
 
         foreach ($repository->getPackages() as $package) {
+            if (!$package instanceof CompletePackage) {
+                continue;
+            }
+
             $extra = $package->getExtra();
 
             if (isset($extra['contao-manager-plugin'])) {

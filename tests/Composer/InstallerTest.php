@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Tests\Composer;
 
 use Composer\IO\IOInterface;
-use Composer\Package\PackageInterface;
+use Composer\Package\AliasPackage;
+use Composer\Package\CompletePackage;
+use Composer\Package\CompletePackageInterface;
 use Composer\Repository\RepositoryInterface;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Composer\Installer;
@@ -128,6 +130,41 @@ class InstallerTest extends TestCase
         $installer->dumpPlugins($repository, $io);
     }
 
+    public function testIgnoresAliasPackages(): void
+    {
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
+
+        $repository = $this->createMock(RepositoryInterface::class);
+
+        $repository
+            ->expects($this->once())
+            ->method('getPackages')
+            ->willReturn([
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class, true),
+                $this->mockPackage('foo/config-bundle', FooConfigPlugin::class),
+            ])
+        ;
+
+        $io = $this->createMock(IOInterface::class);
+
+        $io
+            ->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE]
+            )
+        ;
+
+        $filesystem = $this->mockFilesystemAndCheckDump("
+        \$this->plugins = \$plugins ?: [
+            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin()
+        ];");
+
+        $installer = new Installer($filesystem);
+        $installer->dumpPlugins($repository, $io);
+    }
+
     public function testThrowsExceptionIfPluginClassDoesNotExist(): void
     {
         $repository = $this->createMock(RepositoryInterface::class);
@@ -152,21 +189,20 @@ class InstallerTest extends TestCase
     /**
      * @param string $name
      * @param string $plugin
+     * @param bool   $isAlias
      *
-     * @return PackageInterface
+     * @return CompletePackageInterface
      */
-    private function mockPackage(string $name, string $plugin): PackageInterface
+    private function mockPackage(string $name, string $plugin, bool $isAlias = false): CompletePackageInterface
     {
-        $package = $this->createMock(PackageInterface::class);
+        $package = $this->createMock($isAlias ? AliasPackage::class : CompletePackage::class);
 
         $package
-            ->expects($this->any())
             ->method('getName')
             ->willReturn($name)
         ;
 
         $package
-            ->expects($this->once())
             ->method('getExtra')
             ->willReturn(['contao-manager-plugin' => $plugin])
         ;
