@@ -12,7 +12,7 @@ sudo: false
 env:
   global:
     - COMPOSER_ALLOW_XDEBUG=0
-    - COMPOSER_ROOT_VERSION='2.3.0'
+    - COMPOSER_ROOT_VERSION='2.4.0'
 
 matrix:
   include:
