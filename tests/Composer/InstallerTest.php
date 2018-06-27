@@ -15,7 +15,7 @@ namespace Contao\ManagerPlugin\Tests\Composer;
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
-use Composer\Package\CompletePackageInterface;
+use Composer\Package\PackageInterface;
 use Composer\Repository\RepositoryInterface;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Composer\Installer;
@@ -191,9 +191,9 @@ class InstallerTest extends TestCase
      * @param string $plugin
      * @param bool   $isAlias
      *
-     * @return CompletePackageInterface
+     * @return PackageInterface
      */
-    private function mockPackage(string $name, string $plugin, bool $isAlias = false): CompletePackageInterface
+    private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
     {
         $package = $this->createMock($isAlias ? AliasPackage::class : CompletePackage::class);
 
