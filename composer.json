@@ -24,7 +24,8 @@
         "friendsofphp/php-cs-fixer": "^2.12",
         "php-coveralls/php-coveralls": "^2.1",
         "php-http/guzzle6-adapter": "^1.1",
-        "phpunit/phpunit": "^6.1"
+        "phpunit/phpunit": "^6.5",
+        "symfony/phpunit-bridge": "^3.4.5"
     },
     "extra": {
         "branch-alias": {

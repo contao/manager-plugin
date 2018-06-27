@@ -47,6 +47,11 @@ class JsonParserTest extends TestCase
         $this->assertFalse($this->parser->supports('foobar'));
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testParsesSimpleObjects(): void
     {
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/simple-object.json');
@@ -64,6 +69,11 @@ class JsonParserTest extends TestCase
         $this->assertSame([], $config->getLoadAfter());
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testParsesSimpleStrings(): void
     {
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/simple-string.json');
@@ -81,6 +91,11 @@ class JsonParserTest extends TestCase
         $this->assertSame([], $config->getLoadAfter());
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testParsesTheBundleEnvironment(): void
     {
         /** @var ConfigInterface[] $configs */
@@ -101,6 +116,11 @@ class JsonParserTest extends TestCase
         $this->assertFalse($configs[2]->loadInDevelopment());
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testParsesOptionalBundles(): void
     {
         /** @var ConfigInterface[] $configs */
@@ -116,6 +136,11 @@ class JsonParserTest extends TestCase
         $this->assertSame(['Foo\BarBundle\FooBarBundle'], $configs[1]->getLoadAfter());
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testFailsToParseAFileWithNoBundles(): void
     {
         $this->expectException('RuntimeException');
@@ -123,6 +148,11 @@ class JsonParserTest extends TestCase
         $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/no-bundle.json');
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testFailsToParseAMissingFile(): void
     {
         $this->expectException('InvalidArgumentException');
@@ -130,6 +160,11 @@ class JsonParserTest extends TestCase
         $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/missing.json');
     }
 
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Using a bundles.json file has been deprecated %s.
+     */
     public function testFailsToParseInvalidJsonData(): void
     {
         $this->expectException('RuntimeException');
