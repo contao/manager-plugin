@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license LGPL-3.0-or-later
  */
 
-namespace Contao\ManagerPlugin\Test;
+namespace Contao\ManagerPlugin\Tests;
 
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;

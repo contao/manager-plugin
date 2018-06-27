@@ -22,6 +22,21 @@ use Composer\Script\ScriptEvents;
 class Plugin implements PluginInterface, EventSubscriberInterface
 {
     /**
+     * @var Installer
+     */
+    private $installer;
+
+    /**
+     * Constructor.
+     *
+     * @param Installer|null $installer
+     */
+    public function __construct(Installer $installer = null)
+    {
+        $this->installer = $installer ?: new Installer();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function activate(Composer $composer, IOInterface $io): void
@@ -38,7 +53,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $event->getIO()->write('<info>contao/manager-plugin:</info> Generating plugin class...');
 
-        (new Installer())->dumpPlugins(
+        $this->installer->dumpPlugins(
             $event->getComposer()->getRepositoryManager()->getLocalRepository(),
             $event->getIO()
         );

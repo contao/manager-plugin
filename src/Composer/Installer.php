@@ -16,6 +16,7 @@ use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryInterface;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Installer
 {
@@ -138,6 +139,19 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 PHP;
 
     /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
+     * @param Filesystem|null $filesystem
+     */
+    public function __construct(Filesystem $filesystem = null)
+    {
+        $this->filesystem = $filesystem ?: new Filesystem();
+    }
+
+    /**
      * Sets the Contao Manager plugins.
      *
      * @param RepositoryInterface $repository
@@ -195,7 +209,7 @@ PHP;
             sprintf("[\n%s\n        ]", implode(",\n", $load))
         );
 
-        file_put_contents(__DIR__.'/../PluginLoader.php', $content);
+        $this->filesystem->dumpFile(__DIR__.'/../PluginLoader.php', $content);
     }
 
     /**
