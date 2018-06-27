@@ -23,6 +23,11 @@ class Installer
     use DependencyResolverTrait;
 
     /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
      * @var string
      */
     private static $generatedClassTemplate = <<<'PHP'
@@ -137,11 +142,6 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 }
 
 PHP;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
 
     /**
      * @param Filesystem|null $filesystem

@@ -35,15 +35,14 @@ class InstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
         $repository = $this->createMock(RepositoryInterface::class);
+
         $repository
             ->expects($this->once())
             ->method('getPackages')
-            ->willReturn(
-                [
-                    $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
-                    $this->mockPackage('foo/config-bundle', FooConfigPlugin::class),
-                ]
-            )
+            ->willReturn([
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
+                $this->mockPackage('foo/config-bundle', FooConfigPlugin::class),
+            ])
         ;
 
         $io = $this->createMock(IOInterface::class);
@@ -73,15 +72,14 @@ class InstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
         $repository = $this->createMock(RepositoryInterface::class);
+
         $repository
             ->expects($this->once())
             ->method('getPackages')
-            ->willReturn(
-                [
-                    $this->mockPackage('foo/config-bundle', FooConfigPlugin::class),
-                    $this->mockPackage('contao/manager-bundle', FooBarPlugin::class),
-                ]
-            )
+            ->willReturn([
+                $this->mockPackage('foo/config-bundle', FooConfigPlugin::class),
+                $this->mockPackage('contao/manager-bundle', FooBarPlugin::class),
+            ])
         ;
 
         $io = $this->createMock(IOInterface::class);
@@ -109,14 +107,13 @@ class InstallerTest extends TestCase
         ;
 
         $repository = $this->createMock(RepositoryInterface::class);
+
         $repository
             ->expects($this->once())
             ->method('getPackages')
-            ->willReturn(
-                [
-                    $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
-                ]
-            )
+            ->willReturn([
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
+            ])
         ;
 
         $io = $this->createMock(IOInterface::class);
@@ -134,14 +131,13 @@ class InstallerTest extends TestCase
     public function testThrowsExceptionIfPluginClassDoesNotExist(): void
     {
         $repository = $this->createMock(RepositoryInterface::class);
+
         $repository
             ->expects($this->once())
             ->method('getPackages')
-            ->willReturn(
-                [
-                    $this->mockPackage('foo/bar', '\Non\Existing\Plugin'),
-                ]
-            )
+            ->willReturn([
+                $this->mockPackage('foo/bar', '\Non\Existing\Plugin'),
+            ])
         ;
 
         $io = $this->createMock(IOInterface::class);

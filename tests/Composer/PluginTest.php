@@ -32,12 +32,14 @@ class PluginTest extends TestCase
     public function testDoesNothingOnActivation(): void
     {
         $composer = $this->createMock(Composer::class);
+
         $composer
             ->expects($this->never())
             ->method($this->anything())
         ;
 
         $io = $this->createMock(IOInterface::class);
+
         $io
             ->expects($this->never())
             ->method($this->anything())
@@ -75,6 +77,7 @@ class PluginTest extends TestCase
         ;
 
         $installer = $this->createMock(Installer::class);
+
         $installer
             ->expects($this->once())
             ->method('dumpPlugins')
@@ -90,9 +93,8 @@ class PluginTest extends TestCase
         $events = Plugin::getSubscribedEvents();
 
         $this->assertArrayHasKey(ScriptEvents::POST_INSTALL_CMD, $events);
-        $this->assertTrue(method_exists(Plugin::class, $events[ScriptEvents::POST_INSTALL_CMD]));
-
         $this->assertArrayHasKey(ScriptEvents::POST_UPDATE_CMD, $events);
+        $this->assertTrue(method_exists(Plugin::class, $events[ScriptEvents::POST_INSTALL_CMD]));
         $this->assertTrue(method_exists(Plugin::class, $events[ScriptEvents::POST_UPDATE_CMD]));
     }
 }
