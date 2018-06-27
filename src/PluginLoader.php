@@ -15,24 +15,18 @@ namespace Contao\ManagerPlugin;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
-use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
-use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
-use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 
+/**
+ * This is a stub class which will be replaced during "composer install" or
+ * "composer update" unless Composer is run with the "--no-scripts" flag.
+ */
 class PluginLoader
 {
-    use DependencyResolverTrait;
-
     public const BUNDLE_PLUGINS = BundlePluginInterface::class;
     public const CONFIG_PLUGINS = ConfigPluginInterface::class;
     public const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
     public const ROUTING_PLUGINS = RoutingPluginInterface::class;
-
-    /**
-     * @var string
-     */
-    private $installedJson;
 
     /**
      * @var array
@@ -40,11 +34,21 @@ class PluginLoader
     private $plugins;
 
     /**
-     * @param string $installedJson
+     * @var array
      */
-    public function __construct($installedJson)
+    private $disabled = [];
+
+    /**
+     * @param string|null $installedJson
+     * @param array       $plugins
+     */
+    public function __construct(string $installedJson = null, array $plugins = null)
     {
-        $this->installedJson = $installedJson;
+        if (null !== $installedJson) {
+            @trigger_error('Passing the path to the Composer installed.json as first argument is no longer supported in version 2.3.', E_USER_DEPRECATED);
+        }
+
+        $this->plugins = $plugins ?: [];
     }
 
     /**
@@ -52,11 +56,9 @@ class PluginLoader
      *
      * @return array
      */
-    public function getInstances()
+    public function getInstances(): array
     {
-        $this->load();
-
-        return $this->plugins;
+        return array_diff_key($this->plugins, array_flip($this->disabled));
     }
 
     /**
@@ -67,7 +69,7 @@ class PluginLoader
      *
      * @return array
      */
-    public function getInstancesOf($type, $reverseOrder = false)
+    public function getInstancesOf(string $type, bool $reverseOrder = false): array
     {
         $plugins = array_filter(
             $this->getInstances(),
@@ -80,93 +82,26 @@ class PluginLoader
             $plugins = array_reverse($plugins, true);
         }
 
-        return $plugins;
+        return array_diff_key($plugins, array_flip($this->disabled));
     }
 
     /**
-     * Orders the plugins.
-     *
-     * @param array $plugins
-     *
-     * @throws UnresolvableDependenciesException
+     * Returns the list of disabled Composer packages.
      *
      * @return array
      */
-    protected function orderPlugins(array $plugins)
+    public function getDisabledPackages(): array
     {
-        $this->plugins = [];
-
-        $ordered = [];
-        $dependencies = [];
-        $packages = array_keys($plugins);
-
-        // Load the manager bundle first
-        if (isset($plugins['contao/manager-bundle'])) {
-            array_unshift($packages, 'contao/manager-bundle');
-            $packages = array_unique($packages);
-        }
-
-        // Walk through the packages
-        foreach ($packages as $packageName) {
-            $dependencies[$packageName] = [];
-
-            if ($plugins[$packageName] instanceof DependentPluginInterface) {
-                $dependencies[$packageName] = $plugins[$packageName]->getPackageDependencies();
-            }
-        }
-
-        foreach ($this->orderByDependencies($dependencies) as $packageName) {
-            $ordered[$packageName] = $plugins[$packageName];
-        }
-
-        return $ordered;
+        return $this->disabled;
     }
 
     /**
-     * Loads the plugins from the Composer installed.json file.
+     * Sets the list of disabled Composer packages.
      *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     * @throws UnresolvableDependenciesException
+     * @param array $packages
      */
-    private function load(): void
+    public function setDisabledPackages(array $packages): void
     {
-        if (null !== $this->plugins) {
-            return;
-        }
-
-        if (!is_file($this->installedJson)) {
-            throw new \InvalidArgumentException(
-                sprintf('Composer installed.json was not found at "%s"', $this->installedJson)
-            );
-        }
-
-        $plugins = [];
-        $json = json_decode(file_get_contents($this->installedJson), true);
-
-        if (null === $json) {
-            throw new \RuntimeException(sprintf('File "%s" cannot be decoded', $this->installedJson));
-        }
-
-        foreach ($json as $package) {
-            if (isset($package['extra']['contao-manager-plugin'])) {
-                if (!class_exists($package['extra']['contao-manager-plugin'])) {
-                    throw new \RuntimeException(
-                        sprintf('Plugin class "%s" not found', $package['extra']['contao-manager-plugin'])
-                    );
-                }
-
-                $plugins[$package['name']] = new $package['extra']['contao-manager-plugin']();
-            }
-        }
-
-        $this->plugins = $this->orderPlugins($plugins);
-
-        // Instantiate a global plugin to load AppBundle or other customizations
-        $appPlugin = '\ContaoManagerPlugin';
-
-        if (class_exists($appPlugin)) {
-            $this->plugins['app'] = new $appPlugin();
-        }
+        $this->disabled = $packages;
     }
 }
