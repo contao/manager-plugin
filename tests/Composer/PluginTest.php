@@ -104,7 +104,7 @@ class PluginTest extends TestCase
         (new Plugin($installer))->dumpPlugins($event);
     }
 
-    public function testLoadsAutoloadFileFromVendor()
+    public function testLoadsAutoloadFileFromVendor(): void
     {
         $io = $this->createMock(IOInterface::class);
         $config = $this->createMock(Config::class);
