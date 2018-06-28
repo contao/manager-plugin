@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Tests\Composer;
 
 use Composer\Composer;
+use Composer\Config;
 use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryInterface;
 use Composer\Repository\RepositoryManager;
@@ -50,21 +51,36 @@ class PluginTest extends TestCase
 
     public function testDumpsPlugins(): void
     {
-        $event = $this->createMock(Event::class);
-        $composer = $this->createMock(Composer::class);
-        $manager = $this->createMock(RepositoryManager::class);
         $repository = $this->createMock(RepositoryInterface::class);
         $io = $this->createMock(IOInterface::class);
+        $manager = $this->createMock(RepositoryManager::class);
 
         $manager
             ->method('getLocalRepository')
             ->willReturn($repository)
         ;
 
+        $config = $this->createMock(Config::class);
+
+        $config
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn(__DIR__.'/../../vendor')
+        ;
+
+        $composer = $this->createMock(Composer::class);
+
         $composer
             ->method('getRepositoryManager')
             ->willReturn($manager)
         ;
+
+        $composer
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $event = $this->createMock(Event::class);
 
         $event
             ->method('getComposer')
