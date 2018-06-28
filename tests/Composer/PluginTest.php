@@ -65,7 +65,7 @@ class PluginTest extends TestCase
         $config
             ->method('get')
             ->with('vendor-dir')
-            ->willReturn(__DIR__.'/../../vendor')
+            ->willReturn(__DIR__.'/../Fixtures/Composer/null-vendor')
         ;
 
         $composer = $this->createMock(Composer::class);
@@ -100,6 +100,46 @@ class PluginTest extends TestCase
             ->with($repository, $io)
             ->willReturn(null)
         ;
+
+        (new Plugin($installer))->dumpPlugins($event);
+    }
+
+    public function testLoadsAutoloadFileFromVendor()
+    {
+        $io = $this->createMock(IOInterface::class);
+        $config = $this->createMock(Config::class);
+
+        $config
+            ->expects($this->once())
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn(__DIR__.'/../Fixtures/Composer/test-vendor')
+        ;
+
+        $composer = $this->createMock(Composer::class);
+
+        $composer
+            ->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $event = $this->createMock(Event::class);
+
+        $event
+            ->method('getComposer')
+            ->willReturn($composer)
+        ;
+
+        $event
+            ->method('getIO')
+            ->willReturn($io)
+        ;
+
+        $installer = $this->createMock(Installer::class);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('autoload.php successfully loaded');
 
         (new Plugin($installer))->dumpPlugins($event);
     }
