@@ -22,15 +22,6 @@ interface ApiPluginInterface
     public function getApiFeatures(): array;
 
     /**
-     * Allows to override features that are provided by the Contao Managed Edition.
-     *
-     * @param array $features
-     *
-     * @return array
-     */
-    public function overrideApiFeatures(array $features): array;
-
-    /**
      * Adds additional commands to the Manager API.
      *
      * @return array
