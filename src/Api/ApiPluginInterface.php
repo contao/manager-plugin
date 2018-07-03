@@ -15,7 +15,7 @@ namespace Contao\ManagerPlugin\Api;
 interface ApiPluginInterface
 {
     /**
-     * Gets features this plugin can handle.
+     * Returns the features this plugin can handle.
      *
      * @return array
      */
