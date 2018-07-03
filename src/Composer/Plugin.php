@@ -53,6 +53,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $event->getIO()->write('<info>contao/manager-plugin:</info> Generating plugin class...');
 
+        // Require the autoload.php file so the Plugin classes are loaded
+        require $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
+
         $this->installer->dumpPlugins(
             $event->getComposer()->getRepositoryManager()->getLocalRepository(),
             $event->getIO()

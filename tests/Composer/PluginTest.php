@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Tests\Composer;
 
 use Composer\Composer;
+use Composer\Config;
 use Composer\IO\IOInterface;
 use Composer\Repository\RepositoryInterface;
 use Composer\Repository\RepositoryManager;
@@ -50,21 +51,36 @@ class PluginTest extends TestCase
 
     public function testDumpsPlugins(): void
     {
-        $event = $this->createMock(Event::class);
-        $composer = $this->createMock(Composer::class);
-        $manager = $this->createMock(RepositoryManager::class);
         $repository = $this->createMock(RepositoryInterface::class);
         $io = $this->createMock(IOInterface::class);
+        $manager = $this->createMock(RepositoryManager::class);
 
         $manager
             ->method('getLocalRepository')
             ->willReturn($repository)
         ;
 
+        $config = $this->createMock(Config::class);
+
+        $config
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn(__DIR__.'/../Fixtures/Composer/null-vendor')
+        ;
+
+        $composer = $this->createMock(Composer::class);
+
         $composer
             ->method('getRepositoryManager')
             ->willReturn($manager)
         ;
+
+        $composer
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $event = $this->createMock(Event::class);
 
         $event
             ->method('getComposer')
@@ -84,6 +100,46 @@ class PluginTest extends TestCase
             ->with($repository, $io)
             ->willReturn(null)
         ;
+
+        (new Plugin($installer))->dumpPlugins($event);
+    }
+
+    public function testLoadsAutoloadFileFromVendor(): void
+    {
+        $io = $this->createMock(IOInterface::class);
+        $config = $this->createMock(Config::class);
+
+        $config
+            ->expects($this->once())
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn(__DIR__.'/../Fixtures/Composer/test-vendor')
+        ;
+
+        $composer = $this->createMock(Composer::class);
+
+        $composer
+            ->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $event = $this->createMock(Event::class);
+
+        $event
+            ->method('getComposer')
+            ->willReturn($composer)
+        ;
+
+        $event
+            ->method('getIO')
+            ->willReturn($io)
+        ;
+
+        $installer = $this->createMock(Installer::class);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('autoload.php successfully loaded');
 
         (new Plugin($installer))->dumpPlugins($event);
     }
