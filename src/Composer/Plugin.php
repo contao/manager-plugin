@@ -51,17 +51,21 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function dumpPlugins(Event $event): void
     {
-        $event->getIO()->write('<info>contao/manager-plugin:</info> Generating plugin class...');
+        $io = $event->getIO();
+
+        if (!file_exists(__DIR__.'/../PluginLoader.php')) {
+            $io->write('<info>contao/manager-plugin:</info> Class not found (probably scheduled for removal); generation of plugin class skipped.');
+
+            return;
+        }
+
+        $io->write('<info>contao/manager-plugin:</info> Generating plugin class...');
 
         // Require the autoload.php file so the Plugin classes are loaded
         require $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
 
-        $this->installer->dumpPlugins(
-            $event->getComposer()->getRepositoryManager()->getLocalRepository(),
-            $event->getIO()
-        );
-
-        $event->getIO()->write('<info>contao/manager-plugin:</info> ...done generating plugin class');
+        $this->installer->dumpPlugins($event->getComposer()->getRepositoryManager()->getLocalRepository(), $io);
+        $io->write('<info>contao/manager-plugin:</info> ...done generating plugin class');
     }
 
     /**
