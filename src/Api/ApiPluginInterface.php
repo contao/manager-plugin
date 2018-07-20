@@ -17,14 +17,14 @@ interface ApiPluginInterface
     /**
      * Returns the features this plugin can handle.
      *
-     * @return array
+     * @return array<string,string[]>
      */
     public function getApiFeatures(): array;
 
     /**
      * Adds additional commands to the Manager API.
      *
-     * @return array
+     * @return string[]
      */
     public function getApiCommands(): array;
 }

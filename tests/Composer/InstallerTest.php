@@ -61,7 +61,7 @@ class InstallerTest extends TestCase
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
             'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin()
+            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
         ];");
 
         $installer = new Installer($filesystem);
@@ -89,7 +89,7 @@ class InstallerTest extends TestCase
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
             'contao/manager-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin()
+            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
         ];");
 
         $installer = new Installer($filesystem);
@@ -123,7 +123,7 @@ class InstallerTest extends TestCase
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
             'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'app' => new \ContaoManagerPlugin()
+            'app' => new \ContaoManagerPlugin(),
         ];");
 
         $installer = new Installer($filesystem);
@@ -158,7 +158,7 @@ class InstallerTest extends TestCase
 
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
-            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin()
+            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
         ];");
 
         $installer = new Installer($filesystem);
@@ -186,13 +186,6 @@ class InstallerTest extends TestCase
         $installer->dumpPlugins($repository, $io);
     }
 
-    /**
-     * @param string $name
-     * @param string $plugin
-     * @param bool   $isAlias
-     *
-     * @return PackageInterface
-     */
     private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
     {
         $package = $this->createMock($isAlias ? AliasPackage::class : CompletePackage::class);
@@ -210,11 +203,6 @@ class InstallerTest extends TestCase
         return $package;
     }
 
-    /**
-     * @param string $match
-     *
-     * @return Filesystem
-     */
     private function mockFilesystemAndCheckDump(string $match): Filesystem
     {
         $filesystem = $this->createMock(Filesystem::class);

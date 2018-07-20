@@ -40,12 +40,6 @@ class BundleLoader
      */
     private $filesystem;
 
-    /**
-     * @param PluginLoader          $pluginLoader
-     * @param ConfigResolverFactory $resolverFactory
-     * @param ParserInterface       $parser
-     * @param Filesystem            $filesystem
-     */
     public function __construct(PluginLoader $pluginLoader, ConfigResolverFactory $resolverFactory, ParserInterface $parser, Filesystem $filesystem = null)
     {
         $this->pluginLoader = $pluginLoader;
@@ -61,12 +55,9 @@ class BundleLoader
     /**
      * Returns an ordered bundles map.
      *
-     * @param bool        $development
-     * @param string|null $cacheFile
-     *
      * @return ConfigInterface[]
      */
-    public function getBundleConfigs($development, $cacheFile = null)
+    public function getBundleConfigs(bool $development, string $cacheFile = null): array
     {
         if (null !== $cacheFile) {
             return $this->loadFromCache($development, $cacheFile);
@@ -78,12 +69,9 @@ class BundleLoader
     /**
      * Loads the bundles map from cache.
      *
-     * @param bool        $development
-     * @param string|null $cacheFile
-     *
      * @return ConfigInterface[]
      */
-    private function loadFromCache($development, $cacheFile)
+    private function loadFromCache(bool $development, string $cacheFile = null): array
     {
         $bundleConfigs = is_file($cacheFile) ? include $cacheFile : null;
 
@@ -97,12 +85,9 @@ class BundleLoader
     /**
      * Generates the bundles map.
      *
-     * @param bool        $development
-     * @param string|null $cacheFile
-     *
      * @return ConfigInterface[]
      */
-    private function loadFromPlugins($development, $cacheFile)
+    private function loadFromPlugins(bool $development, string $cacheFile = null): array
     {
         $resolver = $this->resolverFactory->create();
 

@@ -17,11 +17,9 @@ interface ExtensionPluginInterface
     /**
      * Allows a plugin to override extension configuration.
      *
-     * @param string           $extensionName
-     * @param array            $extensionConfigs
-     * @param ContainerBuilder $container
+     * @param string $extensionName
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container);
 }

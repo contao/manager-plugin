@@ -26,11 +26,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     private $installer;
 
-    /**
-     * Constructor.
-     *
-     * @param Installer|null $installer
-     */
     public function __construct(Installer $installer = null)
     {
         $this->installer = $installer ?: new Installer();
@@ -44,11 +39,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         // Nothing to do here, as all features are provided through event listeners
     }
 
-    /**
-     * Dumps the Contao Manager plugins.
-     *
-     * @param Event $event
-     */
     public function dumpPlugins(Event $event): void
     {
         $io = $event->getIO();

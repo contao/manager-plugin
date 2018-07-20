@@ -41,21 +41,11 @@ class BundleConfig implements ConfigInterface
      */
     protected $loadInDevelopment = true;
 
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * Create a new config instance from properties.
-     *
-     * @param array $properties
-     *
-     * @return static
-     */
     public static function __set_state(array $properties)
     {
         $config = new static($properties['name']);
@@ -67,10 +57,15 @@ class BundleConfig implements ConfigInterface
         return $config;
     }
 
+    public static function create(string $name): self
+    {
+        return new static($name);
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -78,7 +73,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getReplace()
+    public function getReplace(): array
     {
         return $this->replace;
     }
@@ -86,7 +81,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setReplace(array $replace)
+    public function setReplace(array $replace): self
     {
         $this->replace = $replace;
 
@@ -96,7 +91,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getLoadAfter()
+    public function getLoadAfter(): array
     {
         return $this->loadAfter;
     }
@@ -104,7 +99,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setLoadAfter(array $loadAfter)
+    public function setLoadAfter(array $loadAfter): self
     {
         $this->loadAfter = $loadAfter;
 
@@ -114,7 +109,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function loadInProduction()
+    public function loadInProduction(): bool
     {
         return $this->loadInProduction;
     }
@@ -122,7 +117,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setLoadInProduction($loadInProduction)
+    public function setLoadInProduction($loadInProduction): self
     {
         $this->loadInProduction = (bool) $loadInProduction;
 
@@ -132,7 +127,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function loadInDevelopment()
+    public function loadInDevelopment(): bool
     {
         return $this->loadInDevelopment;
     }
@@ -140,7 +135,7 @@ class BundleConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setLoadInDevelopment($loadInDevelopment)
+    public function setLoadInDevelopment($loadInDevelopment): self
     {
         $this->loadInDevelopment = (bool) $loadInDevelopment;
 
@@ -157,17 +152,5 @@ class BundleConfig implements ConfigInterface
         }
 
         return new $this->name();
-    }
-
-    /**
-     * Creates a new config instance.
-     *
-     * @param string $name
-     *
-     * @return static
-     */
-    public static function create($name)
-    {
-        return new static($name);
     }
 }

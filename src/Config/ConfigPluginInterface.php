@@ -18,9 +18,6 @@ interface ConfigPluginInterface
 {
     /**
      * Allows a plugin to load container configuration.
-     *
-     * @param LoaderInterface $loader
-     * @param array           $managerConfig
      */
     public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig);
 }

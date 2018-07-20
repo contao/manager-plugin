@@ -19,11 +19,6 @@ class DelegatingParser implements ParserInterface
      */
     private $parsers = [];
 
-    /**
-     * Adds a parser to the chain.
-     *
-     * @param ParserInterface $parser
-     */
     public function addParser(ParserInterface $parser): void
     {
         $this->parsers[] = $parser;
@@ -32,7 +27,7 @@ class DelegatingParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse($resource, $type = null)
+    public function parse($resource, $type = null): array
     {
         foreach ($this->parsers as $parser) {
             if ($parser->supports($resource, $type)) {
@@ -46,7 +41,7 @@ class DelegatingParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         foreach ($this->parsers as $parser) {
             if ($parser->supports($resource, $type)) {

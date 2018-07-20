@@ -17,13 +17,11 @@ trait DependencyResolverTrait
     /**
      * Returns a list of array keys ordered by their dependencies.
      *
-     * @param array $dependencies
-     *
      * @throws UnresolvableDependenciesException
      *
-     * @return array
+     * @return string[]
      */
-    protected function orderByDependencies(array $dependencies)
+    protected function orderByDependencies(array $dependencies): array
     {
         $ordered = [];
         $available = array_keys($dependencies);
@@ -43,14 +41,8 @@ trait DependencyResolverTrait
 
     /**
      * Resolves the dependency order.
-     *
-     * @param array $dependencies
-     * @param array $ordered
-     * @param array $available
-     *
-     * @return bool
      */
-    private function doResolve(array &$dependencies, array &$ordered, array $available)
+    private function doResolve(array &$dependencies, array &$ordered, array $available): bool
     {
         $failed = true;
 
@@ -68,14 +60,8 @@ trait DependencyResolverTrait
 
     /**
      * Checks whether the requirements can be resolved.
-     *
-     * @param array $requires
-     * @param array $available
-     * @param array $ordered
-     *
-     * @return bool
      */
-    private function canBeResolved(array $requires, array $available, array $ordered)
+    private function canBeResolved(array $requires, array $available, array $ordered): bool
     {
         if (0 === \count($requires)) {
             return true;
