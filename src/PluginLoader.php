@@ -38,10 +38,6 @@ class PluginLoader
      */
     private $disabled = [];
 
-    /**
-     * @param string|null $installedJson
-     * @param array       $plugins
-     */
     public function __construct(string $installedJson = null, array $plugins = null)
     {
         if (null !== $installedJson) {
@@ -54,7 +50,7 @@ class PluginLoader
     /**
      * Returns all active plugin instances.
      *
-     * @return array
+     * @return array<string,BundlePluginInterface>
      */
     public function getInstances(): array
     {
@@ -64,10 +60,7 @@ class PluginLoader
     /**
      * Returns the active plugin instances of a given type (see class constants).
      *
-     * @param string $type
-     * @param bool   $reverseOrder
-     *
-     * @return array
+     * @return array<string,BundlePluginInterface>
      */
     public function getInstancesOf(string $type, bool $reverseOrder = false): array
     {
@@ -86,20 +79,13 @@ class PluginLoader
     }
 
     /**
-     * Returns the list of disabled Composer packages.
-     *
-     * @return array
+     * @return string[]
      */
     public function getDisabledPackages(): array
     {
         return $this->disabled;
     }
 
-    /**
-     * Sets the list of disabled Composer packages.
-     *
-     * @param array $packages
-     */
     public function setDisabledPackages(array $packages): void
     {
         $this->disabled = $packages;

@@ -17,25 +17,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ModuleConfig extends BundleConfig
 {
-    /**
-     * @var array
-     */
-    private static $legacy = [
-        'core',
-        'calendar',
-        'comments',
-        'faq',
-        'listing',
-        'news',
-        'newsletter',
-    ];
-
-    /**
-     * Constructor.
-     *
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         parent::__construct($name);
 
@@ -55,7 +37,17 @@ class ModuleConfig extends BundleConfig
      */
     private function setLoadAfterLegacyModules(): void
     {
-        $modules = array_merge(self::$legacy, [$this->getName()]);
+        static $legacy = [
+            'core',
+            'calendar',
+            'comments',
+            'faq',
+            'listing',
+            'news',
+            'newsletter',
+        ];
+
+        $modules = array_merge($legacy, [$this->getName()]);
         sort($modules);
         $modules = array_values($modules);
         array_splice($modules, array_search($this->getName(), $modules, true));

@@ -14,12 +14,7 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 
 class ConfigResolverFactory
 {
-    /**
-     * Creates a ConfigResolver instance.
-     *
-     * @return ConfigResolverInterface
-     */
-    public function create()
+    public function create(): ConfigResolverInterface
     {
         return new ConfigResolver();
     }

@@ -19,8 +19,6 @@ interface ConfigResolverInterface
     /**
      * Adds a configuration object.
      *
-     * @param ConfigInterface $config
-     *
      * @return $this
      */
     public function add(ConfigInterface $config);

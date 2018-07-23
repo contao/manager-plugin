@@ -19,7 +19,7 @@ class JsonParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse($resource, $type = null)
+    public function parse($resource, $type = null): array
     {
         @trigger_error('Using a bundles.json file has been deprecated and will no longer work in version 3.0. Use the Plugin::getBundles() method to define your bundles instead.', E_USER_DEPRECATED);
 
@@ -34,7 +34,7 @@ class JsonParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
         return \is_string($resource) && 'json' === pathinfo($resource, PATHINFO_EXTENSION);
     }
@@ -42,14 +42,10 @@ class JsonParser implements ParserInterface
     /**
      * Parses the file and returns the configuration array.
      *
-     * @param string $file The absolute file path
-     *
-     * @throws \InvalidArgumentException If $file is not a file
-     * @throws \RuntimeException         If the file cannot be decoded
-     *
-     * @return array The configuration array
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    private function parseJsonFile($file)
+    private function parseJsonFile(string $file): array
     {
         if (!is_file($file)) {
             throw new \InvalidArgumentException("$file is not a file");
@@ -66,9 +62,6 @@ class JsonParser implements ParserInterface
 
     /**
      * Parses the bundle array and generates config objects.
-     *
-     * @param array $bundles
-     * @param array $configs
      *
      * @throws \RuntimeException
      */

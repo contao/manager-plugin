@@ -26,7 +26,7 @@ class ConfigResolver implements ConfigResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function add(ConfigInterface $config)
+    public function add(ConfigInterface $config): self
     {
         $this->configs[] = $config;
 
@@ -36,7 +36,7 @@ class ConfigResolver implements ConfigResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getBundleConfigs($development)
+    public function getBundleConfigs($development): array
     {
         $bundles = [];
 
@@ -58,11 +58,9 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Builds the replaces from the configuration objects.
-     *
-     * @return array
+     * @return array<string,string>
      */
-    private function buildReplaceMap()
+    private function buildReplaceMap(): array
     {
         $replace = [];
 
@@ -78,11 +76,9 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Builds the loading order from the configuration objects.
-     *
-     * @return array
+     * @return array<string,string>
      */
-    private function buildLoadingOrder()
+    private function buildLoadingOrder(): array
     {
         $loadingOrder = [];
 
@@ -100,14 +96,9 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Orders the bundles in a given order.
-     *
-     * @param array $bundles
-     * @param array $ordered
-     *
-     * @return array
+     * @return array<string,string>
      */
-    private function order(array $bundles, array $ordered)
+    private function order(array $bundles, array $ordered): array
     {
         $return = [];
 
@@ -121,14 +112,9 @@ class ConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Normalizes the loading order array.
-     *
-     * @param array $loadingOrder
-     * @param array $replace
-     *
-     * @return array
+     * @return array<string,string>
      */
-    private function normalizeLoadingOrder(array $loadingOrder, array $replace)
+    private function normalizeLoadingOrder(array $loadingOrder, array $replace): array
     {
         foreach ($loadingOrder as $bundleName => &$loadAfter) {
             if (isset($replace[$bundleName])) {
@@ -141,12 +127,6 @@ class ConfigResolver implements ConfigResolverInterface
         return $loadingOrder;
     }
 
-    /**
-     * Replaces the legacy bundle names with their new name.
-     *
-     * @param array $loadAfter
-     * @param array $replace
-     */
     private function replaceBundleNames(array &$loadAfter, array $replace): void
     {
         foreach ($loadAfter as &$bundleName) {

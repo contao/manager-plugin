@@ -50,7 +50,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 /**
  * This class has been auto-generated. It will be overwritten at every run of
  * "composer install" or "composer update".
- * 
+ *
  * @see \Contao\ManagerPlugin\Composer\Installer
  */
 %s
@@ -70,10 +70,6 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
      */
     private $disabled = [];
 
-    /**
-     * @param string|null $installedJson
-     * @param array       $plugins
-     */
     public function __construct(string $installedJson = null, array $plugins = null)
     {
         if (null !== $installedJson) {
@@ -86,7 +82,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
     /**
      * Returns all active plugin instances.
      *
-     * @return array
+     * @return array<string,BundlePluginInterface>
      */
     public function getInstances(): array
     {
@@ -96,10 +92,7 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
     /**
      * Returns the active plugin instances of a given type (see class constants).
      *
-     * @param string $type
-     * @param bool   $reverseOrder
-     *
-     * @return array
+     * @return array<string,BundlePluginInterface>
      */
     public function getInstancesOf(string $type, bool $reverseOrder = false): array
     {
@@ -118,20 +111,13 @@ use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
     }
 
     /**
-     * Returns the list of disabled Composer packages.
-     *
-     * @return array
+     * @return string[]
      */
     public function getDisabledPackages(): array
     {
         return $this->disabled;
     }
 
-    /**
-     * Sets the list of disabled Composer packages.
-     *
-     * @param array $packages
-     */
     public function setDisabledPackages(array $packages): void
     {
         $this->disabled = $packages;
@@ -145,20 +131,11 @@ PHP;
      */
     private $filesystem;
 
-    /**
-     * @param Filesystem|null $filesystem
-     */
     public function __construct(Filesystem $filesystem = null)
     {
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 
-    /**
-     * Sets the Contao Manager plugins.
-     *
-     * @param RepositoryInterface $repository
-     * @param IOInterface         $io
-     */
     public function dumpPlugins(RepositoryInterface $repository, IOInterface $io): void
     {
         $plugins = [];
@@ -195,11 +172,6 @@ PHP;
         $this->dumpClass($plugins);
     }
 
-    /**
-     * Dumps the PluginLoader class.
-     *
-     * @param array $plugins
-     */
     private function dumpClass(array $plugins): void
     {
         $load = [];
@@ -212,18 +184,14 @@ PHP;
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla'.'ss '.'PluginLoader', // workaround for regex-based code parsers :-(
-            sprintf("[\n%s\n        ]", implode(",\n", $load))
+            sprintf("[\n%s,\n        ]", implode(",\n", $load))
         );
 
         $this->filesystem->dumpFile(__DIR__.'/../PluginLoader.php', $content);
     }
 
     /**
-     * Orders the plugins.
-     *
-     * @param array $plugins
-     *
-     * @return array
+     * @return array<string,string>
      */
     private function orderPlugins(array $plugins): array
     {

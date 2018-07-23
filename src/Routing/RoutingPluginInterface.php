@@ -21,9 +21,6 @@ interface RoutingPluginInterface
     /**
      * Returns a collection of routes for this bundle.
      *
-     * @param LoaderResolverInterface $resolver
-     * @param KernelInterface         $kernel
-     *
      * @return RouteCollection|null
      */
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel);

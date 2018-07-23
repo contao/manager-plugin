@@ -27,14 +27,12 @@ interface ConfigInterface
     /**
      * Returns the replaces.
      *
-     * @return array
+     * @return string[]
      */
     public function getReplace();
 
     /**
      * Sets the replaces.
-     *
-     * @param array $replace
      *
      * @return $this
      */
@@ -43,14 +41,12 @@ interface ConfigInterface
     /**
      * Returns the "load after" bundles.
      *
-     * @return array
+     * @return string[]
      */
     public function getLoadAfter();
 
     /**
      * Sets the "load after" bundles.
-     *
-     * @param array $loadAfter
      *
      * @return $this
      */
@@ -90,8 +86,6 @@ interface ConfigInterface
 
     /**
      * Returns a bundle instance for this configuration.
-     *
-     * @param KernelInterface $kernel
      *
      * @return BundleInterface
      */

@@ -37,13 +37,9 @@ class BundleLoaderTest extends TestCase
     }
 
     /**
-     * @param array $plugins
-     * @param int   $configCount
-     * @param bool  $development
-     *
      * @dataProvider getBundleConfigs
      */
-    public function testReturnsTheBundleConfigs(array $plugins, $configCount, $development): void
+    public function testReturnsTheBundleConfigs(array $plugins, int $configCount, bool $development): void
     {
         $bundleLoader = new BundleLoader(
             $this->mockPluginLoader($this->atLeastOnce(), $plugins),
@@ -55,9 +51,9 @@ class BundleLoaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<string,BundlePluginInterface[]|int|bool>
      */
-    public function getBundleConfigs()
+    public function getBundleConfigs(): array
     {
         return [
             'Test correctly calls development mode' => [
@@ -171,13 +167,9 @@ class BundleLoaderTest extends TestCase
     }
 
     /**
-     * Mocks the bundle plugin.
-     *
-     * @param array $configs
-     *
      * @return BundlePluginInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockBundlePlugin(array $configs = [])
+    private function mockBundlePlugin(array $configs = []): BundlePluginInterface
     {
         $mock = $this->createMock(BundlePluginInterface::class);
 
@@ -190,14 +182,9 @@ class BundleLoaderTest extends TestCase
     }
 
     /**
-     * Mocks the plugin loader.
-     *
-     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedRecorder $expects
-     * @param array                                                 $plugins
-     *
      * @return PluginLoader|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = [])
+    private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = []): PluginLoader
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
 
@@ -212,14 +199,9 @@ class BundleLoaderTest extends TestCase
     }
 
     /**
-     * Mocks the config resolver factory.
-     *
-     * @param int  $addCount
-     * @param bool $development
-     *
      * @return ConfigResolverFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockConfigResolverFactory($addCount, $development)
+    private function mockConfigResolverFactory(int $addCount, bool $development): ConfigResolverFactory
     {
         $resolver = $this->createMock(ConfigResolverInterface::class);
 

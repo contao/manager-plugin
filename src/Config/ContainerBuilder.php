@@ -28,11 +28,6 @@ class ContainerBuilder extends SymfonyContainerBuilder
      */
     private $managerConfig;
 
-    /**
-     * @param PluginLoader               $pluginLoader
-     * @param array                      $managerConfig
-     * @param ParameterBagInterface|null $parameterBag
-     */
     public function __construct(PluginLoader $pluginLoader, array $managerConfig, ParameterBagInterface $parameterBag = null)
     {
         parent::__construct($parameterBag);
@@ -42,11 +37,9 @@ class ContainerBuilder extends SymfonyContainerBuilder
     }
 
     /**
-     * Gets the manager configuration.
-     *
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getManagerConfig()
+    public function getManagerConfig(): array
     {
         return $this->managerConfig;
     }
@@ -54,7 +47,7 @@ class ContainerBuilder extends SymfonyContainerBuilder
     /**
      * {@inheritdoc}
      */
-    public function getExtensionConfig($name)
+    public function getExtensionConfig($name): array
     {
         $configs = parent::getExtensionConfig($name);
         $plugins = $this->pluginLoader->getInstancesOf(PluginLoader::EXTENSION_PLUGINS);

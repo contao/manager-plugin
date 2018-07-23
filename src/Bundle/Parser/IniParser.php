@@ -26,12 +26,7 @@ class IniParser implements ParserInterface
      */
     private $modulesDir;
 
-    /**
-     * Constructor.
-     *
-     * @param string $modulesDir
-     */
-    public function __construct($modulesDir)
+    public function __construct(string $modulesDir)
     {
         $this->modulesDir = $modulesDir;
     }
@@ -39,7 +34,7 @@ class IniParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function parse($resource, $type = null)
+    public function parse($resource, $type = null): array
     {
         $configs = [];
         $config = new ModuleConfig($resource);
@@ -81,21 +76,17 @@ class IniParser implements ParserInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($resource, $type = null)
+    public function supports($resource, $type = null): bool
     {
-        return 'ini' === $type || is_dir($this->modulesDir.'/'.(string) $resource);
+        return 'ini' === $type || is_dir($this->modulesDir.'/'.$resource);
     }
 
     /**
      * Parses the file and returns the configuration array.
      *
-     * @param string $file The file path
-     *
      * @throws \RuntimeException If the file cannot be decoded
-     *
-     * @return array The configuration array
      */
-    private function parseIniFile($file)
+    private function parseIniFile(string $file): array
     {
         $ini = parse_ini_file($file, true);
 

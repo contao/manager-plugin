@@ -47,9 +47,6 @@ class ConfigResolverTest extends TestCase
     }
 
     /**
-     * @param array $configs
-     * @param array $expectedResult
-     *
      * @dataProvider getBundleConfigs
      */
     public function testAddsTheBundleConfigs(array $configs, array $expectedResult): void
@@ -64,9 +61,9 @@ class ConfigResolverTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<string,BundleConfig[]|array<string,BundleConfig>>
      */
-    public function getBundleConfigs()
+    public function getBundleConfigs(): array
     {
         $config1 = new BundleConfig('name1');
         $config2 = (new BundleConfig('name2'))->setLoadAfter(['name1']);
