@@ -33,14 +33,12 @@ class PluginTest extends TestCase
     public function testDoesNothingOnActivation(): void
     {
         $composer = $this->createMock(Composer::class);
-
         $composer
             ->expects($this->never())
             ->method($this->anything())
         ;
 
         $io = $this->createMock(IOInterface::class);
-
         $io
             ->expects($this->never())
             ->method($this->anything())
@@ -53,15 +51,14 @@ class PluginTest extends TestCase
     {
         $repository = $this->createMock(RepositoryInterface::class);
         $io = $this->createMock(IOInterface::class);
-        $manager = $this->createMock(RepositoryManager::class);
 
+        $manager = $this->createMock(RepositoryManager::class);
         $manager
             ->method('getLocalRepository')
             ->willReturn($repository)
         ;
 
         $config = $this->createMock(Config::class);
-
         $config
             ->method('get')
             ->with('vendor-dir')
@@ -69,7 +66,6 @@ class PluginTest extends TestCase
         ;
 
         $composer = $this->createMock(Composer::class);
-
         $composer
             ->method('getRepositoryManager')
             ->willReturn($manager)
@@ -81,7 +77,6 @@ class PluginTest extends TestCase
         ;
 
         $event = $this->createMock(Event::class);
-
         $event
             ->method('getComposer')
             ->willReturn($composer)
@@ -93,7 +88,6 @@ class PluginTest extends TestCase
         ;
 
         $installer = $this->createMock(Installer::class);
-
         $installer
             ->expects($this->once())
             ->method('dumpPlugins')
@@ -107,8 +101,8 @@ class PluginTest extends TestCase
     public function testLoadsAutoloadFileFromVendor(): void
     {
         $io = $this->createMock(IOInterface::class);
-        $config = $this->createMock(Config::class);
 
+        $config = $this->createMock(Config::class);
         $config
             ->expects($this->once())
             ->method('get')
@@ -117,7 +111,6 @@ class PluginTest extends TestCase
         ;
 
         $composer = $this->createMock(Composer::class);
-
         $composer
             ->expects($this->once())
             ->method('getConfig')
@@ -125,7 +118,6 @@ class PluginTest extends TestCase
         ;
 
         $event = $this->createMock(Event::class);
-
         $event
             ->method('getComposer')
             ->willReturn($composer)

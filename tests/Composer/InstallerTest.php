@@ -37,7 +37,6 @@ class InstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
         $repository = $this->createMock(RepositoryInterface::class);
-
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -48,7 +47,6 @@ class InstallerTest extends TestCase
         ;
 
         $io = $this->createMock(IOInterface::class);
-
         $io
             ->expects($this->exactly(2))
             ->method('write')
@@ -74,7 +72,6 @@ class InstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
         $repository = $this->createMock(RepositoryInterface::class);
-
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -103,13 +100,13 @@ class InstallerTest extends TestCase
     {
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
 
-        $this->getMockBuilder(BundlePluginInterface::class)
+        $this
+            ->getMockBuilder(BundlePluginInterface::class)
             ->setMockClassName('ContaoManagerPlugin')
             ->getMock()
         ;
 
         $repository = $this->createMock(RepositoryInterface::class);
-
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -130,13 +127,46 @@ class InstallerTest extends TestCase
         $installer->dumpPlugins($repository, $io);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testAddsAppPluginIfClassExists(): void
+    {
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/../Fixtures/PluginLoader/Plugin.php';
+
+        $this
+            ->getMockBuilder('App\ContaoManager\Plugin')
+            ->getMock()
+        ;
+
+        $repository = $this->createMock(RepositoryInterface::class);
+        $repository
+            ->expects($this->once())
+            ->method('getPackages')
+            ->willReturn([
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
+            ])
+        ;
+
+        $io = $this->createMock(IOInterface::class);
+
+        $filesystem = $this->mockFilesystemAndCheckDump("
+        \$this->plugins = \$plugins ?: [
+            'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
+            'app' => new \App\ContaoManager\Plugin(),
+        ];");
+
+        $installer = new Installer($filesystem);
+        $installer->dumpPlugins($repository, $io);
+    }
+
     public function testIgnoresAliasPackages(): void
     {
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
         $repository = $this->createMock(RepositoryInterface::class);
-
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -147,7 +177,6 @@ class InstallerTest extends TestCase
         ;
 
         $io = $this->createMock(IOInterface::class);
-
         $io
             ->expects($this->exactly(1))
             ->method('write')
@@ -168,7 +197,6 @@ class InstallerTest extends TestCase
     public function testThrowsExceptionIfPluginClassDoesNotExist(): void
     {
         $repository = $this->createMock(RepositoryInterface::class);
-
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -189,7 +217,6 @@ class InstallerTest extends TestCase
     private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
     {
         $package = $this->createMock($isAlias ? AliasPackage::class : CompletePackage::class);
-
         $package
             ->method('getName')
             ->willReturn($name)
@@ -206,7 +233,6 @@ class InstallerTest extends TestCase
     private function mockFilesystemAndCheckDump(string $match): Filesystem
     {
         $filesystem = $this->createMock(Filesystem::class);
-
         $filesystem
             ->expects($this->once())
             ->method('dumpFile')

@@ -42,7 +42,6 @@ class DelegatingParserTest extends TestCase
     public function testDelegatesTheSupportsCalls(): void
     {
         $parser = $this->createMock(ParserInterface::class);
-
         $parser
             ->method('supports')
             ->willReturn(true)
@@ -56,7 +55,6 @@ class DelegatingParserTest extends TestCase
     public function testDelegatesTheParseCalls(): void
     {
         $parser = $this->createMock(ParserInterface::class);
-
         $parser
             ->method('supports')
             ->willReturn(true)
@@ -87,7 +85,6 @@ class DelegatingParserTest extends TestCase
     public function testDoesNotSupportAnythingIfThereIsNoMatchingParser(): void
     {
         $parser = $this->createMock(ParserInterface::class);
-
         $parser
             ->method('supports')
             ->willReturn(false)
@@ -101,7 +98,6 @@ class DelegatingParserTest extends TestCase
     public function testFailsToParseAResourceIfThereIsNoMatchingParser(): void
     {
         $parser = $this->createMock(ParserInterface::class);
-
         $parser
             ->method('supports')
             ->willReturn(false)

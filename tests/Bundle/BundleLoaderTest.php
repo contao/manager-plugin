@@ -146,7 +146,6 @@ class BundleLoaderTest extends TestCase
         $cacheFile = sys_get_temp_dir().'/'.uniqid('BundleLoader_', true);
 
         $filesystem = $this->createMock(Filesystem::class);
-
         $filesystem
             ->expects($this->once())
             ->method('dumpFile')
@@ -172,7 +171,6 @@ class BundleLoaderTest extends TestCase
     private function mockBundlePlugin(array $configs = []): BundlePluginInterface
     {
         $mock = $this->createMock(BundlePluginInterface::class);
-
         $mock
             ->method('getBundles')
             ->willReturn($configs)
@@ -187,7 +185,6 @@ class BundleLoaderTest extends TestCase
     private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = []): PluginLoader
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
-
         $pluginLoader
             ->expects($expects)
             ->method('getInstancesOf')
@@ -204,7 +201,6 @@ class BundleLoaderTest extends TestCase
     private function mockConfigResolverFactory(int $addCount, bool $development): ConfigResolverFactory
     {
         $resolver = $this->createMock(ConfigResolverInterface::class);
-
         $resolver
             ->expects($this->exactly($addCount))
             ->method('add')
@@ -218,7 +214,6 @@ class BundleLoaderTest extends TestCase
         ;
 
         $factory = $this->createMock(ConfigResolverFactory::class);
-
         $factory
             ->method('create')
             ->willReturn($resolver)

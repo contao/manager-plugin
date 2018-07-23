@@ -104,7 +104,6 @@ class ConfigTest extends TestCase
     public function testReturnsTheBundlePath(): void
     {
         $kernel = $this->createMock(KernelInterface::class);
-
         $kernel
             ->method('getRootDir')
             ->willReturn(__DIR__.'/../../Fixtures/Bundle/Config/app')
@@ -120,7 +119,6 @@ class ConfigTest extends TestCase
     public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid(): void
     {
         $kernel = $this->createMock(KernelInterface::class);
-
         $kernel
             ->method('getRootDir')
             ->willReturn(__DIR__.'/../../Fixtures/Bundle/Config/app')

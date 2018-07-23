@@ -37,7 +37,6 @@ class ContainerBuilderTest extends TestCase
     public function testReturnsTheExtensionConfig(): void
     {
         $plugin = $this->createMock(ExtensionPluginInterface::class);
-
         $plugin
             ->expects($this->once())
             ->method('getExtensionConfig')
@@ -46,7 +45,6 @@ class ContainerBuilderTest extends TestCase
         ;
 
         $extension = $this->createMock(ExtensionInterface::class);
-
         $extension
             ->method('getAlias')
             ->willReturn('foobar')
@@ -65,7 +63,6 @@ class ContainerBuilderTest extends TestCase
     private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = []): PluginLoader
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
-
         $pluginLoader
             ->expects($expects)
             ->method('getInstancesOf')
