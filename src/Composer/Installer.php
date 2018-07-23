@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Contao\ManagerPlugin\Composer;
 
+use App\ContaoManager\Plugin;
 use Composer\IO\IOInterface;
 use Composer\Package\CompletePackage;
 use Composer\Repository\RepositoryInterface;
@@ -185,10 +186,10 @@ PHP;
         $plugins = $this->orderPlugins($plugins);
 
         // Instantiate a global plugin to load AppBundle or other customizations
-        $appPlugin = '\ContaoManagerPlugin';
-
-        if (class_exists($appPlugin)) {
-            $plugins['app'] = new $appPlugin();
+        if (class_exists(Plugin::class)) {
+            $plugins['app'] = new Plugin();
+        } elseif (class_exists(\ContaoManagerPlugin::class)) {
+            $plugins['app'] = new \ContaoManagerPlugin();
         }
 
         $this->dumpClass($plugins);
