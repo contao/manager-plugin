@@ -242,7 +242,7 @@ PHP;
             foreach (array_keys($extra['contao-manager-plugin']) as $name) {
                 if (!isset($provide[$name]) && $package->getName() !== $name) {
                     throw new \RuntimeException(sprintf(
-                        'The package "%s" is not provided by "%s"', $name, $package->getName())
+                        'The package "%s" is not provided by "%s".', $name, $package->getName())
                     );
                 }
             }

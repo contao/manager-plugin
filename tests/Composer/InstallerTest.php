@@ -203,7 +203,7 @@ class InstallerTest extends TestCase
         $installer->dumpPlugins($repository, $io);
     }
 
-    public function testThrowsExceptionIfPluginClassDoesNotExist(): void
+    public function testFailsIfThePluginClassDoesNotExist(): void
     {
         $repository = $this->createMock(RepositoryInterface::class);
         $repository
@@ -220,6 +220,76 @@ class InstallerTest extends TestCase
         $this->expectExceptionMessage('The plugin class "\Non\Existing\Plugin" was not found');
 
         $installer = new Installer();
+        $installer->dumpPlugins($repository, $io);
+    }
+
+    public function testFailsIfAnAdditionalPackageIsNotProvided(): void
+    {
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooConsolePlugin.php';
+
+        $bundles = [
+            'foo/config-bundle' => FooConfigPlugin::class,
+            'foo/console-bundle' => FooConsolePlugin::class,
+        ];
+
+        $repository = $this->createMock(RepositoryInterface::class);
+        $repository
+            ->expects($this->once())
+            ->method('getPackages')
+            ->willReturn([
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
+                $this->mockMultiPackage('foo/config-bundle', $bundles, []),
+            ])
+        ;
+
+        $io = $this->createMock(IOInterface::class);
+        $io
+            ->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
+            )
+        ;
+
+        $installer = new Installer();
+
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage('The package "foo/console-bundle" is not provided by "foo/config-bundle".');
+
+        $installer->dumpPlugins($repository, $io);
+    }
+
+    public function testFailsIfAPackageIsRegisteredTwice(): void
+    {
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
+
+        $repository = $this->createMock(RepositoryInterface::class);
+        $repository
+            ->expects($this->once())
+            ->method('getPackages')
+            ->willReturn([
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
+                $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
+            ])
+        ;
+
+        $io = $this->createMock(IOInterface::class);
+        $io
+            ->expects($this->exactly(1))
+            ->method('write')
+            ->withConsecutive(
+                [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
+            )
+        ;
+
+        $installer = new Installer();
+
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage('The package "foo/bar-bundle" cannot be registered twice.');
+
         $installer->dumpPlugins($repository, $io);
     }
 
