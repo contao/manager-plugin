@@ -181,6 +181,11 @@ PHP;
             $load[] = "            '$package' => new \\$class()";
         }
 
+        // Do not dump the file if there are no packages
+        if (empty($load)) {
+            return;
+        }
+
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla'.'ss '.'PluginLoader', // workaround for regex-based code parsers :-(
