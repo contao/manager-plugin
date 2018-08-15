@@ -145,18 +145,18 @@ PHP;
                 continue;
             }
 
-            $extra = $package->getExtra();
-
-            if (isset($extra['contao-manager-plugin'])) {
-                if (!class_exists($extra['contao-manager-plugin'])) {
-                    throw new \RuntimeException(
-                        sprintf('Plugin class "%s" not found', $extra['contao-manager-plugin'])
-                    );
+            foreach ($this->getPluginClasses($package) as $name => $class) {
+                if (!class_exists($class)) {
+                    throw new \RuntimeException(sprintf('The plugin class "%s" was not found.', $class));
                 }
 
-                $io->write(' - Added plugin for '.$package->getName(), true, IOInterface::VERY_VERBOSE);
+                if (isset($plugins[$name])) {
+                    throw new \RuntimeException(sprintf('The package "%s" cannot be registered twice.', $name));
+                }
 
-                $plugins[$package->getName()] = new $extra['contao-manager-plugin']();
+                $io->write(' - Added plugin for '.$name, true, IOInterface::VERY_VERBOSE);
+
+                $plugins[$name] = new $class();
             }
         }
 
@@ -219,5 +219,37 @@ PHP;
         }
 
         return $ordered;
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    private function getPluginClasses(CompletePackage $package): array
+    {
+        $extra = $package->getExtra();
+
+        if (!isset($extra['contao-manager-plugin'])) {
+            return [];
+        }
+
+        if (\is_string($extra['contao-manager-plugin'])) {
+            return [$package->getName() => $extra['contao-manager-plugin']];
+        }
+
+        if (\is_array($extra['contao-manager-plugin'])) {
+            $provide = $package->getProvides();
+
+            foreach (array_keys($extra['contao-manager-plugin']) as $name) {
+                if (!isset($provide[$name]) && $package->getName() !== $name) {
+                    throw new \RuntimeException(sprintf(
+                        'The package "%s" is not provided by "%s"', $name, $package->getName())
+                    );
+                }
+            }
+
+            return $extra['contao-manager-plugin'];
+        }
+
+        throw new \RuntimeException('Invalid value for "extra.contao-manager-plugin".');
     }
 }

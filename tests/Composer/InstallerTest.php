@@ -21,6 +21,7 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Composer\Installer;
 use Foo\Bar\FooBarPlugin;
 use Foo\Config\FooConfigPlugin;
+use Foo\Console\FooConsolePlugin;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -35,6 +36,12 @@ class InstallerTest extends TestCase
     {
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
+        include_once __DIR__.'/../Fixtures/PluginLoader/FooConsolePlugin.php';
+
+        $bundles = [
+            'foo/config-bundle' => FooConfigPlugin::class,
+            'foo/console-bundle' => FooConsolePlugin::class,
+        ];
 
         $repository = $this->createMock(RepositoryInterface::class);
         $repository
@@ -42,17 +49,18 @@ class InstallerTest extends TestCase
             ->method('getPackages')
             ->willReturn([
                 $this->mockPackage('foo/bar-bundle', FooBarPlugin::class),
-                $this->mockPackage('foo/config-bundle', FooConfigPlugin::class),
+                $this->mockMultiPackage('foo/config-bundle', $bundles, ['foo/console-bundle' => 'self.version']),
             ])
         ;
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE],
-                [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE]
+                [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE],
+                [' - Added plugin for foo/console-bundle', true, IOInterface::VERY_VERBOSE]
             )
         ;
 
@@ -60,6 +68,7 @@ class InstallerTest extends TestCase
         \$this->plugins = \$plugins ?: [
             'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
             'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
+            'foo/console-bundle' => new \Foo\Console\FooConsolePlugin(),
         ];");
 
         $installer = new Installer($filesystem);
@@ -208,7 +217,7 @@ class InstallerTest extends TestCase
         $io = $this->createMock(IOInterface::class);
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Plugin class "\Non\Existing\Plugin" not found');
+        $this->expectExceptionMessage('The plugin class "\Non\Existing\Plugin" was not found');
 
         $installer = new Installer();
         $installer->dumpPlugins($repository, $io);
@@ -225,6 +234,27 @@ class InstallerTest extends TestCase
         $package
             ->method('getExtra')
             ->willReturn(['contao-manager-plugin' => $plugin])
+        ;
+
+        return $package;
+    }
+
+    private function mockMultiPackage(string $name, array $plugin, array $provide): PackageInterface
+    {
+        $package = $this->createMock(CompletePackage::class);
+        $package
+            ->method('getName')
+            ->willReturn($name)
+        ;
+
+        $package
+            ->method('getExtra')
+            ->willReturn(['contao-manager-plugin' => $plugin])
+        ;
+
+        $package
+            ->method('getProvides')
+            ->willReturn($provide)
         ;
 
         return $package;
