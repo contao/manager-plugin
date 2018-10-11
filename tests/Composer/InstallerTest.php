@@ -187,7 +187,7 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE]
@@ -246,7 +246,7 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
@@ -278,7 +278,7 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
