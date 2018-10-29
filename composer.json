@@ -16,7 +16,8 @@
         "symfony/dependency-injection": "^3.3 || ^4.0",
         "symfony/filesystem": "^3.3 || ^4.0",
         "symfony/http-kernel": "^3.3 || ^4.0",
-        "symfony/routing": "^3.3 || ^4.0"
+        "symfony/routing": "^3.3 || ^4.0",
+        "symfony/event-dispatcher": "^3.3 || ^4.0"
     },
     "require-dev": {
         "composer/composer": "^1.1",
