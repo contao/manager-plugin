@@ -187,7 +187,7 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE]
@@ -223,7 +223,7 @@ class InstallerTest extends TestCase
         $installer->dumpPlugins($repository, $io);
     }
 
-    public function testFailsIfAnAdditionalPackageIsNotProvided(): void
+    public function testFailsIfAnAdditionalPackageIsNotReplaced(): void
     {
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
@@ -246,7 +246,7 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
@@ -256,7 +256,7 @@ class InstallerTest extends TestCase
         $installer = new Installer();
 
         $this->expectException('RuntimeException');
-        $this->expectExceptionMessage('The package "foo/console-bundle" is not provided by "foo/config-bundle".');
+        $this->expectExceptionMessage('The package "foo/console-bundle" is not replaced by "foo/config-bundle".');
 
         $installer->dumpPlugins($repository, $io);
     }
@@ -278,7 +278,7 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('write')
             ->withConsecutive(
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
@@ -295,7 +295,12 @@ class InstallerTest extends TestCase
 
     private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
     {
-        $package = $this->createMock($isAlias ? AliasPackage::class : CompletePackage::class);
+        if ($isAlias) {
+            $package = $this->createMock(AliasPackage::class);
+        } else {
+            $package = $this->createMock(CompletePackage::class);
+        }
+
         $package
             ->method('getName')
             ->willReturn($name)
@@ -309,7 +314,7 @@ class InstallerTest extends TestCase
         return $package;
     }
 
-    private function mockMultiPackage(string $name, array $plugin, array $provide): PackageInterface
+    private function mockMultiPackage(string $name, array $plugin, array $replaces): PackageInterface
     {
         $package = $this->createMock(CompletePackage::class);
         $package
@@ -323,8 +328,8 @@ class InstallerTest extends TestCase
         ;
 
         $package
-            ->method('getProvides')
-            ->willReturn($provide)
+            ->method('getReplaces')
+            ->willReturn($replaces)
         ;
 
         return $package;

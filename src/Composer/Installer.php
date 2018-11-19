@@ -181,6 +181,11 @@ PHP;
             $load[] = "            '$package' => new \\$class()";
         }
 
+        // Do not dump the file if there are no packages
+        if (empty($load)) {
+            return;
+        }
+
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla'.'ss '.'PluginLoader', // workaround for regex-based code parsers :-(
@@ -237,12 +242,12 @@ PHP;
         }
 
         if (\is_array($extra['contao-manager-plugin'])) {
-            $provide = $package->getProvides();
+            $replaces = $package->getReplaces();
 
             foreach (array_keys($extra['contao-manager-plugin']) as $name) {
-                if (!isset($provide[$name]) && $package->getName() !== $name) {
+                if (!isset($replaces[$name]) && $package->getName() !== $name) {
                     throw new \RuntimeException(sprintf(
-                        'The package "%s" is not provided by "%s".', $name, $package->getName())
+                        'The package "%s" is not replaced by "%s".', $name, $package->getName())
                     );
                 }
             }
