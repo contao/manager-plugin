@@ -36,7 +36,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     public function activate(Composer $composer, IOInterface $io): void
     {
-        // Nothing to do here, as all features are provided through event listeners
+        $this->addArtifactRepository($composer);
     }
 
     public function dumpPlugins(Event $event): void
@@ -67,5 +67,16 @@ class Plugin implements PluginInterface, EventSubscriberInterface
             ScriptEvents::POST_INSTALL_CMD => 'dumpPlugins',
             ScriptEvents::POST_UPDATE_CMD => 'dumpPlugins',
         ];
+    }
+
+    private function addArtifactRepository(Composer $composer): void
+    {
+        $packagesDir = \dirname($composer->getConfig()->get('vendor-dir')).'/contao-manager/packages';
+
+        if (is_dir($packagesDir)) {
+            $composer->getRepositoryManager()->prependRepository(
+                $composer->getRepositoryManager()->createRepository('artifact', [])
+            );
+        }
     }
 }
