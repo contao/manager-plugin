@@ -75,7 +75,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         if (is_dir($packagesDir)) {
             $composer->getRepositoryManager()->prependRepository(
-                $composer->getRepositoryManager()->createRepository('artifact', [])
+                $composer->getRepositoryManager()->createRepository('artifact', ['url' => $packagesDir])
             );
         }
     }
