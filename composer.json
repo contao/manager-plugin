@@ -31,7 +31,10 @@
         "branch-alias": {
             "dev-master": "2.7.x-dev"
         },
-        "class": "Contao\\ManagerPlugin\\Composer\\Plugin"
+        "class": [
+            "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
+            "Contao\\ManagerPlugin\\Composer\\ManagerPluginsInstaller"
+        ]
     },
     "autoload": {
         "psr-4": {

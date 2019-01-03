@@ -12,24 +12,87 @@ declare(strict_types=1);
 
 namespace Contao\ManagerPlugin\Tests\Composer;
 
+use Composer\Composer;
+use Composer\Config;
 use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
 use Composer\Package\PackageInterface;
 use Composer\Repository\RepositoryInterface;
+use Composer\Repository\RepositoryManager;
+use Composer\Script\Event;
+use Composer\Script\ScriptEvents;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
-use Contao\ManagerPlugin\Composer\Installer;
+use Contao\ManagerPlugin\Composer\ManagerPluginsInstaller;
 use Foo\Bar\FooBarPlugin;
 use Foo\Config\FooConfigPlugin;
 use Foo\Console\FooConsolePlugin;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-class InstallerTest extends TestCase
+class ManagerPluginsInstallerTest extends TestCase
 {
-    public function testCanBeInstantiated(): void
+    public function testDoesNothingOnActivation(): void
     {
-        $this->assertInstanceOf('Contao\ManagerPlugin\Composer\Installer', new Installer());
+        $composer = $this->createMock(Composer::class);
+        $composer
+            ->expects($this->never())
+            ->method($this->anything())
+        ;
+
+        $io = $this->createMock(IOInterface::class);
+        $io
+            ->expects($this->never())
+            ->method($this->anything())
+        ;
+
+        (new ManagerPluginsInstaller())->activate($composer, $io);
+    }
+
+    public function testLoadsAutoloadFileFromVendor(): void
+    {
+        $io = $this->createMock(IOInterface::class);
+
+        $config = $this->createMock(Config::class);
+        $config
+            ->expects($this->once())
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn(__DIR__.'/../Fixtures/Composer/test-vendor')
+        ;
+
+        $composer = $this->createMock(Composer::class);
+        $composer
+            ->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $event = $this->createMock(Event::class);
+        $event
+            ->method('getComposer')
+            ->willReturn($composer)
+        ;
+
+        $event
+            ->method('getIO')
+            ->willReturn($io)
+        ;
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('autoload.php successfully loaded');
+
+        (new ManagerPluginsInstaller())->dumpPlugins($event);
+    }
+
+    public function testSubscribesToInstallAndUpdateEvent(): void
+    {
+        $events = ManagerPluginsInstaller::getSubscribedEvents();
+
+        $this->assertArrayHasKey(ScriptEvents::POST_INSTALL_CMD, $events);
+        $this->assertArrayHasKey(ScriptEvents::POST_UPDATE_CMD, $events);
+        $this->assertTrue(method_exists(ManagerPluginsInstaller::class, $events[ScriptEvents::POST_INSTALL_CMD]));
+        $this->assertTrue(method_exists(ManagerPluginsInstaller::class, $events[ScriptEvents::POST_UPDATE_CMD]));
     }
 
     public function testDumpsPluginsFromRepository(): void
@@ -55,12 +118,14 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(5))
             ->method('write')
             ->withConsecutive(
+                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE],
                 [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE],
-                [' - Added plugin for foo/console-bundle', true, IOInterface::VERY_VERBOSE]
+                [' - Added plugin for foo/console-bundle', true, IOInterface::VERY_VERBOSE],
+                ['<info>contao/manager-plugin:</info> ...done generating plugin class']
             )
         ;
 
@@ -71,8 +136,8 @@ class InstallerTest extends TestCase
             'foo/console-bundle' => new \Foo\Console\FooConsolePlugin(),
         ];");
 
-        $installer = new Installer($filesystem);
-        $installer->dumpPlugins($repository, $io);
+        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     public function testAddsManagerPluginAtTop(): void
@@ -98,8 +163,8 @@ class InstallerTest extends TestCase
             'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
         ];");
 
-        $installer = new Installer($filesystem);
-        $installer->dumpPlugins($repository, $io);
+        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     /**
@@ -132,8 +197,8 @@ class InstallerTest extends TestCase
             'app' => new \ContaoManagerPlugin(),
         ];");
 
-        $installer = new Installer($filesystem);
-        $installer->dumpPlugins($repository, $io);
+        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     /**
@@ -166,8 +231,8 @@ class InstallerTest extends TestCase
             'app' => new \App\ContaoManager\Plugin(),
         ];");
 
-        $installer = new Installer($filesystem);
-        $installer->dumpPlugins($repository, $io);
+        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     public function testIgnoresAliasPackages(): void
@@ -187,10 +252,12 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->once())
+            ->expects($this->exactly(3))
             ->method('write')
             ->withConsecutive(
-                [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE]
+                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
+                [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE],
+                ['<info>contao/manager-plugin:</info> ...done generating plugin class']
             )
         ;
 
@@ -199,8 +266,8 @@ class InstallerTest extends TestCase
             'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
         ];");
 
-        $installer = new Installer($filesystem);
-        $installer->dumpPlugins($repository, $io);
+        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     public function testFailsIfThePluginClassDoesNotExist(): void
@@ -219,8 +286,8 @@ class InstallerTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The plugin class "\Non\Existing\Plugin" was not found');
 
-        $installer = new Installer();
-        $installer->dumpPlugins($repository, $io);
+        $installer = new ManagerPluginsInstaller();
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     public function testFailsIfAnAdditionalPackageIsNotReplaced(): void
@@ -246,19 +313,20 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
+                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
             )
         ;
 
-        $installer = new Installer();
+        $installer = new ManagerPluginsInstaller();
 
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('The package "foo/console-bundle" is not replaced by "foo/config-bundle".');
 
-        $installer->dumpPlugins($repository, $io);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     public function testFailsIfAPackageIsRegisteredTwice(): void
@@ -278,19 +346,20 @@ class InstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
         $io
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
+                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
             )
         ;
 
-        $installer = new Installer();
+        $installer = new ManagerPluginsInstaller();
 
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('The package "foo/bar-bundle" cannot be registered twice.');
 
-        $installer->dumpPlugins($repository, $io);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
     private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
@@ -352,5 +421,47 @@ class InstallerTest extends TestCase
         ;
 
         return $filesystem;
+    }
+
+    private function mockEventWithRepositoryAndIO(RepositoryInterface $repository, IOInterface $io): Event
+    {
+        $config = $this->createMock(Config::class);
+        $config
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn(__DIR__.'/../Fixtures/Composer/null-vendor')
+        ;
+
+        $repositoryManager = $this->createMock(RepositoryManager::class);
+        $repositoryManager
+            ->method('getLocalRepository')
+            ->willReturn($repository)
+        ;
+
+        $composer = $this->createMock(Composer::class);
+
+        $composer
+            ->method('getRepositoryManager')
+            ->willReturn($repositoryManager)
+        ;
+
+        $composer
+            ->method('getConfig')
+            ->willReturn($config)
+        ;
+
+        $event = $this->createMock(Event::class);
+
+        $event
+            ->method('getComposer')
+            ->willReturn($composer)
+        ;
+
+        $event
+            ->method('getIO')
+            ->willReturn($io)
+        ;
+
+        return $event;
     }
 }

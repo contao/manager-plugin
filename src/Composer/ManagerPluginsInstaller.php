@@ -13,14 +13,19 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use App\ContaoManager\Plugin;
+use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
 use Composer\Package\CompletePackage;
+use Composer\Plugin\PluginInterface;
 use Composer\Repository\RepositoryInterface;
+use Composer\Script\Event;
+use Composer\Script\ScriptEvents;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Installer
+class ManagerPluginsInstaller implements PluginInterface, EventSubscriberInterface
 {
     use DependencyResolverTrait;
 
@@ -136,7 +141,45 @@ PHP;
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 
-    public function dumpPlugins(RepositoryInterface $repository, IOInterface $io): void
+    /**
+     * {@inheritdoc}
+     */
+    public function activate(Composer $composer, IOInterface $io): void
+    {
+        // Nothing to do here, as all features are provided through event listeners
+    }
+
+    public function dumpPlugins(Event $event): void
+    {
+        $io = $event->getIO();
+
+        if (!file_exists(__DIR__.'/../PluginLoader.php')) {
+            $io->write('<info>contao/manager-plugin:</info> Class not found (probably scheduled for removal); generation of plugin class skipped.');
+
+            return;
+        }
+
+        $io->write('<info>contao/manager-plugin:</info> Generating plugin class...');
+
+        // Require the autoload.php file so the Plugin classes are loaded
+        require $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
+
+        $this->doDumpPlugins($event->getComposer()->getRepositoryManager()->getLocalRepository(), $io);
+        $io->write('<info>contao/manager-plugin:</info> ...done generating plugin class');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            ScriptEvents::POST_INSTALL_CMD => 'dumpPlugins',
+            ScriptEvents::POST_UPDATE_CMD => 'dumpPlugins',
+        ];
+    }
+
+    private function doDumpPlugins(RepositoryInterface $repository, IOInterface $io): void
     {
         $plugins = [];
 
