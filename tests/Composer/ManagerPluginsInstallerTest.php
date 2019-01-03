@@ -140,6 +140,32 @@ class ManagerPluginsInstallerTest extends TestCase
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
+    public function testDumpsEmptyPluginsWithoutPackages(): void
+    {
+        $repository = $this->createMock(RepositoryInterface::class);
+        $repository
+            ->expects($this->once())
+            ->method('getPackages')
+            ->willReturn([])
+        ;
+
+        $io = $this->createMock(IOInterface::class);
+        $io
+            ->expects($this->exactly(2))
+            ->method('write')
+            ->withConsecutive(
+                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
+                ['<info>contao/manager-plugin:</info> ...done generating plugin class']
+            )
+        ;
+
+        $filesystem = $this->mockFilesystemAndCheckDump('
+        $this->plugins = $plugins ?: [];');
+
+        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
+    }
+
     public function testAddsManagerPluginAtTop(): void
     {
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';

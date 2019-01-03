@@ -224,15 +224,17 @@ PHP;
             $load[] = "            '$package' => new \\$class()";
         }
 
-        // Do not dump the file if there are no packages
+        // Dump empty list if there are no packages
         if (empty($load)) {
-            return;
+            $pluginList = '[]';
+        } else {
+            $pluginList = sprintf("[\n%s,\n        ]", implode(",\n", $load));
         }
 
         $content = sprintf(
             static::$generatedClassTemplate,
             'cla'.'ss '.'PluginLoader', // workaround for regex-based code parsers :-(
-            sprintf("[\n%s,\n        ]", implode(",\n", $load))
+            $pluginList
         );
 
         $this->filesystem->dumpFile(__DIR__.'/../PluginLoader.php', $content);
