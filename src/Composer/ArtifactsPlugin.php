@@ -61,7 +61,7 @@ class ArtifactsPlugin implements PluginInterface
             $data = $this->getComposerInformation($package);
 
             if (null !== $data) {
-                $config->merge($data);
+                $config->merge(['repositories' => $data['repositories'] ?? []]);
             }
         }
     }
