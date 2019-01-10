@@ -8,13 +8,5 @@
             "type": "vcs",
             "url": "https://example.org/"
         }
-    ],
-    "config": {
-        "http-basic": {
-            "example.org": {
-                "username": "foo",
-                "password": "bar"
-            }
-        }
-    }
+    ]
 }
