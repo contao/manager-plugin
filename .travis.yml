@@ -1,37 +1,34 @@
 language: php
-
-git:
-  depth: 1
+dist: xenial
 
 cache:
   directories:
     - $HOME/.composer/cache
 
-sudo: false
-
 env:
   global:
     - COMPOSER_ALLOW_XDEBUG=0
-    - COMPOSER_ROOT_VERSION='2.5.0'
+    - COMPOSER_ROOT_VERSION='2.7.0'
 
 matrix:
   include:
     # Latest dependencies with all PHP versions
     - php: 7.1
     - php: 7.2
+    - php: 7.3
 
     # Ignore the platform requirements for the upcoming PHP version
     - php: nightly
       env: COMPOSER_FLAGS='--ignore-platform-reqs'
 
     # Generate the coverage with the latest PHP version
-    - php: 7.2
+    - php: 7.3
       env: COVERAGE='--coverage-clover build/logs/clover.xml'
 
     # Lowest dependencies with the oldest and latest PHP versions
     - php: 7.1
       env: COMPOSER_FLAGS='--prefer-lowest --prefer-stable' SYMFONY_DEPRECATIONS_HELPER='weak_vendors'
-    - php: 7.2
+    - php: 7.3
       env: COMPOSER_FLAGS='--prefer-lowest --prefer-stable' SYMFONY_DEPRECATIONS_HELPER='weak_vendors'
   allow_failures:
     - php: nightly

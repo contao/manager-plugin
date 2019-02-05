@@ -90,17 +90,17 @@ class ArtifactsPlugin implements PluginInterface
         $zip = new \ZipArchive();
         $zip->open($package->getDistUrl());
 
-        if (0 == $zip->numFiles) {
+        if (!$zip->numFiles) {
             return null;
         }
 
         $foundFileIndex = $this->locateFile($zip, 'composer.json');
+
         if (false === $foundFileIndex) {
             return null;
         }
 
         $configurationFileName = $zip->getNameIndex($foundFileIndex);
-
         $composerFile = "zip://{$package->getDistUrl()}#$configurationFileName";
         $json = file_get_contents($composerFile);
 
@@ -115,27 +115,29 @@ class ArtifactsPlugin implements PluginInterface
         $indexOfShortestMatch = false;
         $lengthOfShortestMatch = -1;
 
-        for ($i = 0; $i < $zip->numFiles; $i++) {
+        for ($i = 0; $i < $zip->numFiles; ++$i) {
             $stat = $zip->statIndex($i);
-            if (strcmp(basename($stat['name']), $filename) === 0) {
-                $directoryName = dirname($stat['name']);
-                if ($directoryName === '.') {
-                    //if composer.json is in root directory
-                    //it has to be the one to use.
+
+            if (0 === strcmp(basename($stat['name']), $filename)) {
+                $directoryName = \dirname($stat['name']);
+
+                if ('.' === $directoryName) {
+                    // If composer.json is in root directory, it has to be the one to use
                     return $i;
                 }
 
-                if (strpos($directoryName, '\\') !== false ||
-                    strpos($directoryName, '/') !== false) {
-                    //composer.json files below first directory are rejected
+                if (false !== strpos($directoryName, '\\') || false !== strpos($directoryName, '/')) {
+                    // composer.json files below first directory are rejected
                     continue;
                 }
 
-                $length = strlen($stat['name']);
-                if ($indexOfShortestMatch === false || $length < $lengthOfShortestMatch) {
-                    //Check it's not a directory.
+                $length = \strlen($stat['name']);
+
+                if (false === $indexOfShortestMatch || $length < $lengthOfShortestMatch) {
+                    // Check it's not a directory
                     $contents = $zip->getFromIndex($i);
-                    if ($contents !== false) {
+
+                    if (false !== $contents) {
                         $indexOfShortestMatch = $i;
                         $lengthOfShortestMatch = $length;
                     }
