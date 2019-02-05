@@ -35,12 +35,20 @@ class ArtifactsPlugin implements PluginInterface
 
         $repository = $this->addArtifactRepository($composer, $packagesDir);
 
+        if (null === $repository) {
+            return;
+        }
+
         $this->registerProviders($repository, $composer);
     }
 
-    private function addArtifactRepository(Composer $composer, string $repositoryUrl): RepositoryInterface
+    private function addArtifactRepository(Composer $composer, string $repositoryUrl): ?RepositoryInterface
     {
         $repository = $composer->getRepositoryManager()->createRepository('artifact', ['url' => $repositoryUrl]);
+
+        if (empty($repository->getPackages())) {
+            return null;
+        }
 
         $composer->getRepositoryManager()->addRepository($repository);
         $composer->getConfig()->merge(['repositories' => [['type' => 'artifact', 'url' => $repositoryUrl]]]);
