@@ -29,7 +29,7 @@ class ArtifactsPlugin implements PluginInterface
     {
         $packagesDir = $composer->getConfig()->get('data-dir').'/packages';
 
-        if (!is_dir($packagesDir)) {
+        if (!is_dir($packagesDir) || !class_exists(\ZipArchive::class)) {
             return;
         }
 
