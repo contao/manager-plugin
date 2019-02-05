@@ -19,6 +19,7 @@
         "symfony/routing": "^3.3 || ^4.0"
     },
     "require-dev": {
+        "ext-zip": "*",
         "composer/composer": "^1.1",
         "contao/core-bundle": "^4.5",
         "friendsofphp/php-cs-fixer": "^2.12",

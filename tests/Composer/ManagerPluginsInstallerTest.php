@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Contao\ManagerPlugin\Tests\Composer;
 
+use App\ContaoManager\Plugin;
 use Composer\Composer;
 use Composer\Config;
 use Composer\IO\IOInterface;
@@ -27,6 +28,7 @@ use Contao\ManagerPlugin\Composer\ManagerPluginsInstaller;
 use Foo\Bar\FooBarPlugin;
 use Foo\Config\FooConfigPlugin;
 use Foo\Console\FooConsolePlugin;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -51,8 +53,6 @@ class ManagerPluginsInstallerTest extends TestCase
 
     public function testLoadsAutoloadFileFromVendor(): void
     {
-        $io = $this->createMock(IOInterface::class);
-
         $config = $this->createMock(Config::class);
         $config
             ->expects($this->once())
@@ -76,7 +76,7 @@ class ManagerPluginsInstallerTest extends TestCase
 
         $event
             ->method('getIO')
-            ->willReturn($io)
+            ->willReturn($this->createMock(IOInterface::class))
         ;
 
         $this->expectException(\RuntimeException::class);
@@ -131,9 +131,9 @@ class ManagerPluginsInstallerTest extends TestCase
 
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
-            'foo/console-bundle' => new \Foo\Console\FooConsolePlugin(),
+            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+            'foo/console-bundle' => new \\Foo\\Console\\FooConsolePlugin(),
         ];");
 
         $installer = new ManagerPluginsInstaller($filesystem);
@@ -185,8 +185,8 @@ class ManagerPluginsInstallerTest extends TestCase
 
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
-            'contao/manager-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
+            'contao/manager-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
         ];");
 
         $installer = new ManagerPluginsInstaller($filesystem);
@@ -219,8 +219,8 @@ class ManagerPluginsInstallerTest extends TestCase
 
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'app' => new \ContaoManagerPlugin(),
+            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+            'app' => new \\ContaoManagerPlugin(),
         ];");
 
         $installer = new ManagerPluginsInstaller($filesystem);
@@ -236,7 +236,7 @@ class ManagerPluginsInstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/Plugin.php';
 
         $this
-            ->getMockBuilder('App\ContaoManager\Plugin')
+            ->getMockBuilder(Plugin::class)
             ->getMock()
         ;
 
@@ -253,8 +253,8 @@ class ManagerPluginsInstallerTest extends TestCase
 
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \Foo\Bar\FooBarPlugin(),
-            'app' => new \App\ContaoManager\Plugin(),
+            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+            'app' => new \\App\\ContaoManager\\Plugin(),
         ];");
 
         $installer = new ManagerPluginsInstaller($filesystem);
@@ -289,7 +289,7 @@ class ManagerPluginsInstallerTest extends TestCase
 
         $filesystem = $this->mockFilesystemAndCheckDump("
         \$this->plugins = \$plugins ?: [
-            'foo/config-bundle' => new \Foo\Config\FooConfigPlugin(),
+            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
         ];");
 
         $installer = new ManagerPluginsInstaller($filesystem);
@@ -388,6 +388,9 @@ class ManagerPluginsInstallerTest extends TestCase
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
+    /**
+     * @return PackageInterface|MockObject
+     */
     private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
     {
         if ($isAlias) {
@@ -409,6 +412,9 @@ class ManagerPluginsInstallerTest extends TestCase
         return $package;
     }
 
+    /**
+     * @return PackageInterface|MockObject
+     */
     private function mockMultiPackage(string $name, array $plugin, array $replaces): PackageInterface
     {
         $package = $this->createMock(CompletePackage::class);
@@ -430,6 +436,9 @@ class ManagerPluginsInstallerTest extends TestCase
         return $package;
     }
 
+    /**
+     * @return Filesystem|MockObject
+     */
     private function mockFilesystemAndCheckDump(string $match): Filesystem
     {
         $filesystem = $this->createMock(Filesystem::class);
@@ -449,6 +458,9 @@ class ManagerPluginsInstallerTest extends TestCase
         return $filesystem;
     }
 
+    /**
+     * @return Event|MockObject
+     */
     private function mockEventWithRepositoryAndIO(RepositoryInterface $repository, IOInterface $io): Event
     {
         $config = $this->createMock(Config::class);
@@ -465,7 +477,6 @@ class ManagerPluginsInstallerTest extends TestCase
         ;
 
         $composer = $this->createMock(Composer::class);
-
         $composer
             ->method('getRepositoryManager')
             ->willReturn($repositoryManager)
@@ -477,7 +488,6 @@ class ManagerPluginsInstallerTest extends TestCase
         ;
 
         $event = $this->createMock(Event::class);
-
         $event
             ->method('getComposer')
             ->willReturn($composer)

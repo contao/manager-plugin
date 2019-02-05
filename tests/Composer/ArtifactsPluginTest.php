@@ -20,11 +20,12 @@ use Composer\Package\RootPackageInterface;
 use Composer\Repository\RepositoryInterface;
 use Composer\Repository\RepositoryManager;
 use Contao\ManagerPlugin\Composer\ArtifactsPlugin;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ArtifactsPluginTest extends TestCase
 {
-    public function testAddsArtifactsRepository()
+    public function testAddsArtifactsRepository(): void
     {
         $repository = $this->createMock(RepositoryInterface::class);
         $repository
@@ -33,7 +34,6 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $repositoryManager = $this->createMock(RepositoryManager::class);
-
         $repositoryManager
             ->expects($this->once())
             ->method('createRepository')
@@ -54,10 +54,9 @@ class ArtifactsPluginTest extends TestCase
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
-    public function testRegistersProviders()
+    public function testRegistersProviders(): void
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
-
         $config
             ->expects($this->once())
             ->method('merge')
@@ -74,10 +73,9 @@ class ArtifactsPluginTest extends TestCase
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
-    public function testDoesNotRegisterNotRequiredProviders()
+    public function testDoesNotRegisterNotRequiredProviders(): void
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
-
         $config
             ->expects($this->never())
             ->method('merge')
@@ -86,18 +84,16 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage('foo/bar', 'contao-provider')],
-            []
+            [$this->mockPackage('foo/bar', 'contao-provider')]
         );
 
         $plugin = new ArtifactsPlugin();
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
-    public function testDoesNotRegisterNonProviderPackages()
+    public function testDoesNotRegisterNonProviderPackages(): void
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
-
         $config
             ->expects($this->never())
             ->method('merge')
@@ -114,13 +110,11 @@ class ArtifactsPluginTest extends TestCase
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
-    public function testDoesNothingWithoutPackagesDir()
+    public function testDoesNothingWithoutPackagesDir(): void
     {
-        $io = $this->createMock(IOInterface::class);
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/null-data');
 
         $composer = $this->createMock(Composer::class);
-
         $composer
             ->method('getConfig')
             ->willReturn($config)
@@ -132,11 +126,13 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $plugin = new ArtifactsPlugin();
-        $plugin->activate($composer, $io);
+        $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
     /**
-     * @return Composer|\PHPUnit_Framework_MockObject_MockObject
+     * @param RepositoryManager|null $repositoryManager
+     *
+     * @return Composer|MockObject
      */
     private function mockComposerWithDataDir($config, $repositoryManager = null, array $packages = [], $requires = []): Composer
     {
@@ -157,11 +153,11 @@ class ArtifactsPluginTest extends TestCase
             $repositoryManager = $this->createMock(RepositoryManager::class);
             $repositoryManager
                 ->method('createRepository')
-                ->willReturn($repository);
+                ->willReturn($repository)
+            ;
         }
 
         $composer = $this->createMock(Composer::class);
-
         $composer
             ->method('getConfig')
             ->willReturn($config)
@@ -181,10 +177,12 @@ class ArtifactsPluginTest extends TestCase
         return $composer;
     }
 
-    private function mockConfigWithDataDir(string $dataDir)
+    /**
+     * @return Config|MockObject
+     */
+    private function mockConfigWithDataDir(string $dataDir): MockObject
     {
         $config = $this->createMock(Config::class);
-
         $config
             ->method('get')
             ->with('data-dir')
@@ -194,10 +192,12 @@ class ArtifactsPluginTest extends TestCase
         return $config;
     }
 
-    private function mockPackage(string $name, string $type, string $distUrl = null)
+    /**
+     * @return PackageInterface|MockObject
+     */
+    private function mockPackage(string $name, string $type, string $distUrl = null): PackageInterface
     {
         $package = $this->createMock(PackageInterface::class);
-
         $package
             ->expects('contao-provider' === $type ? $this->once() : $this->never())
             ->method('getName')
