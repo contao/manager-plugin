@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use Composer\Composer;
-use Composer\Config;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
 use Composer\Package\PackageInterface;
-use Composer\Package\RootPackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
@@ -37,32 +35,43 @@ class ArtifactsPlugin implements PluginInterface
 
         $repository = $this->addArtifactRepository($composer, $packagesDir);
 
-        $this->registerProviders($repository, $composer->getConfig(), $composer->getPackage());
+        $this->registerProviders($repository, $composer);
     }
 
     private function addArtifactRepository(Composer $composer, string $repositoryUrl): RepositoryInterface
     {
         $repository = $composer->getRepositoryManager()->createRepository('artifact', ['url' => $repositoryUrl]);
-        $composer->getRepositoryManager()->prependRepository($repository);
+
+        $composer->getRepositoryManager()->addRepository($repository);
+        $composer->getConfig()->merge(['repositories' => [['type' => 'artifact', 'url' => $repositoryUrl]]]);
 
         return $repository;
     }
 
-    private function registerProviders(RepositoryInterface $repository, Config $config, RootPackageInterface $rootPackage): void
+    private function registerProviders(RepositoryInterface $artifacts, Composer $composer): void
     {
-        $requires = $rootPackage->getRequires();
+        $requires = $composer->getPackage()->getRequires();
 
-        foreach ($repository->getPackages() as $package) {
+        foreach ($artifacts->getPackages() as $package) {
             if ('contao-provider' !== $package->getType() || !\array_key_exists($package->getName(), $requires)) {
                 continue;
             }
 
             $data = $this->getComposerInformation($package);
 
-            if (null !== $data) {
-                $config->merge(['repositories' => $data['repositories'] ?? []]);
+            if (null !== $data && isset($data['repositories']) && \is_array($data['repositories'])) {
+                $rm = $composer->getRepositoryManager();
+
+                foreach ($data['repositories'] as $config) {
+                    $repo = $rm->createRepository($config['type'], $config);
+                    $rm->addRepository($repo);
+                }
+
+                $composer->getConfig()->merge(['repositories' => $data['repositories'] ?? []]);
             }
         }
+
+        $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
     }
 
     /**
@@ -73,17 +82,17 @@ class ArtifactsPlugin implements PluginInterface
         $zip = new \ZipArchive();
         $zip->open($package->getDistUrl());
 
-        if (!$zip->numFiles) {
+        if (0 == $zip->numFiles) {
             return null;
         }
 
         $foundFileIndex = $this->locateFile($zip, 'composer.json');
-
         if (false === $foundFileIndex) {
             return null;
         }
 
         $configurationFileName = $zip->getNameIndex($foundFileIndex);
+
         $composerFile = "zip://{$package->getDistUrl()}#$configurationFileName";
         $json = file_get_contents($composerFile);
 
@@ -98,29 +107,27 @@ class ArtifactsPlugin implements PluginInterface
         $indexOfShortestMatch = false;
         $lengthOfShortestMatch = -1;
 
-        for ($i = 0; $i < $zip->numFiles; ++$i) {
+        for ($i = 0; $i < $zip->numFiles; $i++) {
             $stat = $zip->statIndex($i);
-
-            if (0 === strcmp(basename($stat['name']), $filename)) {
-                $directoryName = \dirname($stat['name']);
-
-                if ('.' === $directoryName) {
-                    // If composer.json is in root directory, it has to be the one to use
+            if (strcmp(basename($stat['name']), $filename) === 0) {
+                $directoryName = dirname($stat['name']);
+                if ($directoryName === '.') {
+                    //if composer.json is in root directory
+                    //it has to be the one to use.
                     return $i;
                 }
 
-                if (false !== strpos($directoryName, '\\') || false !== strpos($directoryName, '/')) {
-                    // composer.json files below first directory are rejected
+                if (strpos($directoryName, '\\') !== false ||
+                    strpos($directoryName, '/') !== false) {
+                    //composer.json files below first directory are rejected
                     continue;
                 }
 
-                $length = \strlen($stat['name']);
-
-                if (false === $indexOfShortestMatch || $length < $lengthOfShortestMatch) {
-                    // Check it's not a directory
+                $length = strlen($stat['name']);
+                if ($indexOfShortestMatch === false || $length < $lengthOfShortestMatch) {
+                    //Check it's not a directory.
                     $contents = $zip->getFromIndex($i);
-
-                    if (false !== $contents) {
+                    if ($contents !== false) {
                         $indexOfShortestMatch = $i;
                         $lengthOfShortestMatch = $length;
                     }
