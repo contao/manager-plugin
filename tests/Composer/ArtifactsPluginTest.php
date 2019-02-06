@@ -48,19 +48,17 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
-
         $config
             ->expects($this->once())
-            ->method('merge')->with(
-                [
-                    'repositories' => [
-                        [
-                            'type' => 'artifact',
-                            'url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages',
-                        ],
+            ->method('merge')
+            ->with([
+                'repositories' => [
+                    [
+                        'type' => 'artifact',
+                        'url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages',
                     ],
-                ]
-            )
+                ],
+            ])
         ;
 
         $composer = $this->mockComposerWithDataDir($config, $repositoryManager);
@@ -72,7 +70,6 @@ class ArtifactsPluginTest extends TestCase
     public function testDoesNotAddArtifactsRepositoryIfTheDirectoryDoesNotExist(): void
     {
         $repositoryManager = $this->createMock(RepositoryManager::class);
-
         $repositoryManager
             ->expects($this->never())
             ->method('createRepository')
@@ -84,7 +81,6 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/null-data');
-
         $config
             ->expects($this->never())
             ->method('merge')
@@ -118,7 +114,6 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
-
         $config
             ->expects($this->never())
             ->method('merge')
