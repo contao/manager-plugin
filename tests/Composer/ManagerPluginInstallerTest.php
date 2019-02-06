@@ -24,7 +24,7 @@ use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
-use Contao\ManagerPlugin\Composer\ManagerPluginsInstaller;
+use Contao\ManagerPlugin\Composer\ManagerPluginInstaller;
 use Foo\Bar\FooBarPlugin;
 use Foo\Config\FooConfigPlugin;
 use Foo\Console\FooConsolePlugin;
@@ -32,7 +32,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ManagerPluginsInstallerTest extends TestCase
+class ManagerPluginInstallerTest extends TestCase
 {
     public function testDoesNothingOnActivation(): void
     {
@@ -48,7 +48,7 @@ class ManagerPluginsInstallerTest extends TestCase
             ->method($this->anything())
         ;
 
-        (new ManagerPluginsInstaller())->activate($composer, $io);
+        (new ManagerPluginInstaller())->activate($composer, $io);
     }
 
     public function testLoadsAutoloadFileFromVendor(): void
@@ -82,17 +82,17 @@ class ManagerPluginsInstallerTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('autoload.php successfully loaded');
 
-        (new ManagerPluginsInstaller())->dumpPlugins($event);
+        (new ManagerPluginInstaller())->dumpPlugins($event);
     }
 
     public function testSubscribesToInstallAndUpdateEvent(): void
     {
-        $events = ManagerPluginsInstaller::getSubscribedEvents();
+        $events = ManagerPluginInstaller::getSubscribedEvents();
 
         $this->assertArrayHasKey(ScriptEvents::POST_INSTALL_CMD, $events);
         $this->assertArrayHasKey(ScriptEvents::POST_UPDATE_CMD, $events);
-        $this->assertTrue(method_exists(ManagerPluginsInstaller::class, $events[ScriptEvents::POST_INSTALL_CMD]));
-        $this->assertTrue(method_exists(ManagerPluginsInstaller::class, $events[ScriptEvents::POST_UPDATE_CMD]));
+        $this->assertTrue(method_exists(ManagerPluginInstaller::class, $events[ScriptEvents::POST_INSTALL_CMD]));
+        $this->assertTrue(method_exists(ManagerPluginInstaller::class, $events[ScriptEvents::POST_UPDATE_CMD]));
     }
 
     public function testDumpsPluginsFromRepository(): void
@@ -136,7 +136,7 @@ class ManagerPluginsInstallerTest extends TestCase
             'foo/console-bundle' => new \\Foo\\Console\\FooConsolePlugin(),
         ];");
 
-        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -162,7 +162,7 @@ class ManagerPluginsInstallerTest extends TestCase
         $filesystem = $this->mockFilesystemAndCheckDump('
         $this->plugins = $plugins ?: [];');
 
-        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -189,7 +189,7 @@ class ManagerPluginsInstallerTest extends TestCase
             'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
         ];");
 
-        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -223,7 +223,7 @@ class ManagerPluginsInstallerTest extends TestCase
             'app' => new \\ContaoManagerPlugin(),
         ];");
 
-        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -257,7 +257,7 @@ class ManagerPluginsInstallerTest extends TestCase
             'app' => new \\App\\ContaoManager\\Plugin(),
         ];");
 
-        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -292,7 +292,7 @@ class ManagerPluginsInstallerTest extends TestCase
             'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
         ];");
 
-        $installer = new ManagerPluginsInstaller($filesystem);
+        $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -312,7 +312,7 @@ class ManagerPluginsInstallerTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The plugin class "\Non\Existing\Plugin" was not found');
 
-        $installer = new ManagerPluginsInstaller();
+        $installer = new ManagerPluginInstaller();
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
@@ -347,7 +347,7 @@ class ManagerPluginsInstallerTest extends TestCase
             )
         ;
 
-        $installer = new ManagerPluginsInstaller();
+        $installer = new ManagerPluginInstaller();
 
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('The package "foo/console-bundle" is not replaced by "foo/config-bundle".');
@@ -380,7 +380,7 @@ class ManagerPluginsInstallerTest extends TestCase
             )
         ;
 
-        $installer = new ManagerPluginsInstaller();
+        $installer = new ManagerPluginInstaller();
 
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('The package "foo/bar-bundle" cannot be registered twice.');

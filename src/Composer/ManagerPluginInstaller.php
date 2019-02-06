@@ -25,7 +25,7 @@ use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ManagerPluginsInstaller implements PluginInterface, EventSubscriberInterface
+class ManagerPluginInstaller implements PluginInterface, EventSubscriberInterface
 {
     use DependencyResolverTrait;
 

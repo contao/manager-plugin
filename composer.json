@@ -34,7 +34,7 @@
         },
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
-            "Contao\\ManagerPlugin\\Composer\\ManagerPluginsInstaller"
+            "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller"
         ]
     },
     "autoload": {
