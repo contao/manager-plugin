@@ -30,7 +30,7 @@ class ArtifactsPluginTest extends TestCase
         $repository = $this->createMock(RepositoryInterface::class);
         $repository
             ->method('getPackages')
-            ->willReturn([])
+            ->willReturn([$this->createMock(PackageInterface::class)])
         ;
 
         $repositoryManager = $this->createMock(RepositoryManager::class);
@@ -43,11 +43,87 @@ class ArtifactsPluginTest extends TestCase
 
         $repositoryManager
             ->expects($this->once())
-            ->method('prependRepository')
+            ->method('addRepository')
             ->with($repository)
         ;
 
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
+
+        $config
+            ->expects($this->once())
+            ->method('merge')->with(
+                [
+                    'repositories' => [
+                        [
+                            'type' => 'artifact',
+                            'url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages',
+                        ],
+                    ],
+                ]
+            )
+        ;
+
+        $composer = $this->mockComposerWithDataDir($config, $repositoryManager);
+
+        $plugin = new ArtifactsPlugin();
+        $plugin->activate($composer, $this->createMock(IOInterface::class));
+    }
+
+    public function testDoesNotAddArtifactsRepositoryIfTheDirectoryDoesNotExist(): void
+    {
+        $repositoryManager = $this->createMock(RepositoryManager::class);
+
+        $repositoryManager
+            ->expects($this->never())
+            ->method('createRepository')
+        ;
+
+        $repositoryManager
+            ->expects($this->never())
+            ->method('addRepository')
+        ;
+
+        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/null-data');
+
+        $config
+            ->expects($this->never())
+            ->method('merge')
+        ;
+
+        $composer = $this->mockComposerWithDataDir($config, $repositoryManager);
+
+        $plugin = new ArtifactsPlugin();
+        $plugin->activate($composer, $this->createMock(IOInterface::class));
+    }
+
+    public function testDoesNotAddArtifactsRepositoryIfItHasNoPackages(): void
+    {
+        $repository = $this->createMock(RepositoryInterface::class);
+        $repository
+            ->method('getPackages')
+            ->willReturn([])
+        ;
+
+        $repositoryManager = $this->createMock(RepositoryManager::class);
+        $repositoryManager
+            ->expects($this->once())
+            ->method('createRepository')
+            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages'])
+            ->willReturn($repository)
+        ;
+
+        $repositoryManager
+            ->expects($this->never())
+            ->method('addRepository')
+        ;
+
+        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
+
+        $config
+            ->expects($this->never())
+            ->method('merge')
+        ;
+
         $composer = $this->mockComposerWithDataDir($config, $repositoryManager);
 
         $plugin = new ArtifactsPlugin();
@@ -58,7 +134,7 @@ class ArtifactsPluginTest extends TestCase
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
         $config
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('merge')
         ;
 
@@ -77,7 +153,7 @@ class ArtifactsPluginTest extends TestCase
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
         $config
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('merge')
         ;
 
@@ -95,7 +171,7 @@ class ArtifactsPluginTest extends TestCase
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
         $config
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('merge')
         ;
 
@@ -164,7 +240,7 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $composer
-            ->expects($this->atLeastOnce())
+            ->expects($this->any())
             ->method('getRepositoryManager')
             ->willReturn($repositoryManager)
         ;
