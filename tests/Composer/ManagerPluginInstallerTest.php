@@ -195,6 +195,7 @@ class ManagerPluginInstallerTest extends TestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testAddsGlobalPluginIfClassExists(): void
     {
@@ -229,6 +230,7 @@ class ManagerPluginInstallerTest extends TestCase
 
     /**
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testAddsAppPluginIfClassExists(): void
     {

@@ -37,9 +37,7 @@ jobs:
         - phpenv config-rm xdebug.ini || true
         - composer update --no-interaction --no-suggest
       script:
-        - phpdbg -qrr vendor/bin/phpunit --coverage-clover=image.xml
-      after_script:
-        - php vendor/bin/php-coveralls -o coveralls-upload.json -x image.xml
+        - php vendor/bin/phpunit
 
     # PHP-CS-Fixer is not yet compatible with PHP 7.3
     - stage: test
@@ -48,8 +46,9 @@ jobs:
         - phpenv config-rm xdebug.ini || true
         - composer update --ignore-platform-reqs --no-interaction --no-suggest
       script:
-        - php vendor/bin/phpunit
-
+        - phpdbg -qrr vendor/bin/phpunit --coverage-clover=coverage.xml
+      after_script:
+        - php vendor/bin/php-coveralls -o coveralls-upload.json -x coverage.xml
 
     # Ignore the platform requirements for the upcoming PHP version
     - stage: test
