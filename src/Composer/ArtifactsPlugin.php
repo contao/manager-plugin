@@ -19,6 +19,7 @@ use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
+use Composer\Semver\Constraint\Constraint;
 
 class ArtifactsPlugin implements PluginInterface
 {
@@ -62,6 +63,13 @@ class ArtifactsPlugin implements PluginInterface
 
         foreach ($artifacts->getPackages() as $package) {
             if ('contao-provider' !== $package->getType() || !\array_key_exists($package->getName(), $requires)) {
+                continue;
+            }
+
+            $constraint = $requires[$package->getName()]->getConstraint();
+            $version = new Constraint(Constraint::OP_EQ, $package->getVersion());
+
+            if (null === $constraint || !$constraint->matches($version)) {
                 continue;
             }
 
