@@ -103,7 +103,7 @@ class ConfigResolver implements ConfigResolverInterface
         $return = [];
 
         foreach ($ordered as $package) {
-            if (array_key_exists($package, $bundles)) {
+            if (\array_key_exists($package, $bundles)) {
                 $return[$package] = $bundles[$package];
             }
         }

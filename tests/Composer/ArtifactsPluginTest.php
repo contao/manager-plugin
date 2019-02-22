@@ -138,12 +138,14 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage(
-                'foo/bar',
-                'contao-provider',
-                '1.0.0',
-                __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
-            )],
+            [
+                $this->mockPackage(
+                    'foo/bar',
+                    'contao-provider',
+                    '1.0.0',
+                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                ),
+            ],
             ['foo/bar' => true]
         );
 
@@ -194,11 +196,13 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage(
-                'foo/bar',
-                'contao-provider',
-                '1.0.0'
-            )],
+            [
+                $this->mockPackage(
+                    'foo/bar',
+                    'contao-provider',
+                    '1.0.0'
+                ),
+            ],
             ['foo/bar' => false]
         );
 
@@ -306,23 +310,26 @@ class ArtifactsPluginTest extends TestCase
      */
     private function mockComposerWithDataDir($config, $repositoryManager = null, array $packages = [], $requires = []): Composer
     {
-        $requires = array_map(function (&$matches) {
-            $constraint = $this->createMock(Constraint::class);
-            $constraint
-                ->expects($this->once())
-                ->method('matches')
-                ->willReturn($matches)
-            ;
+        $requires = array_map(
+            function (&$matches) {
+                $constraint = $this->createMock(Constraint::class);
+                $constraint
+                    ->expects($this->once())
+                    ->method('matches')
+                    ->willReturn($matches)
+                ;
 
-            $link = $this->createMock(Link::class);
-            $link
-                ->expects($this->once())
-                ->method('getConstraint')
-                ->willReturn($constraint)
-            ;
+                $link = $this->createMock(Link::class);
+                $link
+                    ->expects($this->once())
+                    ->method('getConstraint')
+                    ->willReturn($constraint)
+                ;
 
-            return $link;
-        }, $requires);
+                return $link;
+            },
+            $requires
+        );
 
         $rootPackage = $this->createMock(RootPackageInterface::class);
         $rootPackage
@@ -352,7 +359,6 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $composer
-            ->expects($this->any())
             ->method('getRepositoryManager')
             ->willReturn($repositoryManager)
         ;
