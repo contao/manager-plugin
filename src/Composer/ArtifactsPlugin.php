@@ -15,10 +15,10 @@ namespace Contao\ManagerPlugin\Composer;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
+use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
-use Composer\Semver\VersionParser;
 
 class ArtifactsPlugin implements PluginInterface
 {
@@ -58,25 +58,14 @@ class ArtifactsPlugin implements PluginInterface
 
     private function registerProviders(RepositoryInterface $artifacts, Composer $composer): void
     {
-        $hasProviders = false;
-        $versionParser = new VersionParser();
         $requires = $composer->getPackage()->getRequires();
 
         foreach ($artifacts->getPackages() as $package) {
-            $name = $package->getName();
-
-            if ('contao-provider' !== $package->getType() || !\array_key_exists($name, $requires)) {
+            if ('contao-provider' !== $package->getType() || !\array_key_exists($package->getName(), $requires)) {
                 continue;
             }
 
-            $constraint = $requires[$name]->getConstraint();
-            $version = $versionParser->parseConstraints($package->getVersion());
-
-            if (null === $constraint || !$constraint->matches($version)) {
-                continue;
-            }
-
-            $data = $this->getComposerInformation($package->getDistUrl());
+            $data = $this->getComposerInformation($package);
 
             if (null !== $data && isset($data['repositories']) && \is_array($data['repositories'])) {
                 $rm = $composer->getRepositoryManager();
@@ -87,22 +76,19 @@ class ArtifactsPlugin implements PluginInterface
                 }
 
                 $composer->getConfig()->merge(['repositories' => $data['repositories'] ?? []]);
-                $hasProviders = true;
             }
         }
 
-        if ($hasProviders) {
-            $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
-        }
+        $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
     }
 
     /**
      * @see ArtifactRepository::getComposerInformation()
      */
-    private function getComposerInformation(string $path): ?array
+    private function getComposerInformation(PackageInterface $package): ?array
     {
         $zip = new \ZipArchive();
-        $zip->open($path);
+        $zip->open($package->getDistUrl());
 
         if (!$zip->numFiles) {
             return null;
@@ -115,7 +101,7 @@ class ArtifactsPlugin implements PluginInterface
         }
 
         $configurationFileName = $zip->getNameIndex($foundFileIndex);
-        $composerFile = "zip://$path#$configurationFileName";
+        $composerFile = "zip://{$package->getDistUrl()}#$configurationFileName";
         $json = file_get_contents($composerFile);
 
         return JsonFile::parseJson($json, $composerFile);
