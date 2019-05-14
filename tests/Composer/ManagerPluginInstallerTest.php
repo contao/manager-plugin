@@ -391,7 +391,7 @@ class ManagerPluginInstallerTest extends TestCase
     }
 
     /**
-     * @return PackageInterface|MockObject
+     * @return PackageInterface&MockObject
      */
     private function mockPackage(string $name, string $plugin, bool $isAlias = false): PackageInterface
     {
@@ -415,7 +415,7 @@ class ManagerPluginInstallerTest extends TestCase
     }
 
     /**
-     * @return PackageInterface|MockObject
+     * @return PackageInterface&MockObject
      */
     private function mockMultiPackage(string $name, array $plugin, array $replaces): PackageInterface
     {
@@ -439,7 +439,7 @@ class ManagerPluginInstallerTest extends TestCase
     }
 
     /**
-     * @return Filesystem|MockObject
+     * @return Filesystem&MockObject
      */
     private function mockFilesystemAndCheckDump(string $match): Filesystem
     {
@@ -461,7 +461,7 @@ class ManagerPluginInstallerTest extends TestCase
     }
 
     /**
-     * @return Event|MockObject
+     * @return Event&MockObject
      */
     private function mockEventWithRepositoryAndIO(RepositoryInterface $repository, IOInterface $io): Event
     {

@@ -203,7 +203,7 @@ class ArtifactsPluginTest extends TestCase
     /**
      * @param RepositoryManager|null $repositoryManager
      *
-     * @return Composer|MockObject
+     * @return Composer&MockObject
      */
     private function mockComposerWithDataDir($config, $repositoryManager = null, array $packages = [], $requires = []): Composer
     {
@@ -249,7 +249,7 @@ class ArtifactsPluginTest extends TestCase
     }
 
     /**
-     * @return Config|MockObject
+     * @return Config&MockObject
      */
     private function mockConfigWithDataDir(string $dataDir): MockObject
     {
@@ -264,7 +264,7 @@ class ArtifactsPluginTest extends TestCase
     }
 
     /**
-     * @return PackageInterface|MockObject
+     * @return PackageInterface&MockObject
      */
     private function mockPackage(string $name, string $type, string $distUrl = null): PackageInterface
     {
