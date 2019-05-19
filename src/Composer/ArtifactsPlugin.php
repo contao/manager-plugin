@@ -58,9 +58,10 @@ class ArtifactsPlugin implements PluginInterface
 
     private function registerProviders(RepositoryInterface $artifacts, Composer $composer): void
     {
-        $hasProviders = false;
         $versionParser = new VersionParser();
+        $repositoryManager = $composer->getRepositoryManager();
         $requires = $composer->getPackage()->getRequires();
+        $repositories = [];
 
         foreach ($artifacts->getPackages() as $package) {
             $name = $package->getName();
@@ -79,19 +80,20 @@ class ArtifactsPlugin implements PluginInterface
             $data = $this->getComposerInformation($package->getDistUrl());
 
             if (null !== $data && isset($data['repositories']) && \is_array($data['repositories'])) {
-                $rm = $composer->getRepositoryManager();
-
                 foreach ($data['repositories'] as $config) {
-                    $repo = $rm->createRepository($config['type'], $config);
-                    $rm->addRepository($repo);
+                    ksort($config);
+                    $repositories[sha1(serialize($config))] = $config;
                 }
-
-                $composer->getConfig()->merge(['repositories' => $data['repositories'] ?? []]);
-                $hasProviders = true;
             }
         }
 
-        if ($hasProviders) {
+        if (!empty($repositories)) {
+            foreach ($repositories as $config) {
+                $repo = $repositoryManager->createRepository($config['type'], $config);
+                $repositoryManager->addRepository($repo);
+            }
+
+            $composer->getConfig()->merge(['repositories' => array_values($repositories)]);
             $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
         }
     }

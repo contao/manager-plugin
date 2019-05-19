@@ -238,6 +238,74 @@ class ArtifactsPluginTest extends TestCase
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
+    public function testDoesNotRegisterDuplicateRepositories(): void
+    {
+        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
+        $config
+            ->expects($this->exactly(2))
+            ->method('merge')
+            ->withConsecutive(
+                [$this->arrayHasKey('repositories')],
+                [$this->logicalAnd(
+                    $this->arrayHasKey('repositories'),
+                    $this->equalTo([
+                        'repositories' => [[
+                            'type' => 'vcs',
+                            'url' => 'https://example.org/',
+                        ]]
+                    ])
+                )]
+            )
+        ;
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn(['foo' => 'bar'])
+        ;
+
+        $composer = $this->mockComposerWithDataDir(
+            $config,
+            null,
+            [
+                $this->mockPackage(
+                    'foo/current-provider',
+                    'contao-provider',
+                    '1.0.0',
+                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                ),
+                $this->mockPackage(
+                    'foo/new-provider',
+                    'contao-provider',
+                    '1.0.0',
+                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                ),
+            ],
+            ['foo/current-provider' => true, 'foo/new-provider' => true]
+        );
+
+        /** @var PackageInterface|MockObject $rootPackage */
+        $rootPackage = $composer->getPackage();
+        $rootPackage
+            ->expects($this->once())
+            ->method('setRepositories')
+            ->with(['foo' => 'bar'])
+        ;
+
+        /** @var RepositoryManager|MockObject $repositoryManager */
+        $repositoryManager = $composer->getRepositoryManager();
+        $repositoryManager
+            ->expects($this->exactly(2))
+            ->method('createRepository')
+        ;
+        $repositoryManager
+            ->expects($this->exactly(2))
+            ->method('addRepository')
+        ;
+
+        $plugin = new ArtifactsPlugin();
+        $plugin->activate($composer, $this->createMock(IOInterface::class));
+    }
+
     public function testCorrectlyHandlesMultiplePackagesAndProviders(): void
     {
         $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
