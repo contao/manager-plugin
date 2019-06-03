@@ -252,7 +252,7 @@ class ArtifactsPluginTest extends TestCase
                         'repositories' => [[
                             'type' => 'vcs',
                             'url' => 'https://example.org/',
-                        ]]
+                        ]],
                     ])
                 )]
             )

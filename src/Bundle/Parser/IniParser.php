@@ -88,7 +88,13 @@ class IniParser implements ParserInterface
      */
     private function parseIniFile(string $file): array
     {
-        $ini = parse_ini_file($file, true);
+        if (\function_exists('parse_ini_file')) {
+            $ini = parse_ini_file($file, true);
+        } elseif (\function_exists('parse_ini_string')) {
+            $ini = parse_ini_string(file_get_contents($file), true);
+        } else {
+            throw new \RuntimeException('"parse_ini_file" or "parse_ini_string" is required to load contao-module packages');
+        }
 
         if (!\is_array($ini)) {
             throw new \RuntimeException("File $file cannot be decoded");
