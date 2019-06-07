@@ -138,12 +138,14 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage(
-                'foo/bar',
-                'contao-provider',
-                '1.0.0',
-                __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
-            )],
+            [
+                $this->mockPackage(
+                    'foo/bar',
+                    'contao-provider',
+                    '1.0.0',
+                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                ),
+            ],
             ['foo/bar' => true]
         );
 
@@ -169,7 +171,7 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage('foo/bar', 'contao-provider')]
+            [$this->mockPackage('foo/bar', 'contao-provider', null, null, false)]
         );
 
         /** @var PackageInterface|MockObject $rootPackage */
@@ -194,11 +196,7 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage(
-                'foo/bar',
-                'contao-provider',
-                '1.0.0'
-            )],
+            [$this->mockPackage('foo/bar', 'contao-provider', '1.0.0')],
             ['foo/bar' => false]
         );
 
@@ -224,7 +222,7 @@ class ArtifactsPluginTest extends TestCase
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
-            [$this->mockPackage('foo/bar', 'contao-bundle')]
+            [$this->mockPackage('foo/bar', 'contao-bundle', null, null, false)]
         );
 
         /** @var PackageInterface|MockObject $rootPackage */
@@ -246,17 +244,20 @@ class ArtifactsPluginTest extends TestCase
             ->method('merge')
             ->withConsecutive(
                 [$this->arrayHasKey('repositories')],
-                [$this->logicalAnd(
-                    $this->arrayHasKey('repositories'),
-                    $this->equalTo([
-                        'repositories' => [[
-                            'type' => 'vcs',
-                            'url' => 'https://example.org/',
-                        ]],
-                    ])
-                )]
+                [
+                    $this->logicalAnd(
+                        $this->arrayHasKey('repositories'),
+                        $this->equalTo([
+                            'repositories' => [[
+                                'type' => 'vcs',
+                                'url' => 'https://example.org/',
+                            ]],
+                        ])
+                    ),
+                ]
             )
         ;
+
         $config
             ->expects($this->once())
             ->method('getRepositories')
@@ -297,6 +298,7 @@ class ArtifactsPluginTest extends TestCase
             ->expects($this->exactly(2))
             ->method('createRepository')
         ;
+
         $repositoryManager
             ->expects($this->exactly(2))
             ->method('addRepository')
@@ -324,15 +326,8 @@ class ArtifactsPluginTest extends TestCase
                     '1.2.0',
                     __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
                 ),
-                $this->mockPackage(
-                    'foo/old-provider',
-                    'contao-provider',
-                    '1.0.0'
-                ),
-                $this->mockPackage(
-                    'foo/bar',
-                    'contao-bundle'
-                ),
+                $this->mockPackage('foo/old-provider', 'contao-provider', '1.0.0'),
+                $this->mockPackage('foo/bar', 'contao-bundle', null, null, false),
             ],
             ['foo/current-provider' => true, 'foo/old-provider' => false]
         );
@@ -368,29 +363,33 @@ class ArtifactsPluginTest extends TestCase
     }
 
     /**
-     * @param RepositoryManager|null $repositoryManager
+     * @param Config&MockObject            $config
+     * @param RepositoryManager&MockObject $repositoryManager
      *
      * @return Composer&MockObject
      */
-    private function mockComposerWithDataDir($config, $repositoryManager = null, array $packages = [], $requires = []): Composer
+    private function mockComposerWithDataDir(Config $config, RepositoryManager $repositoryManager = null, array $packages = [], array $requires = []): Composer
     {
-        $requires = array_map(function (&$matches) {
-            $constraint = $this->createMock(Constraint::class);
-            $constraint
-                ->expects($this->once())
-                ->method('matches')
-                ->willReturn($matches)
-            ;
+        $requires = array_map(
+            function (&$matches) {
+                $constraint = $this->createMock(Constraint::class);
+                $constraint
+                    ->expects($this->once())
+                    ->method('matches')
+                    ->willReturn($matches)
+                ;
 
-            $link = $this->createMock(Link::class);
-            $link
-                ->expects($this->once())
-                ->method('getConstraint')
-                ->willReturn($constraint)
-            ;
+                $link = $this->createMock(Link::class);
+                $link
+                    ->expects($this->once())
+                    ->method('getConstraint')
+                    ->willReturn($constraint)
+                ;
 
-            return $link;
-        }, $requires);
+                return $link;
+            },
+            $requires
+        );
 
         $rootPackage = $this->createMock(RootPackageInterface::class);
         $rootPackage
@@ -420,7 +419,6 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $composer
-            ->expects($this->any())
             ->method('getRepositoryManager')
             ->willReturn($repositoryManager)
         ;
@@ -451,7 +449,7 @@ class ArtifactsPluginTest extends TestCase
     /**
      * @return PackageInterface&MockObject
      */
-    private function mockPackage(string $name, string $type, string $version = null, string $distUrl = null): PackageInterface
+    private function mockPackage(string $name, string $type, string $version = null, string $distUrl = null, bool $required = true): PackageInterface
     {
         $package = $this->createMock(PackageInterface::class);
         $package
@@ -461,7 +459,7 @@ class ArtifactsPluginTest extends TestCase
         ;
 
         $package
-            ->expects($this->once())
+            ->expects($required ? $this->once() : $this->never())
             ->method('getType')
             ->willReturn($type)
         ;

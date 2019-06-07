@@ -66,7 +66,7 @@ class ArtifactsPlugin implements PluginInterface
         foreach ($artifacts->getPackages() as $package) {
             $name = $package->getName();
 
-            if ('contao-provider' !== $package->getType() || !\array_key_exists($name, $requires)) {
+            if (!\array_key_exists($name, $requires) || 'contao-provider' !== $package->getType()) {
                 continue;
             }
 
