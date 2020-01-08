@@ -22,16 +22,13 @@
         "ext-zip": "*",
         "composer/composer": "^1.1",
         "contao/core-bundle": "^4.5",
-        "friendsofphp/php-cs-fixer": "^2.12",
+        "friendsofphp/php-cs-fixer": "^2.14",
         "php-coveralls/php-coveralls": "^2.1",
         "php-http/guzzle6-adapter": "^1.1",
         "phpunit/phpunit": "^6.5",
         "symfony/phpunit-bridge": "^3.4.5"
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "2.8.x-dev"
-        },
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
             "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller"

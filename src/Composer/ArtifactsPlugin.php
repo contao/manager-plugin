@@ -15,10 +15,10 @@ namespace Contao\ManagerPlugin\Composer;
 use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
-use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
+use Composer\Semver\VersionParser;
 
 class ArtifactsPlugin implements PluginInterface
 {
@@ -58,37 +58,53 @@ class ArtifactsPlugin implements PluginInterface
 
     private function registerProviders(RepositoryInterface $artifacts, Composer $composer): void
     {
+        $versionParser = new VersionParser();
+        $repositoryManager = $composer->getRepositoryManager();
         $requires = $composer->getPackage()->getRequires();
+        $repositories = [];
 
         foreach ($artifacts->getPackages() as $package) {
-            if ('contao-provider' !== $package->getType() || !\array_key_exists($package->getName(), $requires)) {
+            $name = $package->getName();
+
+            if (!\array_key_exists($name, $requires) || 'contao-provider' !== $package->getType()) {
                 continue;
             }
 
-            $data = $this->getComposerInformation($package);
+            $constraint = $requires[$name]->getConstraint();
+            $version = $versionParser->parseConstraints($package->getVersion());
+
+            if (null === $constraint || !$constraint->matches($version)) {
+                continue;
+            }
+
+            $data = $this->getComposerInformation($package->getDistUrl());
 
             if (null !== $data && isset($data['repositories']) && \is_array($data['repositories'])) {
-                $rm = $composer->getRepositoryManager();
-
                 foreach ($data['repositories'] as $config) {
-                    $repo = $rm->createRepository($config['type'], $config);
-                    $rm->addRepository($repo);
+                    ksort($config);
+                    $repositories[sha1(serialize($config))] = $config;
                 }
-
-                $composer->getConfig()->merge(['repositories' => $data['repositories'] ?? []]);
             }
         }
 
-        $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
+        if (!empty($repositories)) {
+            foreach ($repositories as $config) {
+                $repo = $repositoryManager->createRepository($config['type'], $config);
+                $repositoryManager->addRepository($repo);
+            }
+
+            $composer->getConfig()->merge(['repositories' => array_values($repositories)]);
+            $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
+        }
     }
 
     /**
      * @see ArtifactRepository::getComposerInformation()
      */
-    private function getComposerInformation(PackageInterface $package): ?array
+    private function getComposerInformation(string $path): ?array
     {
         $zip = new \ZipArchive();
-        $zip->open($package->getDistUrl());
+        $zip->open($path);
 
         if (!$zip->numFiles) {
             return null;
@@ -101,7 +117,7 @@ class ArtifactsPlugin implements PluginInterface
         }
 
         $configurationFileName = $zip->getNameIndex($foundFileIndex);
-        $composerFile = "zip://{$package->getDistUrl()}#$configurationFileName";
+        $composerFile = "zip://$path#$configurationFileName";
         $json = file_get_contents($composerFile);
 
         return JsonFile::parseJson($json, $composerFile);
