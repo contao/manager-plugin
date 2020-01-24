@@ -31,7 +31,8 @@
     "extra": {
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
-            "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller"
+            "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller",
+            "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
         ]
     },
     "autoload": {
