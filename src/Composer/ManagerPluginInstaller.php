@@ -291,9 +291,7 @@ PHP;
 
             foreach (array_keys($extra['contao-manager-plugin']) as $name) {
                 if (!isset($replaces[$name]) && $package->getName() !== $name) {
-                    throw new \RuntimeException(sprintf(
-                        'The package "%s" is not replaced by "%s".', $name, $package->getName())
-                    );
+                    throw new \RuntimeException(sprintf('The package "%s" is not replaced by "%s".', $name, $package->getName()));
                 }
             }
 
