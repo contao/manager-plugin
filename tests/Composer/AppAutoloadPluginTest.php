@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 class AppAutoloadPluginTest extends TestCase
 {
-    public function testAddsTheAppNamespaceIfNoneIsDefined()
+    public function testAddsTheAppNamespaceIfNoneIsDefined(): void
     {
         $package = $this->createMock(RootPackageInterface::class);
         $package
@@ -51,7 +51,7 @@ class AppAutoloadPluginTest extends TestCase
         (new AppAutoloadPlugin())->activate($composer, $io);
     }
 
-    public function testDoesNotAddTheAppNamespaceIfOneIsDefined()
+    public function testDoesNotAddTheAppNamespaceIfOneIsDefined(): void
     {
         $package = $this->createMock(RootPackageInterface::class);
         $package

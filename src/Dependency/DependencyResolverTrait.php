@@ -30,9 +30,7 @@ trait DependencyResolverTrait
             $success = $this->doResolve($dependencies, $ordered, $available);
 
             if (false === $success) {
-                throw new UnresolvableDependenciesException(
-                    "The dependencies order could not be resolved.\n".print_r($dependencies, true)
-                );
+                throw new UnresolvableDependenciesException("The dependencies order could not be resolved.\n".print_r($dependencies, true));
             }
         }
 
