@@ -149,6 +149,16 @@ PHP;
         // Nothing to do here, as all features are provided through event listeners
     }
 
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+        // Nothing to do here, as all features are provided through event listeners
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+        // Nothing to do here, as all features are provided through event listeners
+    }
+
     public function dumpPlugins(Event $event): void
     {
         $io = $event->getIO();

@@ -42,6 +42,16 @@ class ArtifactsPlugin implements PluginInterface
         $this->registerProviders($repository, $composer);
     }
 
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+        // Nothing to do here
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+        // Nothing to do here
+    }
+
     private function addArtifactRepository(Composer $composer, string $repositoryUrl): ?RepositoryInterface
     {
         $repository = $composer->getRepositoryManager()->createRepository('artifact', ['url' => $repositoryUrl]);
