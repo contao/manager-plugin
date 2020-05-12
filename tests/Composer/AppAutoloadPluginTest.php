@@ -81,7 +81,7 @@ class AppAutoloadPluginTest extends TestCase
         (new AppAutoloadPlugin())->activate($composer, $io);
     }
 
-    public function testImplementsTheAPI2Methods()
+    public function testImplementsTheAPI2Methods(): void
     {
         $plugin = new AppAutoloadPlugin();
         $composer = $this->createMock(Composer::class);

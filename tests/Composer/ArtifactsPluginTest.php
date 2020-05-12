@@ -362,7 +362,7 @@ class ArtifactsPluginTest extends TestCase
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
-    public function testImplementsTheAPI2Methods()
+    public function testImplementsTheAPI2Methods(): void
     {
         $plugin = new ArtifactsPlugin();
         $composer = $this->createMock(Composer::class);
