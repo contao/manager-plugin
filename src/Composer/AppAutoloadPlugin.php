@@ -31,4 +31,14 @@ class AppAutoloadPlugin implements PluginInterface
             $rootPackage->setAutoload(['psr-4' => ['App\\' => 'src/']]);
         }
     }
+
+    public function deactivate(Composer $composer, IOInterface $io): void
+    {
+        // Nothing to do here
+    }
+
+    public function uninstall(Composer $composer, IOInterface $io): void
+    {
+        // Nothing to do here
+    }
 }

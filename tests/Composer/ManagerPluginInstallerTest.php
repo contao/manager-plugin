@@ -390,6 +390,16 @@ class ManagerPluginInstallerTest extends TestCase
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
     }
 
+    public function testImplementsTheAPI2Methods(): void
+    {
+        $plugin = new ManagerPluginInstaller();
+        $composer = $this->createMock(Composer::class);
+        $io = $this->createMock(IOInterface::class);
+
+        $this->assertNull($plugin->deactivate($composer, $io));
+        $this->assertNull($plugin->uninstall($composer, $io));
+    }
+
     /**
      * @return PackageInterface&MockObject
      */
