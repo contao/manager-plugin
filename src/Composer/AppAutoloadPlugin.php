@@ -32,12 +32,12 @@ class AppAutoloadPlugin implements PluginInterface
         }
     }
 
-    public function deactivate(Composer $composer, IOInterface $io)
+    public function deactivate(Composer $composer, IOInterface $io): void
     {
         // Nothing to do here
     }
 
-    public function uninstall(Composer $composer, IOInterface $io)
+    public function uninstall(Composer $composer, IOInterface $io): void
     {
         // Nothing to do here
     }
