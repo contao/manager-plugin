@@ -17,6 +17,8 @@ use Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
+use PHPUnit\Framework\MockObject\Generator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -103,11 +105,7 @@ class ConfigTest extends TestCase
 
     public function testReturnsTheBundlePath(): void
     {
-        $kernel = $this->createMock(KernelInterface::class);
-        $kernel
-            ->method('getRootDir')
-            ->willReturn(__DIR__.'/../../Fixtures/Bundle/Config/app')
-        ;
+        $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config');
 
         $config = ModuleConfig::create('foobar');
         $bundle = $config->getBundleInstance($kernel);
@@ -118,11 +116,7 @@ class ConfigTest extends TestCase
 
     public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid(): void
     {
-        $kernel = $this->createMock(KernelInterface::class);
-        $kernel
-            ->method('getRootDir')
-            ->willReturn(__DIR__.'/../../Fixtures/Bundle/Config/app')
-        ;
+        $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config');
 
         $config = ModuleConfig::create('barfoo');
 
@@ -148,5 +142,27 @@ class ConfigTest extends TestCase
 
         $this->assertContains('core', $config->getLoadAfter());
         $this->assertContains('news', $config->getLoadAfter());
+    }
+
+    /**
+     * @return KernelInterface&MockObject
+     */
+    private function mockKernel(string $projectDir): KernelInterface
+    {
+        $generator = new Generator();
+        $methods = $generator->getClassMethods(KernelInterface::class);
+        $methods[] = 'getProjectDir';
+
+        $kernel = $this->getMockBuilder(KernelInterface::class)
+            ->setMethods($methods)
+            ->getMock()
+        ;
+
+        $kernel
+            ->method('getProjectDir')
+            ->willReturn($projectDir)
+        ;
+
+        return $kernel;
     }
 }

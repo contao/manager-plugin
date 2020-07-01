@@ -29,7 +29,7 @@ class ModuleConfig extends BundleConfig
      */
     public function getBundleInstance(KernelInterface $kernel)
     {
-        return new ContaoModuleBundle($this->name, $kernel->getRootDir());
+        return new ContaoModuleBundle($this->name, $kernel->getProjectDir());
     }
 
     /**
