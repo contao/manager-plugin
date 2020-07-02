@@ -17,7 +17,6 @@ use Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
-use PHPUnit\Framework\MockObject\Generator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -103,9 +102,20 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(ContaoCoreBundle::class, $bundle);
     }
 
-    public function testReturnsTheBundlePath(): void
+    public function testReturnsTheBundlePathWithProjectDir(): void
     {
         $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config');
+
+        $config = ModuleConfig::create('foobar');
+        $bundle = $config->getBundleInstance($kernel);
+
+        $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
+        $this->assertSame(__DIR__.'/../../Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
+    }
+
+    public function testReturnsTheBundlePathWithRootDir(): void
+    {
+        $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config/app');
 
         $config = ModuleConfig::create('foobar');
         $bundle = $config->getBundleInstance($kernel);
@@ -149,17 +159,10 @@ class ConfigTest extends TestCase
      */
     private function mockKernel(string $projectDir): KernelInterface
     {
-        $generator = new Generator();
-        $methods = $generator->getClassMethods(KernelInterface::class);
-        $methods[] = 'getProjectDir';
-
-        $kernel = $this->getMockBuilder(KernelInterface::class)
-            ->setMethods($methods)
-            ->getMock()
-        ;
+        $kernel = $this->createMock(KernelInterface::class);
 
         $kernel
-            ->method('getProjectDir')
+            ->method(method_exists($kernel, 'getRootDir') ? 'getRootDir' : 'getProjectDir')
             ->willReturn($projectDir)
         ;
 
