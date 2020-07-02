@@ -29,7 +29,9 @@ class ModuleConfig extends BundleConfig
      */
     public function getBundleInstance(KernelInterface $kernel)
     {
-        return new ContaoModuleBundle($this->name, $kernel->getProjectDir());
+        $dir = \method_exists($kernel, 'getRootDir') ? $kernel->getRootDir() : $kernel->getProjectDir();
+
+        return new ContaoModuleBundle($this->name, $dir);
     }
 
     /**
