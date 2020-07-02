@@ -27,9 +27,6 @@
         "phpunit/phpunit": "^6.5",
         "symfony/phpunit-bridge": "^3.4.5"
     },
-    "conflict": {
-        "contao/manager-bundle": "< 4.9.4"
-    },
     "extra": {
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
