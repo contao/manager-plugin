@@ -91,7 +91,8 @@ class ConfigResolver implements ConfigResolverInterface
                 $loadingOrder[$name][] = $package;
             }
         }
-
+        ksort($loadingOrder);
+        
         return $loadingOrder;
     }
 
