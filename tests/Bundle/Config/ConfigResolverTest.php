@@ -61,7 +61,7 @@ class ConfigResolverTest extends TestCase
 
         $actualResult = $this->resolver->getBundleConfigs(false);
 
-        $this->assertCount(count($expectedResult), $actualResult);
+        $this->assertCount(\count($expectedResult), $actualResult);
         foreach ($expectedResult as $index => $config) {
             $this->assertSame($config->getName(), $actualResult[$index]->getName());
             $this->assertSame($config->getReplace(), $actualResult[$index]->getReplace());
