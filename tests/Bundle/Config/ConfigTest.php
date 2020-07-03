@@ -127,7 +127,6 @@ class ConfigTest extends TestCase
     public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid(): void
     {
         $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config');
-
         $config = ModuleConfig::create('barfoo');
 
         $this->expectException('LogicException');
@@ -160,7 +159,6 @@ class ConfigTest extends TestCase
     private function mockKernel(string $projectDir): KernelInterface
     {
         $kernel = $this->createMock(KernelInterface::class);
-
         $kernel
             ->method(method_exists($kernel, 'getRootDir') ? 'getRootDir' : 'getProjectDir')
             ->willReturn($projectDir)
