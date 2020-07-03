@@ -72,7 +72,8 @@ class ConfigResolver implements ConfigResolverInterface
             ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
             ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
             ->setLoadInProduction($otherConfig->loadInProduction() || $config->loadInProduction())
-            ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment());
+            ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment())
+        ;
     }
 
     /**

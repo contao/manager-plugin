@@ -54,7 +54,7 @@ class ConfigResolverTest extends TestCase
         // Shuffle the input around to ensure the input order does not alter the output.
         // This does not guarantee failure if the random input already provides the expected output but is better
         // than nothing - at least we have a higher probability than 0 to catch these issues here.
-         shuffle($configs);
+        shuffle($configs);
         foreach ($configs as $config) {
             $this->resolver->add($config);
         }
