@@ -51,13 +51,17 @@ class ConfigResolverTest extends TestCase
      */
     public function testAddsTheBundleConfigs(array $configs, array $expectedResult): void
     {
+        // Shuffle the input around to ensure the input order does not alter the output.
+        // This does not guarantee failure if the random input already provides the expected output but is better
+        // than nothing - at least we have a higher probability than 0 to catch these issues here.
+         shuffle($configs);
         foreach ($configs as $config) {
             $this->resolver->add($config);
         }
 
         $actualResult = $this->resolver->getBundleConfigs(false);
 
-        $this->assertSame($expectedResult, $actualResult);
+        $this->assertEquals($expectedResult, $actualResult);
     }
 
     /**
@@ -72,7 +76,9 @@ class ConfigResolverTest extends TestCase
         $config5 = (new BundleConfig('name5'))->setReplace(['core']);
         $config6 = (new BundleConfig('name6'))->setReplace(['name2']);
         $config7a = new BundleConfig('name7');
-        $config7b = new BundleConfig('name7');
+        $config7b = (new BundleConfig('name7'))->setReplace(['name2']);
+        $config8a = (new BundleConfig('name8'))->setLoadAfter(['name1'])->setReplace(['foo']);
+        $config8b = (new BundleConfig('name8'))->setLoadAfter(['name2'])->setReplace(['bar']);
 
         return [
             'Test default configs' => [
@@ -126,11 +132,25 @@ class ConfigResolverTest extends TestCase
             ],
             'Test latter config overrides previous one with the same name' => [
                 [
+                    $config2,
                     $config7a,
                     $config7b,
                 ],
                 [
                     'name7' => $config7b,
+                ],
+            ],
+            'Test latter config merges previous one with the same name' => [
+                [
+                    $config1,
+                    $config2,
+                    $config8a,
+                    $config8b,
+                ],
+                [
+                    'name1' => $config1,
+                    'name2' => $config2,
+                    'name8' => (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['foo', 'bar']),
                 ],
             ],
         ];
