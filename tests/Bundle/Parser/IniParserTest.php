@@ -56,7 +56,7 @@ class IniParserTest extends TestCase
 
         $this->assertSame('with-requires', $configs[0]->getName());
         $this->assertSame([], $configs[0]->getReplace());
-        $this->assertSame(['core', 'news', 'without-ini', 'calendar'], $configs[0]->getLoadAfter());
+        $this->assertSame(['calendar', 'core', 'news', 'without-ini'], $configs[0]->getLoadAfter());
         $this->assertTrue($configs[0]->loadInProduction());
         $this->assertTrue($configs[0]->loadInDevelopment());
     }

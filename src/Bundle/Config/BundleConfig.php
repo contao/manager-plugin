@@ -84,6 +84,7 @@ class BundleConfig implements ConfigInterface
     public function setReplace(array $replace): self
     {
         $this->replace = $replace;
+        sort($this->replace);
 
         return $this;
     }
@@ -102,6 +103,7 @@ class BundleConfig implements ConfigInterface
     public function setLoadAfter(array $loadAfter): self
     {
         $this->loadAfter = $loadAfter;
+        sort($this->loadAfter);
 
         return $this;
     }

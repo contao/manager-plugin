@@ -51,9 +51,9 @@ class ConfigTest extends TestCase
 
         $this->assertEmpty($config->getReplace());
 
-        $config->setReplace(['foobar']);
+        $config->setReplace(['foobar', 'barfoo']);
 
-        $this->assertSame(['foobar'], $config->getReplace());
+        $this->assertSame(['barfoo', 'foobar'], $config->getReplace());
     }
 
     public function testReadsAndWritesTheLoadAfter(): void
@@ -62,9 +62,9 @@ class ConfigTest extends TestCase
 
         $this->assertEmpty($config->getLoadAfter());
 
-        $config->setLoadAfter(['foobar']);
+        $config->setLoadAfter(['foobar', 'barfoo']);
 
-        $this->assertSame(['foobar'], $config->getLoadAfter());
+        $this->assertSame(['barfoo', 'foobar'], $config->getLoadAfter());
     }
 
     public function testDisablesLoadingInProduction(): void
