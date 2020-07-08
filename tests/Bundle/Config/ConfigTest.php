@@ -110,7 +110,7 @@ class ConfigTest extends TestCase
         $bundle = $config->getBundleInstance($kernel);
 
         $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
-        $this->assertSame(__DIR__.'/../../Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
+        $this->assertSame(\dirname(__DIR__, 2).'/Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
     }
 
     public function testReturnsTheBundlePathWithRootDir(): void
@@ -121,7 +121,7 @@ class ConfigTest extends TestCase
         $bundle = $config->getBundleInstance($kernel);
 
         $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
-        $this->assertSame(__DIR__.'/../../Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
+        $this->assertSame(\dirname(__DIR__, 2).'/Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
     }
 
     public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid(): void
