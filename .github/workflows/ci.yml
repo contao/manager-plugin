@@ -25,7 +25,7 @@ jobs:
                   coverage: none
 
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v1
 
             - name: Install the dependencies
               run: composer install --no-interaction --no-suggest
@@ -53,7 +53,7 @@ jobs:
                   coverage: none
 
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v1
 
             - name: Install the dependencies
               run: composer install --no-interaction --no-suggest
@@ -79,7 +79,7 @@ jobs:
                   coverage: none
 
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v1
 
             - name: Install the dependencies
               run: composer install --no-interaction --no-suggest
@@ -101,7 +101,7 @@ jobs:
                   coverage: none
 
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v1
 
             - name: Install the dependencies
               run: composer update --prefer-lowest --prefer-stable --no-interaction --no-suggest
