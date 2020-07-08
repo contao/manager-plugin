@@ -362,6 +362,16 @@ class ArtifactsPluginTest extends TestCase
         $plugin->activate($composer, $this->createMock(IOInterface::class));
     }
 
+    public function testImplementsTheAPI2Methods(): void
+    {
+        $plugin = new ArtifactsPlugin();
+        $composer = $this->createMock(Composer::class);
+        $io = $this->createMock(IOInterface::class);
+
+        $this->assertNull($plugin->deactivate($composer, $io));
+        $this->assertNull($plugin->uninstall($composer, $io));
+    }
+
     /**
      * @param Config&MockObject            $config
      * @param RepositoryManager&MockObject $repositoryManager

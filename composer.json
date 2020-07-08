@@ -11,17 +11,17 @@
     ],
     "require": {
         "php": "^7.1",
-        "composer-plugin-api": "^1.1",
-        "symfony/config": "^3.3 || ^4.0",
-        "symfony/dependency-injection": "^3.3 || ^4.0",
-        "symfony/filesystem": "^3.3 || ^4.0",
-        "symfony/http-kernel": "^3.3 || ^4.0",
-        "symfony/routing": "^3.3 || ^4.0"
+        "composer-plugin-api": "^1.1 || ^2.0",
+        "symfony/config": "^3.3 || ^4.0 || ^5.0",
+        "symfony/dependency-injection": "^3.3 || ^4.0 || ^5.0",
+        "symfony/filesystem": "^3.3 || ^4.0 || ^5.0",
+        "symfony/http-kernel": "^3.3 || ^4.0 || ^5.0",
+        "symfony/routing": "^3.3 || ^4.0 || ^5.0"
     },
     "require-dev": {
         "ext-zip": "*",
-        "composer/composer": "^1.1",
-        "contao/core-bundle": "^4.5",
+        "composer/composer": "^1.1 || ^2.0",
+        "contao/core-bundle": "4.10.x-dev",
         "friendsofphp/php-cs-fixer": "^2.14",
         "php-http/guzzle6-adapter": "^1.1",
         "phpunit/phpunit": "^6.5",
@@ -34,7 +34,7 @@
             "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
         ],
         "symfony": {
-            "require": "^3.3 || ^4.0"
+            "require": "^3.3 || ^4.0 || ^5.0"
         }
     },
     "autoload": {
