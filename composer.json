@@ -21,11 +21,12 @@
     "require-dev": {
         "ext-zip": "*",
         "composer/composer": "^1.1 || ^2.0",
-        "contao/core-bundle": "4.10.x-dev",
+        "contao/core-bundle": "^4.4",
         "friendsofphp/php-cs-fixer": "^2.14",
         "php-http/guzzle6-adapter": "^1.1",
         "phpunit/phpunit": "^6.5",
-        "symfony/phpunit-bridge": "^3.4.5"
+        "symfony/phpunit-bridge": "^3.4.5",
+        "webmozart/path-util": "^2.0"
     },
     "extra": {
         "class": [
@@ -34,7 +35,7 @@
             "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
         ],
         "symfony": {
-            "require": "^3.3 || ^4.0 || ^5.0"
+            "require": "3.4.* || 4.4.* || ^5.0"
         }
     },
     "autoload": {
