@@ -19,7 +19,9 @@ use Contao\ManagerPlugin\Bundle\Config\ConfigInterface;
 use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Webmozart\PathUtil\Path;
 
 class ConfigTest extends TestCase
 {
@@ -102,26 +104,21 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(ContaoCoreBundle::class, $bundle);
     }
 
-    public function testReturnsTheBundlePathWithProjectDir(): void
+    public function testReturnsTheBundlePath(): void
     {
-        $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config');
+        $projectDir = \dirname(__DIR__, 2).'/Fixtures/Bundle/Config';
+
+        if (method_exists(Kernel::class, 'getRootDir')) {
+            $kernel = $this->mockKernel($projectDir.'/app');
+        } else {
+            $kernel = $this->mockKernel($projectDir);
+        }
 
         $config = ModuleConfig::create('foobar');
         $bundle = $config->getBundleInstance($kernel);
 
         $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
-        $this->assertSame(\dirname(__DIR__, 2).'/Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
-    }
-
-    public function testReturnsTheBundlePathWithRootDir(): void
-    {
-        $kernel = $this->mockKernel(__DIR__.'/../../Fixtures/Bundle/Config/app');
-
-        $config = ModuleConfig::create('foobar');
-        $bundle = $config->getBundleInstance($kernel);
-
-        $this->assertInstanceOf(ContaoModuleBundle::class, $bundle);
-        $this->assertSame(\dirname(__DIR__, 2).'/Fixtures/Bundle/Config/system/modules/foobar', $bundle->getPath());
+        $this->assertSame($projectDir.'/system/modules/foobar', Path::canonicalize($bundle->getPath()));
     }
 
     public function testFailsToReturnTheBundleInstanceIfTheNameIsInvalid(): void
@@ -160,7 +157,7 @@ class ConfigTest extends TestCase
     {
         $kernel = $this->createMock(KernelInterface::class);
         $kernel
-            ->method(method_exists($kernel, 'getRootDir') ? 'getRootDir' : 'getProjectDir')
+            ->method(method_exists(Kernel::class, 'getRootDir') ? 'getRootDir' : 'getProjectDir')
             ->willReturn($projectDir)
         ;
 
