@@ -47,14 +47,10 @@ class ConfigResolverTest extends TestCase
     }
 
     /**
-     * @dataProvider getBundleConfigs
+     * @dataProvider getBundleConfigsSeeded
      */
     public function testAddsTheBundleConfigs(array $configs, array $expectedResult): void
     {
-        // Shuffle the input around to ensure the input order does not alter the output.
-        // This does not guarantee failure if the random input already provides the expected output but is better
-        // than nothing - at least we have a higher probability than 0 to catch these issues here.
-        shuffle($configs);
         foreach ($configs as $config) {
             $this->resolver->add($config);
         }
@@ -69,6 +65,29 @@ class ConfigResolverTest extends TestCase
             $this->assertSame($config->loadInProduction(), $actualResult[$index]->loadInProduction());
             $this->assertSame($config->loadInDevelopment(), $actualResult[$index]->loadInDevelopment());
         }
+    }
+
+    /**
+     * @return array<string,BundleConfig[]|array<string,BundleConfig>>
+     */
+    public function getBundleConfigsSeeded(): array
+    {
+        $configs = $this->getBundleConfigs();
+        // Shuffle the input around to ensure the input order does not alter the output.
+        $output = [];
+        for ($seed = 0; $seed < 5; ++$seed) {
+            mt_srand($seed);
+            foreach ($configs as $explanation => $config) {
+                // Copy the input array.
+                $testData = \array_slice($config, 0);
+                shuffle($testData[0]);
+
+                $output['with mt_srand('.$seed.') '.$explanation] = $testData;
+            }
+        }
+        mt_srand();
+
+        return $output;
     }
 
     /**
