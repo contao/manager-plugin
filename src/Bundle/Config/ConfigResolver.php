@@ -64,7 +64,6 @@ class ConfigResolver implements ConfigResolverInterface
     private function mergeConfig($otherConfig, ConfigInterface $config): ConfigInterface
     {
         if (!($otherConfig instanceof BundleConfig) || !($config instanceof BundleConfig)) {
-            // FIXME: can we handle type variance somehow? What about custom configs
             throw new UnexpectedValueException('Mixing config classes is not supported.');
         }
         // If both are bundle config, we have no problem and can merge.
