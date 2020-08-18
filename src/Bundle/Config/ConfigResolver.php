@@ -70,7 +70,7 @@ class ConfigResolver implements ConfigResolverInterface
         $otherConfig = $bundles[$config->getName()];
 
         // Only bundle configurations can be merged
-        if (\get_class($config) !== BundleConfig::class || \get_class($otherConfig) !== BundleConfig::class) {
+        if (BundleConfig::class !== \get_class($config) || BundleConfig::class !== \get_class($otherConfig)) {
             return null;
         }
 
