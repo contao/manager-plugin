@@ -43,8 +43,8 @@ class ConfigResolver implements ConfigResolverInterface
         // Only add bundles which match the environment
         foreach ($this->configs as $config) {
             if (($development && $config->loadInDevelopment()) || (!$development && $config->loadInProduction())) {
-                if (isset($bundles[$config->getName()])) {
-                    $this->mergeConfig($bundles[$config->getName()], $config);
+                if ($newConfig = $this->mergeConfig($bundles, $config)) {
+                    $config = $newConfig;
                 }
 
                 $bundles[$config->getName()] = $config;
@@ -61,11 +61,22 @@ class ConfigResolver implements ConfigResolverInterface
         return $this->order($bundles, $resolvedOrder);
     }
 
-    private function mergeConfig(ConfigInterface $otherConfig, ConfigInterface $config): void
+    private function mergeConfig(array $bundles, ConfigInterface $config): ?ConfigInterface
     {
-        $config
-            ->setReplace(array_values(array_unique(array_merge($otherConfig->getReplace(), $config->getReplace()))))
-            ->setLoadAfter(array_values(array_unique(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))))
+        if (!isset($bundles[$config->getName()])) {
+            return null;
+        }
+
+        $otherConfig = $bundles[$config->getName()];
+
+        // Only bundle configurations can be merged
+        if (\get_class($config) !== BundleConfig::class || \get_class($otherConfig) !== BundleConfig::class) {
+            return null;
+        }
+
+        return BundleConfig::create($otherConfig->getName())
+            ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
+            ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
             ->setLoadInProduction($otherConfig->loadInProduction() || $config->loadInProduction())
             ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment())
         ;
