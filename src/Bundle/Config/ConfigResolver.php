@@ -47,6 +47,7 @@ class ConfigResolver implements ConfigResolverInterface
                 if (null !== $otherConfig = $bundles[$config->getName()] ?? null) {
                     $config = $this->mergeConfig($otherConfig, $config);
                 }
+
                 $bundles[$config->getName()] = $config;
             } else {
                 unset($bundles[$config->getName()]);
@@ -66,7 +67,8 @@ class ConfigResolver implements ConfigResolverInterface
         if (!($otherConfig instanceof BundleConfig) || !($config instanceof BundleConfig)) {
             throw new UnexpectedValueException('Mixing config classes is not supported.');
         }
-        // If both are bundle config, we have no problem and can merge.
+
+        // If both are bundle configs, we have no problem and can merge
         return BundleConfig::create($otherConfig->getName())
             ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
             ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
@@ -109,9 +111,13 @@ class ConfigResolver implements ConfigResolverInterface
                 $loadingOrder[$name][] = $package;
             }
         }
-        uksort($loadingOrder, function (string $a, string $b): int {
-            return md5($a) <=> md5($b);
-        });
+
+        uksort(
+            $loadingOrder,
+            static function (string $a, string $b): int {
+                return md5($a) <=> md5($b);
+            }
+        );
 
         return $loadingOrder;
     }

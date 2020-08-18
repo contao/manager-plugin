@@ -58,6 +58,7 @@ class ConfigResolverTest extends TestCase
         $actualResult = $this->resolver->getBundleConfigs(false);
 
         $this->assertCount(\count($expectedResult), $actualResult);
+
         foreach ($expectedResult as $index => $config) {
             $this->assertSame($config->getName(), $actualResult[$index]->getName());
             $this->assertSame($config->getReplace(), $actualResult[$index]->getReplace());
@@ -73,18 +74,21 @@ class ConfigResolverTest extends TestCase
     public function getBundleConfigsSeeded(): array
     {
         $configs = $this->getBundleConfigs();
-        // Shuffle the input around to ensure the input order does not alter the output.
         $output = [];
+
+        // Shuffle the input around to ensure the input order does not alter the output
         for ($seed = 0; $seed < 5; ++$seed) {
             mt_srand($seed);
+
             foreach ($configs as $explanation => $config) {
-                // Copy the input array.
+                // Copy the input array
                 $testData = \array_slice($config, 0);
                 shuffle($testData[0]);
 
                 $output['with mt_srand('.$seed.') '.$explanation] = $testData;
             }
         }
+
         mt_srand();
 
         return $output;
@@ -105,6 +109,7 @@ class ConfigResolverTest extends TestCase
         $config7b = (new BundleConfig('name7'))->setReplace(['name2']);
         $config8a = (new BundleConfig('name8'))->setLoadAfter(['name1'])->setReplace(['foo']);
         $config8b = (new BundleConfig('name8'))->setLoadAfter(['name2'])->setReplace(['bar']);
+        $config8c = (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['foo', 'bar']);
 
         return [
             'Test default configs' => [
@@ -176,7 +181,7 @@ class ConfigResolverTest extends TestCase
                 [
                     'name1' => $config1,
                     'name2' => $config2,
-                    'name8' => (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['foo', 'bar']),
+                    'name8' => $config8c,
                 ],
             ],
         ];

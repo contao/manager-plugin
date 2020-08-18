@@ -28,7 +28,7 @@
         "symfony/phpunit-bridge": "^3.4.5"
     },
     "conflict": {
-        "contao/manager-bundle": ">= 4.9.0 <4.9.4"
+        "contao/manager-bundle": "4.9.* <4.9.4"
     },
     "extra": {
         "class": [
