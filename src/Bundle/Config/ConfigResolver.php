@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Bundle\Config;
 
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
+use UnexpectedValueException;
 
 class ConfigResolver implements ConfigResolverInterface
 {
@@ -43,6 +44,10 @@ class ConfigResolver implements ConfigResolverInterface
         // Only add bundles which match the environment
         foreach ($this->configs as $config) {
             if (($development && $config->loadInDevelopment()) || (!$development && $config->loadInProduction())) {
+                if (null !== $otherConfig = $bundles[$config->getName()] ?? null) {
+                    $config = $this->mergeConfig($otherConfig, $config);
+                }
+
                 $bundles[$config->getName()] = $config;
             } else {
                 unset($bundles[$config->getName()]);
@@ -55,6 +60,21 @@ class ConfigResolver implements ConfigResolverInterface
         $resolvedOrder = $this->orderByDependencies($normalizedOrder);
 
         return $this->order($bundles, $resolvedOrder);
+    }
+
+    private function mergeConfig($otherConfig, ConfigInterface $config): ConfigInterface
+    {
+        if (!($otherConfig instanceof BundleConfig) || !($config instanceof BundleConfig)) {
+            throw new UnexpectedValueException('Mixing config classes is not supported.');
+        }
+
+        // If both are bundle configs, we have no problem and can merge
+        return BundleConfig::create($otherConfig->getName())
+            ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
+            ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
+            ->setLoadInProduction($otherConfig->loadInProduction() || $config->loadInProduction())
+            ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment())
+        ;
     }
 
     /**
@@ -91,6 +111,13 @@ class ConfigResolver implements ConfigResolverInterface
                 $loadingOrder[$name][] = $package;
             }
         }
+
+        uksort(
+            $loadingOrder,
+            static function (string $a, string $b): int {
+                return md5($a) <=> md5($b);
+            }
+        );
 
         return $loadingOrder;
     }

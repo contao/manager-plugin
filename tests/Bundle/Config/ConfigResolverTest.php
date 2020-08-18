@@ -47,7 +47,7 @@ class ConfigResolverTest extends TestCase
     }
 
     /**
-     * @dataProvider getBundleConfigs
+     * @dataProvider getBundleConfigsSeeded
      */
     public function testAddsTheBundleConfigs(array $configs, array $expectedResult): void
     {
@@ -57,7 +57,41 @@ class ConfigResolverTest extends TestCase
 
         $actualResult = $this->resolver->getBundleConfigs(false);
 
-        $this->assertSame($expectedResult, $actualResult);
+        $this->assertCount(\count($expectedResult), $actualResult);
+
+        foreach ($expectedResult as $index => $config) {
+            $this->assertSame($config->getName(), $actualResult[$index]->getName());
+            $this->assertSame($config->getReplace(), $actualResult[$index]->getReplace());
+            $this->assertSame($config->getLoadAfter(), $actualResult[$index]->getLoadAfter());
+            $this->assertSame($config->loadInProduction(), $actualResult[$index]->loadInProduction());
+            $this->assertSame($config->loadInDevelopment(), $actualResult[$index]->loadInDevelopment());
+        }
+    }
+
+    /**
+     * @return array<string,BundleConfig[]|array<string,BundleConfig>>
+     */
+    public function getBundleConfigsSeeded(): array
+    {
+        $configs = $this->getBundleConfigs();
+        $output = [];
+
+        // Shuffle the input around to ensure the input order does not alter the output
+        for ($seed = 0; $seed < 5; ++$seed) {
+            mt_srand($seed);
+
+            foreach ($configs as $explanation => $config) {
+                // Copy the input array
+                $testData = \array_slice($config, 0);
+                shuffle($testData[0]);
+
+                $output['with mt_srand('.$seed.') '.$explanation] = $testData;
+            }
+        }
+
+        mt_srand();
+
+        return $output;
     }
 
     /**
@@ -72,7 +106,10 @@ class ConfigResolverTest extends TestCase
         $config5 = (new BundleConfig('name5'))->setReplace(['core']);
         $config6 = (new BundleConfig('name6'))->setReplace(['name2']);
         $config7a = new BundleConfig('name7');
-        $config7b = new BundleConfig('name7');
+        $config7b = (new BundleConfig('name7'))->setReplace(['name2']);
+        $config8a = (new BundleConfig('name8'))->setLoadAfter(['name1'])->setReplace(['foo']);
+        $config8b = (new BundleConfig('name8'))->setLoadAfter(['name2'])->setReplace(['bar']);
+        $config8c = (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['foo', 'bar']);
 
         return [
             'Test default configs' => [
@@ -126,11 +163,25 @@ class ConfigResolverTest extends TestCase
             ],
             'Test latter config overrides previous one with the same name' => [
                 [
+                    $config2,
                     $config7a,
                     $config7b,
                 ],
                 [
                     'name7' => $config7b,
+                ],
+            ],
+            'Test latter config merges previous one with the same name' => [
+                [
+                    $config1,
+                    $config2,
+                    $config8a,
+                    $config8b,
+                ],
+                [
+                    'name1' => $config1,
+                    'name2' => $config2,
+                    'name8' => $config8c,
                 ],
             ],
         ];
