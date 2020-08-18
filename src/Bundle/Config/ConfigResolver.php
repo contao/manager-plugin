@@ -75,8 +75,8 @@ class ConfigResolver implements ConfigResolverInterface
         }
 
         return BundleConfig::create($otherConfig->getName())
-            ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
-            ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
+            ->setReplace(array_unique(array_merge($otherConfig->getReplace(), $config->getReplace())))
+            ->setLoadAfter(array_unique(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter())))
             ->setLoadInProduction($otherConfig->loadInProduction() || $config->loadInProduction())
             ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment())
         ;

@@ -109,7 +109,7 @@ class ConfigResolverTest extends TestCase
         $config7a = new BundleConfig('name7');
         $config7b = (new BundleConfig('name7'))->setReplace(['name2']);
         $config8a = (new BundleConfig('name8'))->setLoadAfter(['name1'])->setReplace(['foo']);
-        $config8b = (new BundleConfig('name8'))->setLoadAfter(['name2'])->setReplace(['bar']);
+        $config8b = (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['bar']);
         $config8c = (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['foo', 'bar']);
         $config9a = new ModuleConfig('name9');
         $config9b = new ModuleConfig('name9');
