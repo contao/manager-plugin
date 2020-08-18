@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Bundle\Config;
 
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
-use UnexpectedValueException;
 
 class ConfigResolver implements ConfigResolverInterface
 {
@@ -44,8 +43,8 @@ class ConfigResolver implements ConfigResolverInterface
         // Only add bundles which match the environment
         foreach ($this->configs as $config) {
             if (($development && $config->loadInDevelopment()) || (!$development && $config->loadInProduction())) {
-                if (null !== $otherConfig = $bundles[$config->getName()] ?? null) {
-                    $config = $this->mergeConfig($otherConfig, $config);
+                if ($newConfig = $this->mergeConfig($bundles, $config)) {
+                    $config = $newConfig;
                 }
 
                 $bundles[$config->getName()] = $config;
@@ -62,13 +61,24 @@ class ConfigResolver implements ConfigResolverInterface
         return $this->order($bundles, $resolvedOrder);
     }
 
-    private function mergeConfig($otherConfig, ConfigInterface $config): ConfigInterface
+    private function mergeConfig(array $bundles, ConfigInterface $config): ?ConfigInterface
     {
-        if (!($otherConfig instanceof BundleConfig) || !($config instanceof BundleConfig)) {
-            throw new UnexpectedValueException('Mixing config classes is not supported.');
+        if (!isset($bundles[$config->getName()])) {
+            return null;
         }
 
-        // If both are bundle configs, we have no problem and can merge
+        $otherConfig = $bundles[$config->getName()];
+
+        // Only bundle configurations but not module configurations can be merged
+        if (
+            $config instanceof ModuleConfig
+            || !$config instanceof BundleConfig
+            || $otherConfig instanceof ModuleConfig
+            || !$otherConfig instanceof BundleConfig
+        ) {
+            return null;
+        }
+
         return BundleConfig::create($otherConfig->getName())
             ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
             ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
