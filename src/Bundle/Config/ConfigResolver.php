@@ -43,8 +43,8 @@ class ConfigResolver implements ConfigResolverInterface
         // Only add bundles which match the environment
         foreach ($this->configs as $config) {
             if (($development && $config->loadInDevelopment()) || (!$development && $config->loadInProduction())) {
-                if ($newConfig = $this->mergeConfig($bundles, $config)) {
-                    $config = $newConfig;
+                if (isset($bundles[$config->getName()])) {
+                    $this->mergeConfig($bundles[$config->getName()], $config);
                 }
 
                 $bundles[$config->getName()] = $config;
@@ -61,27 +61,11 @@ class ConfigResolver implements ConfigResolverInterface
         return $this->order($bundles, $resolvedOrder);
     }
 
-    private function mergeConfig(array $bundles, ConfigInterface $config): ?ConfigInterface
+    private function mergeConfig(ConfigInterface $otherConfig, ConfigInterface $config): void
     {
-        if (!isset($bundles[$config->getName()])) {
-            return null;
-        }
-
-        $otherConfig = $bundles[$config->getName()];
-
-        // Only bundle configurations but not module configurations can be merged
-        if (
-            $config instanceof ModuleConfig
-            || !$config instanceof BundleConfig
-            || $otherConfig instanceof ModuleConfig
-            || !$otherConfig instanceof BundleConfig
-        ) {
-            return null;
-        }
-
-        return BundleConfig::create($otherConfig->getName())
-            ->setReplace(array_merge($otherConfig->getReplace(), $config->getReplace()))
-            ->setLoadAfter(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))
+        $config
+            ->setReplace(array_values(array_unique(array_merge($otherConfig->getReplace(), $config->getReplace()))))
+            ->setLoadAfter(array_values(array_unique(array_merge($otherConfig->getLoadAfter(), $config->getLoadAfter()))))
             ->setLoadInProduction($otherConfig->loadInProduction() || $config->loadInProduction())
             ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment())
         ;
