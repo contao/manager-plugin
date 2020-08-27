@@ -39,6 +39,7 @@ class IniParser implements ParserInterface
         if (isset($this->loaded[$resource])) {
             return [];
         }
+
         $configs = [];
         $config = new ModuleConfig($resource);
         $configs[] = $config;
