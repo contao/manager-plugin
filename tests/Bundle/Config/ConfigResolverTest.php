@@ -14,6 +14,7 @@ namespace Contao\ManagerPlugin\Tests\Bundle\Config;
 
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Config\ConfigResolver;
+use Contao\ManagerPlugin\Bundle\Config\ModuleConfig;
 use Contao\ManagerPlugin\Dependency\UnresolvableDependenciesException;
 use PHPUnit\Framework\TestCase;
 
@@ -108,8 +109,10 @@ class ConfigResolverTest extends TestCase
         $config7a = new BundleConfig('name7');
         $config7b = (new BundleConfig('name7'))->setReplace(['name2']);
         $config8a = (new BundleConfig('name8'))->setLoadAfter(['name1'])->setReplace(['foo']);
-        $config8b = (new BundleConfig('name8'))->setLoadAfter(['name2'])->setReplace(['bar']);
+        $config8b = (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['bar']);
         $config8c = (new BundleConfig('name8'))->setLoadAfter(['name1', 'name2'])->setReplace(['foo', 'bar']);
+        $config9a = new ModuleConfig('name9');
+        $config9b = new ModuleConfig('name9');
 
         return [
             'Test default configs' => [
@@ -182,6 +185,15 @@ class ConfigResolverTest extends TestCase
                     'name1' => $config1,
                     'name2' => $config2,
                     'name8' => $config8c,
+                ],
+            ],
+            'Test does not merge module configurations' => [
+                [
+                    $config9a,
+                    $config9b,
+                ],
+                [
+                    'name9' => $config9b,
                 ],
             ],
         ];
