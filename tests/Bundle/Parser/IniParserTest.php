@@ -74,6 +74,20 @@ class IniParserTest extends TestCase
         $this->assertSame(['recursion1'], $configs[1]->getLoadAfter());
     }
 
+    public function testParsesRecursiveRequiresOnlyOnce(): void
+    {
+        /** @var ConfigInterface[] $configs */
+        $configs = $this->parser->parse('recursion1');
+        $this->assertSame([], $this->parser->parse('recursion2'));
+
+        $this->assertCount(2, $configs);
+        $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
+        $this->assertInstanceOf(ConfigInterface::class, $configs[1]);
+
+        $this->assertSame(['recursion2'], $configs[0]->getLoadAfter());
+        $this->assertSame(['recursion1'], $configs[1]->getLoadAfter());
+    }
+
     public function testParsesDirectoriesWithoutIniFile(): void
     {
         /** @var ConfigInterface[] $configs */
