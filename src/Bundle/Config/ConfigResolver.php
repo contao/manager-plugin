@@ -62,10 +62,14 @@ class ConfigResolver implements ConfigResolverInterface
         return $this->order($bundles, $resolvedOrder);
     }
 
-    private function mergeConfig($otherConfig, ConfigInterface $config): ConfigInterface
+    private function mergeConfig(ConfigInterface $otherConfig, ConfigInterface $config): ConfigInterface
     {
-        if (!($otherConfig instanceof BundleConfig) || !($config instanceof BundleConfig)) {
-            throw new UnexpectedValueException('Mixing config classes is not supported.');
+        if ($this->configsAreEqual($otherConfig, $config)) {
+            return $config;
+        }
+
+        if (BundleConfig::class !== \get_class($otherConfig) || BundleConfig::class !== \get_class($config)) {
+            throw new UnexpectedValueException(sprintf('Unable to merge "%s" ("%s" with "%s").', $config->getName(), \get_class($otherConfig), \get_class($config)));
         }
 
         // If both are bundle configs, we have no problem and can merge
@@ -75,6 +79,17 @@ class ConfigResolver implements ConfigResolverInterface
             ->setLoadInProduction($otherConfig->loadInProduction() || $config->loadInProduction())
             ->setLoadInDevelopment($otherConfig->loadInDevelopment() || $config->loadInDevelopment())
         ;
+    }
+
+    private function configsAreEqual(ConfigInterface $otherConfig, ConfigInterface $config): bool
+    {
+        return
+            \get_class($otherConfig) === \get_class($config)
+            && $otherConfig->getName() === $config->getName()
+            && $otherConfig->getReplace() === $config->getReplace()
+            && $otherConfig->getLoadAfter() === $config->getLoadAfter()
+            && $otherConfig->loadInProduction() === $config->loadInProduction()
+            && $otherConfig->loadInDevelopment() === $config->loadInDevelopment();
     }
 
     /**

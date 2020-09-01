@@ -15,6 +15,9 @@ namespace Contao\ManagerPlugin\Bundle\Config;
 use Contao\CoreBundle\HttpKernel\Bundle\ContaoModuleBundle;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+/**
+ * @internal
+ */
 class ModuleConfig extends BundleConfig
 {
     public function __construct(string $name)
