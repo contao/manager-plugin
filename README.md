@@ -181,4 +181,4 @@ file of a Contao 3 extension.
 For more information about the Contao managed edition, please read the
 [manual][1].
 
-[1]: https://docs.contao.org/books/extending-contao4/managed-edition/
+[1]: https://docs.contao.org/dev/getting-started/initial-setup/managed-edition/
