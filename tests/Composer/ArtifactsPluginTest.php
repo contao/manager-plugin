@@ -381,7 +381,7 @@ class ArtifactsPluginTest extends TestCase
     private function mockComposerWithDataDir(Config $config, RepositoryManager $repositoryManager = null, array $packages = [], array $requires = []): Composer
     {
         $requires = array_map(
-            function (&$matches) {
+            function ($matches) {
                 $constraint = $this->createMock(Constraint::class);
                 $constraint
                     ->expects($this->once())

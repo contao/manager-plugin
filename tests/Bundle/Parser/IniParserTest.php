@@ -138,9 +138,14 @@ class IniParserTest extends TestCase
      */
     public function testFailsParsingABrokenIniFile(): void
     {
+        $class = new \ReflectionClass(\PHPUnit\Framework\Error\Warning::class);
+
         // http://stackoverflow.com/questions/1225776/test-the-return-value-of-a-method-that-triggers-an-error-with-phpunit
-        \PHPUnit\Framework\Error\Warning::$enabled = false;
-        \PHPUnit\Framework\Error\Notice::$enabled = false;
+        if ($class->hasProperty('enabled')) {
+            \PHPUnit\Framework\Error\Warning::$enabled = false;
+            \PHPUnit\Framework\Error\Notice::$enabled = false;
+        }
+
         error_reporting(0);
 
         $this->expectException('RuntimeException');
