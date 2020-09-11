@@ -61,6 +61,7 @@ class ConfigResolverTest extends TestCase
         $this->assertCount(\count($expectedResult), $actualResult);
 
         foreach ($expectedResult as $index => $config) {
+            $this->assertSame(\get_class($config), \get_class($actualResult[$index]));
             $this->assertSame($config->getName(), $actualResult[$index]->getName());
             $this->assertSame($config->getReplace(), $actualResult[$index]->getReplace());
             $this->assertSame($config->getLoadAfter(), $actualResult[$index]->getLoadAfter());
@@ -231,6 +232,18 @@ class ConfigResolverTest extends TestCase
         ;
 
         $this->expectException(UnresolvableDependenciesException::class);
+
+        $this->resolver->getBundleConfigs(false);
+    }
+
+    public function testFailsIfTheConfigsCannotBeMerged(): void
+    {
+        $this->resolver
+            ->add((new ModuleConfig('name1'))->setLoadAfter(['loadafter1']))
+            ->add((new ModuleConfig('name1'))->setLoadAfter(['loadafter2']))
+        ;
+
+        $this->expectException(\UnexpectedValueException::class);
 
         $this->resolver->getBundleConfigs(false);
     }
