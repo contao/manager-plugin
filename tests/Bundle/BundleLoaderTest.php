@@ -182,7 +182,7 @@ class BundleLoaderTest extends TestCase
     /**
      * @return PluginLoader|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockPluginLoader(\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder $expects, array $plugins = []): PluginLoader
+    private function mockPluginLoader(\PHPUnit\Framework\MockObject\Rule\InvocationOrder $expects, array $plugins = []): PluginLoader
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
         $pluginLoader
