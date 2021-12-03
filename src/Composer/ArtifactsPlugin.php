@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use Composer\Composer;
+use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
 use Composer\Plugin\PluginInterface;
@@ -27,7 +28,11 @@ class ArtifactsPlugin implements PluginInterface
      */
     public function activate(Composer $composer, IOInterface $io): void
     {
-        $packagesDir = $composer->getConfig()->get('data-dir').'/packages';
+        $packagesDir = dirname(Factory::getComposerFile()).'/contao-manager/packages';
+
+        if (!is_dir($packagesDir)) {
+            $packagesDir = $composer->getConfig()->get('data-dir').'/packages';
+        }
 
         if (!is_dir($packagesDir) || !class_exists(\ZipArchive::class)) {
             return;
