@@ -21,7 +21,7 @@ class JsonParser implements ParserInterface
      */
     public function parse($resource, $type = null): array
     {
-        @trigger_error('Using a bundles.json file has been deprecated and will no longer work in version 3.0. Use the Plugin::getBundles() method to define your bundles instead.', E_USER_DEPRECATED);
+        @trigger_error('Using a bundles.json file has been deprecated and will no longer work in version 3.0. Use the Plugin::getBundles() method to define your bundles instead.', \E_USER_DEPRECATED);
 
         $configs = [];
         $json = $this->parseJsonFile($resource);
@@ -36,7 +36,7 @@ class JsonParser implements ParserInterface
      */
     public function supports($resource, $type = null): bool
     {
-        return \is_string($resource) && 'json' === pathinfo($resource, PATHINFO_EXTENSION);
+        return \is_string($resource) && 'json' === pathinfo($resource, \PATHINFO_EXTENSION);
     }
 
     /**

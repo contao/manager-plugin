@@ -30,7 +30,7 @@ class ArtifactsPluginTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         putenv('COMPOSER=');
     }
 
@@ -55,7 +55,7 @@ class ArtifactsPluginTest extends TestCase
             ->method('addRepository')
             ->with($repository)
         ;
-        
+
         putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
 
         $config = $this->mockConfig(null);
@@ -188,7 +188,7 @@ class ArtifactsPluginTest extends TestCase
 
         $repositories = [
             ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'],
-            ['type' => 'vcs', 'url' => 'https://example.org/']
+            ['type' => 'vcs', 'url' => 'https://example.org/'],
         ];
 
         $config = $this->mockConfig(null);
@@ -392,7 +392,7 @@ class ArtifactsPluginTest extends TestCase
     {
         $repositories = [
             ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages'],
-            ['type' => 'vcs', 'url' => 'https://example.org/']
+            ['type' => 'vcs', 'url' => 'https://example.org/'],
         ];
 
         $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');

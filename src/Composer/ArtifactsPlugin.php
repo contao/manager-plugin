@@ -28,7 +28,7 @@ class ArtifactsPlugin implements PluginInterface
      */
     public function activate(Composer $composer, IOInterface $io): void
     {
-        $packagesDir = dirname(Factory::getComposerFile()).'/contao-manager/packages';
+        $packagesDir = \dirname(Factory::getComposerFile()).'/contao-manager/packages';
 
         if (!is_dir($packagesDir)) {
             $packagesDir = $composer->getConfig()->get('data-dir').'/packages';
