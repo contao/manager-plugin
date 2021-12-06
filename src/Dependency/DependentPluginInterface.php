@@ -17,7 +17,7 @@ interface DependentPluginInterface
     /**
      * Gets list of Composer packages names that must be loaded before this plugin.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getPackageDependencies();
 }

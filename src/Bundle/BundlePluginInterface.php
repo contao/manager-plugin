@@ -20,7 +20,7 @@ interface BundlePluginInterface
     /**
      * Gets a list of autoload configurations for this bundle.
      *
-     * @return ConfigInterface[]
+     * @return array<ConfigInterface>
      */
     public function getBundles(ParserInterface $parser);
 }

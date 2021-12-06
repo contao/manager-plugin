@@ -27,7 +27,7 @@ interface ConfigInterface
     /**
      * Returns the replaces.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getReplace();
 
@@ -41,7 +41,7 @@ interface ConfigInterface
     /**
      * Returns the "load after" bundles.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getLoadAfter();
 

@@ -48,7 +48,7 @@ class IniParserTest extends TestCase
 
     public function testParsesRequires(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('with-requires');
 
         $this->assertCount(4, $configs);
@@ -63,7 +63,7 @@ class IniParserTest extends TestCase
 
     public function testParsesRecursiveRequires(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('recursion1');
 
         $this->assertCount(2, $configs);
@@ -76,7 +76,7 @@ class IniParserTest extends TestCase
 
     public function testParsesRecursiveRequiresOnlyOnce(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('recursion1');
         $this->assertSame([], $this->parser->parse('recursion2'));
 
@@ -90,7 +90,7 @@ class IniParserTest extends TestCase
 
     public function testParsesDirectoriesWithoutIniFile(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('without-ini');
 
         $this->assertCount(1, $configs);
@@ -105,7 +105,7 @@ class IniParserTest extends TestCase
 
     public function testParsesIniFilesWithoutRequires(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('without-requires');
 
         $this->assertCount(1, $configs);
@@ -120,7 +120,7 @@ class IniParserTest extends TestCase
 
     public function testParsesNonExistingDirectories(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('foobar');
 
         $this->assertCount(1, $configs);

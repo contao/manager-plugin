@@ -71,7 +71,7 @@ class ConfigResolverTest extends TestCase
     }
 
     /**
-     * @return array<string,BundleConfig[]|array<string,BundleConfig>>
+     * @return array<string, (array<BundleConfig>|array<string, BundleConfig>)>
      */
     public function getBundleConfigsSeeded(): array
     {
@@ -97,7 +97,7 @@ class ConfigResolverTest extends TestCase
     }
 
     /**
-     * @return array<string,BundleConfig[]|array<string,BundleConfig>>
+     * @return array<string, (array<BundleConfig>|array<string, BundleConfig>)>
      */
     public function getBundleConfigs(): array
     {
