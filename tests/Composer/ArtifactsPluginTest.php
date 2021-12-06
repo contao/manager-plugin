@@ -186,10 +186,27 @@ class ArtifactsPluginTest extends TestCase
     {
         putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
 
+        $repositories = [
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'],
+            ['type' => 'vcs', 'url' => 'https://example.org/']
+        ];
+
         $config = $this->mockConfig(null);
+
         $config
             ->expects($this->exactly(2))
             ->method('merge')
+            ->withConsecutive(...array_map(
+                static function (array $repository) {
+                    return [['repositories' => [$repository]]];
+                }, $repositories)
+            )
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn($repositories)
         ;
 
         $config
@@ -373,10 +390,27 @@ class ArtifactsPluginTest extends TestCase
 
     public function testCorrectlyHandlesMultiplePackagesAndProviders(): void
     {
+        $repositories = [
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages'],
+            ['type' => 'vcs', 'url' => 'https://example.org/']
+        ];
+
         $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
+
         $config
             ->expects($this->exactly(2))
             ->method('merge')
+            ->withConsecutive(...array_map(
+                    static function (array $repository) {
+                        return [['repositories' => [$repository]]];
+                    }, $repositories)
+            )
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn($repositories)
         ;
 
         $config
