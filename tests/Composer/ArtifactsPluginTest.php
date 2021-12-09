@@ -135,6 +135,12 @@ class ArtifactsPluginTest extends TestCase
             ->method('merge')
         ;
 
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn([])
+        ;
+
         $composer = $this->mockComposerWithDataDir(
             $config,
             null,
@@ -314,6 +320,12 @@ class ArtifactsPluginTest extends TestCase
         $config
             ->expects($this->exactly(2))
             ->method('merge')
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn([])
         ;
 
         $composer = $this->mockComposerWithDataDir(
