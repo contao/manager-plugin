@@ -399,7 +399,6 @@ class ArtifactsPluginTest extends TestCase
         ];
 
         $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
-
         $config
             ->expects($this->exactly(2))
             ->method('merge')
