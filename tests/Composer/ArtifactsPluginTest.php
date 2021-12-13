@@ -199,8 +199,8 @@ class ArtifactsPluginTest extends TestCase
             ->withConsecutive(
                 ...array_map(
                     static function (array $repository) {
-                    return [['repositories' => [$repository]]];
-                },
+                        return [['repositories' => [$repository]]];
+                    },
                     $repositories
                 )
             )
@@ -406,8 +406,8 @@ class ArtifactsPluginTest extends TestCase
             ->withConsecutive(
                 ...array_map(
                     static function (array $repository) {
-                    return [['repositories' => [$repository]]];
-                },
+                        return [['repositories' => [$repository]]];
+                    },
                     $repositories
                 )
             )
