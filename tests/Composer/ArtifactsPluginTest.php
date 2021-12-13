@@ -196,10 +196,13 @@ class ArtifactsPluginTest extends TestCase
         $config
             ->expects($this->exactly(2))
             ->method('merge')
-            ->withConsecutive(...array_map(
+            ->withConsecutive(
+                ...array_map(
                 static function (array $repository) {
                     return [['repositories' => [$repository]]];
-                }, $repositories)
+                },
+                $repositories
+            )
             )
         ;
 
@@ -400,10 +403,13 @@ class ArtifactsPluginTest extends TestCase
         $config
             ->expects($this->exactly(2))
             ->method('merge')
-            ->withConsecutive(...array_map(
-                    static function (array $repository) {
+            ->withConsecutive(
+                ...array_map(
+                static function (array $repository) {
                         return [['repositories' => [$repository]]];
-                    }, $repositories)
+                    },
+                $repositories
+            )
             )
         ;
 
