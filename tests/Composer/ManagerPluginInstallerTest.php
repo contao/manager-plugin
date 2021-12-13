@@ -460,7 +460,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->with(
                 \dirname(__DIR__, 2).'/src/Composer/../PluginLoader.php',
                 $this->callback(
-                    function ($content) use ($match) {
+                    static function ($content) use ($match) {
                         return false !== strpos($content, $match);
                     }
                 )

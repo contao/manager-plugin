@@ -66,7 +66,7 @@ class PluginLoader
     {
         $plugins = array_filter(
             $this->getInstances(),
-            function ($plugin) use ($type) {
+            static function ($plugin) use ($type) {
                 return is_a($plugin, $type);
             }
         );
@@ -79,7 +79,7 @@ class PluginLoader
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getDisabledPackages(): array
     {

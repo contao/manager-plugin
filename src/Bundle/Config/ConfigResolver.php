@@ -20,7 +20,7 @@ class ConfigResolver implements ConfigResolverInterface
     use DependencyResolverTrait;
 
     /**
-     * @var ConfigInterface[]
+     * @var array<ConfigInterface>
      */
     protected $configs = [];
 

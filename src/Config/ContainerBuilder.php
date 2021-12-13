@@ -52,7 +52,7 @@ class ContainerBuilder extends SymfonyContainerBuilder
         $configs = parent::getExtensionConfig($name);
         $plugins = $this->pluginLoader->getInstancesOf(PluginLoader::EXTENSION_PLUGINS);
 
-        /** @var ExtensionPluginInterface[] $plugins */
+        /** @var array<ExtensionPluginInterface> $plugins */
         foreach ($plugins as $plugin) {
             $configs = $plugin->getExtensionConfig($name, $configs, $this);
         }
