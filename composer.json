@@ -40,10 +40,7 @@
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
             "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller",
             "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
-        ],
-        "symfony": {
-            "require": "3.4.* || 4.4.* || ^5.1"
-        }
+        ]
     },
     "autoload": {
         "psr-4": {
