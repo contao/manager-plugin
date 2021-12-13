@@ -198,11 +198,11 @@ class ArtifactsPluginTest extends TestCase
             ->method('merge')
             ->withConsecutive(
                 ...array_map(
-                static function (array $repository) {
+                    static function (array $repository) {
                     return [['repositories' => [$repository]]];
                 },
-                $repositories
-            )
+                    $repositories
+                )
             )
         ;
 
@@ -405,11 +405,11 @@ class ArtifactsPluginTest extends TestCase
             ->method('merge')
             ->withConsecutive(
                 ...array_map(
-                static function (array $repository) {
-                        return [['repositories' => [$repository]]];
-                    },
-                $repositories
-            )
+                    static function (array $repository) {
+                    return [['repositories' => [$repository]]];
+                },
+                    $repositories
+                )
             )
         ;
 
