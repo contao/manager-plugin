@@ -55,5 +55,12 @@
     "scripts": {
         "cs-fixer": "tools/ecs/vendor/bin/ecs check src tests --fix --ansi",
         "unit-tests": "vendor/bin/phpunit --colors=always"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "contao-components/installer": false,
+            "bamarni/composer-bin-plugin": true
+        }
     }
 }
