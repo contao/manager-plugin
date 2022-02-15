@@ -20,9 +20,9 @@
     },
     "require-dev": {
         "ext-zip": "*",
+        "bamarni/composer-bin-plugin": "^1.4",
         "composer/composer": "^1.1 || ^2.0",
         "contao/core-bundle": "^4.4",
-        "friendsofphp/php-cs-fixer": "^2.14",
         "php-http/guzzle6-adapter": "^1.1",
         "phpunit/phpunit": "^8.5 || ^9.3",
         "symfony/phpunit-bridge": "^3.4.40 || ^4.0 || ^5.0",
@@ -32,14 +32,15 @@
         "contao/manager-bundle": "4.9.* <4.9.4"
     },
     "extra": {
+        "bamarni-bin": {
+            "bin-links": false,
+            "target-directory": "tools"
+        },
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
             "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller",
             "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
-        ],
-        "symfony": {
-            "require": "3.4.* || 4.4.* || 5.1.*"
-        }
+        ]
     },
     "autoload": {
         "psr-4": {
@@ -49,6 +50,17 @@
     "autoload-dev": {
         "psr-4": {
             "Contao\\ManagerPlugin\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "cs-fixer": "tools/ecs/vendor/bin/ecs check src tests --fix --ansi",
+        "unit-tests": "vendor/bin/phpunit --colors=always"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "contao-components/installer": false,
+            "bamarni/composer-bin-plugin": true
         }
     }
 }

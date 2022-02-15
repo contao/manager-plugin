@@ -51,7 +51,7 @@ class BundleLoaderTest extends TestCase
     }
 
     /**
-     * @return array<string,BundlePluginInterface[]|int|bool>
+     * @return array<string, (array<BundlePluginInterface>|int|bool)>
      */
     public function getBundleConfigs(): array
     {
@@ -207,7 +207,6 @@ class BundleLoaderTest extends TestCase
         ;
 
         $resolver
-            ->expects($this->any())
             ->method('getBundleConfigs')
             ->with($development)
             ->willReturn([])

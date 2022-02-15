@@ -19,7 +19,7 @@ trait DependencyResolverTrait
      *
      * @throws UnresolvableDependenciesException
      *
-     * @return string[]
+     * @return array<string>
      */
     protected function orderByDependencies(array $dependencies): array
     {

@@ -24,7 +24,7 @@ interface ParserInterface
      *
      * @throws \Exception
      *
-     * @return ConfigInterface[]
+     * @return array<ConfigInterface>
      */
     public function parse($resource, $type = null);
 

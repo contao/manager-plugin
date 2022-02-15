@@ -27,7 +27,14 @@ use PHPUnit\Framework\TestCase;
 
 class ArtifactsPluginTest extends TestCase
 {
-    public function testAddsArtifactsRepository(): void
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        putenv('COMPOSER=');
+    }
+
+    public function testAddsArtifactsRepositoryFromComposerDir(): void
     {
         $repository = $this->createMock(RepositoryInterface::class);
         $repository
@@ -39,7 +46,7 @@ class ArtifactsPluginTest extends TestCase
         $repositoryManager
             ->expects($this->once())
             ->method('createRepository')
-            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages'])
+            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'])
             ->willReturn($repository)
         ;
 
@@ -49,7 +56,9 @@ class ArtifactsPluginTest extends TestCase
             ->with($repository)
         ;
 
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
+        putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
+
+        $config = $this->mockConfig(null);
         $config
             ->expects($this->once())
             ->method('merge')
@@ -57,7 +66,49 @@ class ArtifactsPluginTest extends TestCase
                 'repositories' => [
                     [
                         'type' => 'artifact',
-                        'url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages',
+                        'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages',
+                    ],
+                ],
+            ])
+        ;
+
+        $composer = $this->mockComposerWithDataDir($config, $repositoryManager);
+
+        $plugin = new ArtifactsPlugin();
+        $plugin->activate($composer, $this->createMock(IOInterface::class));
+    }
+
+    public function testAddsArtifactsRepositoryFromDataDir(): void
+    {
+        $repository = $this->createMock(RepositoryInterface::class);
+        $repository
+            ->method('getPackages')
+            ->willReturn([$this->createMock(PackageInterface::class)])
+        ;
+
+        $repositoryManager = $this->createMock(RepositoryManager::class);
+        $repositoryManager
+            ->expects($this->once())
+            ->method('createRepository')
+            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'])
+            ->willReturn($repository)
+        ;
+
+        $repositoryManager
+            ->expects($this->once())
+            ->method('addRepository')
+            ->with($repository)
+        ;
+
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/artifact-data/contao-manager');
+        $config
+            ->expects($this->once())
+            ->method('merge')
+            ->with([
+                'repositories' => [
+                    [
+                        'type' => 'artifact',
+                        'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages',
                     ],
                 ],
             ])
@@ -82,7 +133,9 @@ class ArtifactsPluginTest extends TestCase
             ->method('addRepository')
         ;
 
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/null-data');
+        putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/null-data/composer.json');
+
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/null-data/contao-manager');
         $config
             ->expects($this->never())
             ->method('merge')
@@ -106,7 +159,7 @@ class ArtifactsPluginTest extends TestCase
         $repositoryManager
             ->expects($this->once())
             ->method('createRepository')
-            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/packages'])
+            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'])
             ->willReturn($repository)
         ;
 
@@ -115,7 +168,9 @@ class ArtifactsPluginTest extends TestCase
             ->method('addRepository')
         ;
 
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
+        putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
+
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/artifact-data/contao-manager');
         $config
             ->expects($this->never())
             ->method('merge')
@@ -129,10 +184,38 @@ class ArtifactsPluginTest extends TestCase
 
     public function testRegistersContaoProviders(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
+        putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
+
+        $repositories = [
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'],
+            ['type' => 'vcs', 'url' => 'https://example.org/'],
+        ];
+
+        $config = $this->mockConfig(null);
+
         $config
             ->expects($this->exactly(2))
             ->method('merge')
+            ->withConsecutive(
+                ...array_map(
+                    static function (array $repository) {
+                        return [['repositories' => [$repository]]];
+                    },
+                    $repositories
+                )
+            )
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn($repositories)
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn([])
         ;
 
         $composer = $this->mockComposerWithDataDir(
@@ -143,7 +226,7 @@ class ArtifactsPluginTest extends TestCase
                     'foo/bar',
                     'contao-provider',
                     '1.0.0',
-                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                    __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages/foo-bar-1.0.0.zip'
                 ),
             ],
             ['foo/bar' => true]
@@ -162,7 +245,7 @@ class ArtifactsPluginTest extends TestCase
 
     public function testDoesNotRegisterProvidersThatAreNotRequired(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
         $config
             ->expects($this->once())
             ->method('merge')
@@ -187,7 +270,7 @@ class ArtifactsPluginTest extends TestCase
 
     public function testDoesNotRegisterProvidersWhereConstraintDoesNotMatch(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
         $config
             ->expects($this->once())
             ->method('merge')
@@ -213,7 +296,7 @@ class ArtifactsPluginTest extends TestCase
 
     public function testDoesNotRegisterPackagesThatAreNotProviders(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/artifact-data');
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/artifact-data/contao-manager');
         $config
             ->expects($this->once())
             ->method('merge')
@@ -238,7 +321,7 @@ class ArtifactsPluginTest extends TestCase
 
     public function testDoesNotRegisterDuplicateRepositories(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
         $config
             ->expects($this->exactly(2))
             ->method('merge')
@@ -272,13 +355,13 @@ class ArtifactsPluginTest extends TestCase
                     'foo/current-provider',
                     'contao-provider',
                     '1.0.0',
-                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                    __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages/foo-bar-1.0.0.zip'
                 ),
                 $this->mockPackage(
                     'foo/new-provider',
                     'contao-provider',
                     '1.0.0',
-                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                    __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages/foo-bar-1.0.0.zip'
                 ),
             ],
             ['foo/current-provider' => true, 'foo/new-provider' => true]
@@ -310,10 +393,35 @@ class ArtifactsPluginTest extends TestCase
 
     public function testCorrectlyHandlesMultiplePackagesAndProviders(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/provider-data');
+        $repositories = [
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages'],
+            ['type' => 'vcs', 'url' => 'https://example.org/'],
+        ];
+
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
         $config
             ->expects($this->exactly(2))
             ->method('merge')
+            ->withConsecutive(
+                ...array_map(
+                    static function (array $repository) {
+                        return [['repositories' => [$repository]]];
+                    },
+                    $repositories
+                )
+            )
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn($repositories)
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn([])
         ;
 
         $composer = $this->mockComposerWithDataDir(
@@ -324,7 +432,7 @@ class ArtifactsPluginTest extends TestCase
                     'foo/current-provider',
                     'contao-provider',
                     '1.2.0',
-                    __DIR__.'/../Fixtures/Composer/provider-data/packages/foo-bar-1.0.0.zip'
+                    __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages/foo-bar-1.0.0.zip'
                 ),
                 $this->mockPackage('foo/old-provider', 'contao-provider', '1.0.0'),
                 $this->mockPackage('foo/bar', 'contao-bundle', null, null, false),
@@ -345,7 +453,7 @@ class ArtifactsPluginTest extends TestCase
 
     public function testDoesNothingWithoutPackagesDir(): void
     {
-        $config = $this->mockConfigWithDataDir(__DIR__.'/../Fixtures/Composer/null-data');
+        $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/null-data');
 
         $composer = $this->createMock(Composer::class);
         $composer
@@ -444,14 +552,23 @@ class ArtifactsPluginTest extends TestCase
     /**
      * @return Config&MockObject
      */
-    private function mockConfigWithDataDir(string $dataDir): MockObject
+    private function mockConfig(?string $dataDir): MockObject
     {
         $config = $this->createMock(Config::class);
-        $config
-            ->method('get')
-            ->with('data-dir')
-            ->willReturn($dataDir)
-        ;
+
+        if (null === $dataDir) {
+            $config
+                ->expects($this->never())
+                ->method('get')
+                ->with('data-dir')
+            ;
+        } else {
+            $config
+                ->method('get')
+                ->with('data-dir')
+                ->willReturn($dataDir)
+            ;
+        }
 
         return $config;
     }

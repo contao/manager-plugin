@@ -55,7 +55,7 @@ class BundleLoader
     /**
      * Returns an ordered bundles map.
      *
-     * @return ConfigInterface[]
+     * @return array<ConfigInterface>
      */
     public function getBundleConfigs(bool $development, string $cacheFile = null): array
     {
@@ -69,7 +69,7 @@ class BundleLoader
     /**
      * Loads the bundles map from cache.
      *
-     * @return ConfigInterface[]
+     * @return array<ConfigInterface>
      */
     private function loadFromCache(bool $development, string $cacheFile = null): array
     {
@@ -85,13 +85,13 @@ class BundleLoader
     /**
      * Generates the bundles map.
      *
-     * @return ConfigInterface[]
+     * @return array<ConfigInterface>
      */
     private function loadFromPlugins(bool $development, string $cacheFile = null): array
     {
         $resolver = $this->resolverFactory->create();
 
-        /** @var BundlePluginInterface[] $plugins */
+        /** @var array<BundlePluginInterface> $plugins */
         $plugins = $this->pluginLoader->getInstancesOf(PluginLoader::BUNDLE_PLUGINS);
 
         foreach ($plugins as $plugin) {

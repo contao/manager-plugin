@@ -15,7 +15,7 @@ namespace Contao\ManagerPlugin\Bundle\Parser;
 class DelegatingParser implements ParserInterface
 {
     /**
-     * @var ParserInterface[]
+     * @var array<ParserInterface>
      */
     private $parsers = [];
 

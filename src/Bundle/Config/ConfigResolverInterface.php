@@ -30,7 +30,7 @@ interface ConfigResolverInterface
      *
      * @throws UnresolvableDependenciesException
      *
-     * @return BundleConfig[]
+     * @return array<BundleConfig>
      */
     public function getBundleConfigs($development);
 }

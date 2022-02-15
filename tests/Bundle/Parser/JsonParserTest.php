@@ -98,7 +98,7 @@ class JsonParserTest extends TestCase
      */
     public function testParsesTheBundleEnvironment(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/dev-prod.json');
 
         $this->assertCount(3, $configs);
@@ -123,7 +123,7 @@ class JsonParserTest extends TestCase
      */
     public function testParsesOptionalBundles(): void
     {
-        /** @var ConfigInterface[] $configs */
+        /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse(__DIR__.'/../../Fixtures/Bundle/JsonParser/optional.json');
 
         $this->assertCount(2, $configs);
