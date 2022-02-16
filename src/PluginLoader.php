@@ -17,10 +17,6 @@ use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 
-/**
- * This is a stub class which will be replaced during "composer install" or
- * "composer update" unless Composer is run with the "--no-scripts" flag.
- */
 class PluginLoader
 {
     public const BUNDLE_PLUGINS = BundlePluginInterface::class;
@@ -44,7 +40,12 @@ class PluginLoader
             @trigger_error('Passing the path to the Composer installed.json as first argument is no longer supported in version 2.3.', E_USER_DEPRECATED);
         }
 
-        $this->plugins = $plugins ?: [];
+        $this->plugins = null !== $plugins ? $plugins : array_filter((array) @include self::getGeneratedPath());
+    }
+
+    public static function getGeneratedPath(): string
+    {
+        return __DIR__.'/../generated/plugins.php';
     }
 
     /**
