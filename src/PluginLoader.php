@@ -27,7 +27,7 @@ class PluginLoader
     /**
      * @var array
      */
-    private $plugins;
+    private $plugins = [];
 
     /**
      * @var array
@@ -40,7 +40,14 @@ class PluginLoader
             @trigger_error('Passing the path to the Composer installed.json as first argument is no longer supported in version 2.3.', E_USER_DEPRECATED);
         }
 
-        $this->plugins = null !== $plugins ? $plugins : array_filter((array) @include self::getGeneratedPath());
+        if (null !== $plugins) {
+            $this->plugins = $plugins;
+            return;
+        }
+
+        if (is_file(self::getGeneratedPath())) {
+            $this->plugins = (array) include self::getGeneratedPath();
+        }
     }
 
     public static function getGeneratedPath(): string
