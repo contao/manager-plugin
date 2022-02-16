@@ -42,7 +42,7 @@ class PluginLoader
 
         if (null !== $plugins) {
             $this->plugins = $plugins;
-            
+
             return;
         }
 
