@@ -19,6 +19,7 @@ use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
 use Composer\Package\PackageInterface;
+use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Repository\RepositoryInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
@@ -106,7 +107,7 @@ class ManagerPluginInstallerTest extends TestCase
             'foo/console-bundle' => FooConsolePlugin::class,
         ];
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -142,7 +143,7 @@ return array (
 
     public function testDumpsEmptyPluginsWithoutPackages(): void
     {
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -172,7 +173,7 @@ return array (
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -208,7 +209,7 @@ return array (
             ->getMock()
         ;
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -243,7 +244,7 @@ return array (
             ->getMock()
         ;
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -269,7 +270,7 @@ return array (
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -301,7 +302,7 @@ return array (
 
     public function testFailsIfThePluginClassDoesNotExist(): void
     {
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -330,7 +331,7 @@ return array (
             'foo/console-bundle' => FooConsolePlugin::class,
         ];
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -363,7 +364,7 @@ return array (
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
