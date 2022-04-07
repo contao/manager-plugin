@@ -459,7 +459,7 @@ return array (
             ->expects($this->once())
             ->method('dumpFile')
             ->with(
-                \dirname(__DIR__, 2).'/src/../generated/plugins.php',
+                \dirname(__DIR__, 2).'/src/../.generated/plugins.php',
                 $this->callback(
                     static function ($content) use ($match) {
                         return false !== strpos($content, $match);

@@ -10,4 +10,4 @@
 /.phpunit.result.cache
 
 # Generated files
-/generated
+/.generated

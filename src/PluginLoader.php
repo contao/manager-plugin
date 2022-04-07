@@ -53,7 +53,7 @@ class PluginLoader
 
     public static function getGeneratedPath(): string
     {
-        return __DIR__.'/../generated/plugins.php';
+        return __DIR__.'/../.generated/plugins.php';
     }
 
     /**
