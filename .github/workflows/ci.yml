@@ -21,7 +21,6 @@ jobs:
               with:
                   php-version: 7.4
                   extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  tools: flex
                   coverage: pcov
 
             - name: Checkout
@@ -47,9 +46,8 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 8.0
+                  php-version: 7.4 # Keep running this with PHP 7, otherwise there will be PHP 8 CS fixes
                   extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  tools: flex
                   coverage: none
 
             - name: Checkout
@@ -77,7 +75,6 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  tools: flex
                   coverage: none
 
             - name: Checkout
@@ -99,7 +96,6 @@ jobs:
               with:
                   php-version: 8.0
                   extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  tools: flex
                   coverage: none
 
             - name: Checkout
@@ -121,7 +117,6 @@ jobs:
               with:
                   php-version: 7.4
                   extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  tools: flex
                   coverage: none
 
             - name: Checkout

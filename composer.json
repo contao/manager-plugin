@@ -1,8 +1,8 @@
 {
     "name": "contao/manager-plugin",
-    "type": "composer-plugin",
     "description": "Contao 4 manager plugin",
     "license": "LGPL-3.0-or-later",
+    "type": "composer-plugin",
     "authors": [
         {
             "name": "Andreas Schempp",
@@ -31,6 +31,23 @@
     "conflict": {
         "contao/manager-bundle": "4.9.* <4.9.4"
     },
+    "autoload": {
+        "psr-4": {
+            "Contao\\ManagerPlugin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Contao\\ManagerPlugin\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true,
+            "composer/package-versions-deprecated": true,
+            "contao-components/installer": false
+        }
+    },
     "extra": {
         "bamarni-bin": {
             "bin-links": false,
@@ -42,25 +59,8 @@
             "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
         ]
     },
-    "autoload": {
-        "psr-4": {
-            "Contao\\ManagerPlugin\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Contao\\ManagerPlugin\\Tests\\": "tests/"
-        }
-    },
     "scripts": {
-        "cs-fixer": "tools/ecs/vendor/bin/ecs check src tests --fix --ansi",
-        "unit-tests": "vendor/bin/phpunit --colors=always"
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "contao-components/installer": false,
-            "bamarni/composer-bin-plugin": true
-        }
+        "cs-fixer": "@php tools/ecs/vendor/bin/ecs check src tests --fix --ansi",
+        "unit-tests": "@php vendor/bin/phpunit --colors=always"
     }
 }

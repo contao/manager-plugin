@@ -20,7 +20,6 @@ use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface;
-use Composer\Repository\RepositoryInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
@@ -475,7 +474,7 @@ return array (
     /**
      * @return Event&MockObject
      */
-    private function mockEventWithRepositoryAndIO(RepositoryInterface $repository, IOInterface $io): Event
+    private function mockEventWithRepositoryAndIO(InstalledRepositoryInterface $repository, IOInterface $io): Event
     {
         $config = $this->createMock(Config::class);
         $config
