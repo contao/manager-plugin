@@ -594,7 +594,7 @@ class ArtifactsPluginTest extends TestCase
         $package
             ->expects(null === $version ? $this->never() : $this->once())
             ->method('getVersion')
-            ->willReturn($version)
+            ->willReturn((string) $version)
         ;
 
         $package

@@ -19,7 +19,7 @@ use Composer\IO\IOInterface;
 use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackage;
 use Composer\Package\PackageInterface;
-use Composer\Repository\RepositoryInterface;
+use Composer\Repository\InstalledRepositoryInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
@@ -106,7 +106,7 @@ class ManagerPluginInstallerTest extends TestCase
             'foo/console-bundle' => FooConsolePlugin::class,
         ];
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -142,7 +142,7 @@ class ManagerPluginInstallerTest extends TestCase
 
     public function testDumpsEmptyPluginsWithoutPackages(): void
     {
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -171,7 +171,7 @@ class ManagerPluginInstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -207,7 +207,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->getMock()
         ;
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -242,7 +242,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->getMock()
         ;
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -268,7 +268,7 @@ class ManagerPluginInstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -300,7 +300,7 @@ class ManagerPluginInstallerTest extends TestCase
 
     public function testFailsIfThePluginClassDoesNotExist(): void
     {
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -329,7 +329,7 @@ class ManagerPluginInstallerTest extends TestCase
             'foo/console-bundle' => FooConsolePlugin::class,
         ];
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -362,7 +362,7 @@ class ManagerPluginInstallerTest extends TestCase
         include_once __DIR__.'/../Fixtures/PluginLoader/FooBarPlugin.php';
         include_once __DIR__.'/../Fixtures/PluginLoader/FooConfigPlugin.php';
 
-        $repository = $this->createMock(RepositoryInterface::class);
+        $repository = $this->createMock(InstalledRepositoryInterface::class);
         $repository
             ->expects($this->once())
             ->method('getPackages')
@@ -473,7 +473,7 @@ class ManagerPluginInstallerTest extends TestCase
     /**
      * @return Event&MockObject
      */
-    private function mockEventWithRepositoryAndIO(RepositoryInterface $repository, IOInterface $io): Event
+    private function mockEventWithRepositoryAndIO(InstalledRepositoryInterface $repository, IOInterface $io): Event
     {
         $config = $this->createMock(Config::class);
         $config
