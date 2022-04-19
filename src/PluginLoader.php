@@ -42,11 +42,7 @@ class PluginLoader
 
         if (null !== $plugins) {
             $this->plugins = $plugins;
-
-            return;
-        }
-
-        if (is_file(self::getGeneratedPath())) {
+        } elseif (is_file(self::getGeneratedPath())) {
             $this->plugins = (array) include self::getGeneratedPath();
         }
     }
