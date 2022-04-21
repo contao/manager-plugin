@@ -24,7 +24,7 @@ class PluginLoaderTest extends TestCase
 {
     public function testCanBeInstantiated(): void
     {
-        $pluginLoader = new PluginLoader();
+        $pluginLoader = new PluginLoader(null, []);
 
         $this->assertInstanceOf('Contao\ManagerPlugin\PluginLoader', $pluginLoader);
     }
