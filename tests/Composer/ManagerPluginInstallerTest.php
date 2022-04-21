@@ -129,12 +129,12 @@ class ManagerPluginInstallerTest extends TestCase
             )
         ;
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
-            'foo/console-bundle' => new \\Foo\\Console\\FooConsolePlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+  'foo/console-bundle' => new \\Foo\\Console\\FooConsolePlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -159,8 +159,9 @@ class ManagerPluginInstallerTest extends TestCase
             )
         ;
 
-        $filesystem = $this->mockFilesystemAndCheckDump('
-        $this->plugins = $plugins ?: [];');
+        $filesystem = $this->mockFilesystemAndCheckDump('<?php
+return array (
+);');
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -183,11 +184,11 @@ class ManagerPluginInstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'contao/manager-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'contao/manager-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -218,11 +219,11 @@ class ManagerPluginInstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'app' => new \\ContaoManagerPlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'app' => new \\ContaoManagerPlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -253,11 +254,11 @@ class ManagerPluginInstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'app' => new \\App\\ContaoManager\\Plugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'app' => new \\App\\ContaoManager\\Plugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -289,10 +290,10 @@ class ManagerPluginInstallerTest extends TestCase
             )
         ;
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -458,7 +459,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->once())
             ->method('dumpFile')
             ->with(
-                \dirname(__DIR__, 2).'/src/Composer/../PluginLoader.php',
+                \dirname(__DIR__, 2).'/src/../.generated/plugins.php',
                 $this->callback(
                     static function ($content) use ($match) {
                         return false !== strpos($content, $match);
