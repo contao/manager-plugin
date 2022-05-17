@@ -63,9 +63,10 @@ class ManagerPluginInstaller implements PluginInterface, EventSubscriberInterfac
         $this->handleUpdateFromLegacyPlugin();
 
         $io = $event->getIO();
-
         $io->write('<info>contao/manager-plugin:</info> Dumping generated plugins file...');
+
         $this->doDumpPlugins($event->getComposer()->getRepositoryManager()->getLocalRepository(), $io);
+
         $io->write('<info>contao/manager-plugin:</info> ...done dumping generated plugins file');
     }
 
@@ -91,9 +92,9 @@ class ManagerPluginInstaller implements PluginInterface, EventSubscriberInterfac
             return;
         }
 
-        // If the file did not exist at all or the content is not equal it means we're updating from an old version where
-        // the PluginLoader class got dynamically replaced. In that case we have to copy our file again and
-        // from that point in time on, things should work just fine.
+        // If the file did not exist at all or the content is not equal, it means we‘re updating from
+        // an old version where the PluginLoader class got dynamically replaced. In this case, we have
+        // to copy our file again and from that point in time on, things should work just fine.
         $fs->copy($resourcePath, $classPath, true);
     }
 
