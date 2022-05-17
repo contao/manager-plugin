@@ -60,21 +60,14 @@ class ManagerPluginInstaller implements PluginInterface, EventSubscriberInterfac
 
     public function dumpPlugins(Event $event): void
     {
+        $this->handleUpdateFromLegacyPlugin();
+
         $io = $event->getIO();
-
-        if (!file_exists(__DIR__.'/../PluginLoader.php')) {
-            $io->write('<info>contao/manager-plugin:</info> Class not found (probably scheduled for removal); generation of plugin class skipped.');
-
-            return;
-        }
-
-        $io->write('<info>contao/manager-plugin:</info> Generating plugin class...');
-
-        // Require the autoload.php file so the Plugin classes are loaded
-        require $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
+        $io->write('<info>contao/manager-plugin:</info> Dumping generated plugins file...');
 
         $this->doDumpPlugins($event->getComposer()->getRepositoryManager()->getLocalRepository(), $io);
-        $io->write('<info>contao/manager-plugin:</info> ...done generating plugin class');
+
+        $io->write('<info>contao/manager-plugin:</info> ...done dumping generated plugins file');
     }
 
     /**
@@ -86,6 +79,23 @@ class ManagerPluginInstaller implements PluginInterface, EventSubscriberInterfac
             ScriptEvents::POST_INSTALL_CMD => 'dumpPlugins',
             ScriptEvents::POST_UPDATE_CMD => 'dumpPlugins',
         ];
+    }
+
+    private function handleUpdateFromLegacyPlugin(): void
+    {
+        $fs = new Filesystem();
+        $classPath = __DIR__.'/../PluginLoader.php';
+        $resourcePath = __DIR__.'/../Resources/PluginLoader.php';
+
+        // In the old plugin version there were cases where the PluginLoader could not exist
+        if ($fs->exists($classPath) && file_get_contents($classPath) === file_get_contents($resourcePath)) {
+            return;
+        }
+
+        // If the file did not exist at all or the content is not equal, it means we‘re updating from
+        // an old version where the PluginLoader class got dynamically replaced. In this case, we have
+        // to copy our file again and from that point in time on, things should work just fine.
+        $fs->copy($resourcePath, $classPath, true);
     }
 
     private function doDumpPlugins(RepositoryInterface $repository, IOInterface $io): void

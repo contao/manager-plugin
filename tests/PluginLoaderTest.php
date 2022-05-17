@@ -88,4 +88,9 @@ class PluginLoaderTest extends TestCase
         $this->assertSame('foo/config2-bundle', $keys[1]);
         $this->assertSame('foo/config1-bundle', $keys[2]);
     }
+
+    public function testLegacyUpdateFilesAreIdentical(): void
+    {
+        $this->assertFileEquals(__DIR__.'/../src/PluginLoader.php', __DIR__.'/../src/Resources/PluginLoader.php');
+    }
 }
