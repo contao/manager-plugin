@@ -54,7 +54,7 @@
             "target-directory": "tools"
         },
         "branch-alias": {
-            "dev-main": "2.12.x-dev"
+            "dev-main": "2.13.x-dev"
         },
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
