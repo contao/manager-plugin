@@ -65,7 +65,7 @@ class JsonParser implements ParserInterface
      *
      * @throws \RuntimeException
      */
-    private function parseBundles(array $bundles, array & $configs): void
+    private function parseBundles(array $bundles, array &$configs): void
     {
         foreach ($bundles as $options) {
             // Only one value given, must be class name

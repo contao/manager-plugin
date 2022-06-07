@@ -40,7 +40,7 @@ trait DependencyResolverTrait
     /**
      * Resolves the dependency order.
      */
-    private function doResolve(array & $dependencies, array & $ordered, array $available): bool
+    private function doResolve(array &$dependencies, array &$ordered, array $available): bool
     {
         $failed = true;
 

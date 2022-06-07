@@ -169,7 +169,7 @@ class ConfigResolver implements ConfigResolverInterface
         return $loadingOrder;
     }
 
-    private function replaceBundleNames(array & $loadAfter, array $replace): void
+    private function replaceBundleNames(array &$loadAfter, array $replace): void
     {
         foreach ($loadAfter as &$bundleName) {
             if (isset($replace[$bundleName])) {
