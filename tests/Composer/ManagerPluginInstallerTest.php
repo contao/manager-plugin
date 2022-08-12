@@ -51,40 +51,6 @@ class ManagerPluginInstallerTest extends TestCase
         (new ManagerPluginInstaller())->activate($composer, $io);
     }
 
-    public function testLoadsAutoloadFileFromVendor(): void
-    {
-        $config = $this->createMock(Config::class);
-        $config
-            ->expects($this->once())
-            ->method('get')
-            ->with('vendor-dir')
-            ->willReturn(__DIR__.'/../Fixtures/Composer/test-vendor')
-        ;
-
-        $composer = $this->createMock(Composer::class);
-        $composer
-            ->expects($this->once())
-            ->method('getConfig')
-            ->willReturn($config)
-        ;
-
-        $event = $this->createMock(Event::class);
-        $event
-            ->method('getComposer')
-            ->willReturn($composer)
-        ;
-
-        $event
-            ->method('getIO')
-            ->willReturn($this->createMock(IOInterface::class))
-        ;
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('autoload.php successfully loaded');
-
-        (new ManagerPluginInstaller())->dumpPlugins($event);
-    }
-
     public function testSubscribesToInstallAndUpdateEvent(): void
     {
         $events = ManagerPluginInstaller::getSubscribedEvents();
@@ -121,20 +87,20 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->exactly(5))
             ->method('write')
             ->withConsecutive(
-                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
+                ['<info>contao/manager-plugin:</info> Dumping generated plugins file...'],
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE],
                 [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE],
                 [' - Added plugin for foo/console-bundle', true, IOInterface::VERY_VERBOSE],
-                ['<info>contao/manager-plugin:</info> ...done generating plugin class']
+                ['<info>contao/manager-plugin:</info> ...done dumping generated plugins file']
             )
         ;
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
-            'foo/console-bundle' => new \\Foo\\Console\\FooConsolePlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+  'foo/console-bundle' => new \\Foo\\Console\\FooConsolePlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -154,13 +120,14 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
-                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
-                ['<info>contao/manager-plugin:</info> ...done generating plugin class']
+                ['<info>contao/manager-plugin:</info> Dumping generated plugins file...'],
+                ['<info>contao/manager-plugin:</info> ...done dumping generated plugins file']
             )
         ;
 
-        $filesystem = $this->mockFilesystemAndCheckDump('
-        $this->plugins = $plugins ?: [];');
+        $filesystem = $this->mockFilesystemAndCheckDump('<?php
+return array (
+);');
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -183,11 +150,11 @@ class ManagerPluginInstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'contao/manager-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'contao/manager-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -218,11 +185,11 @@ class ManagerPluginInstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'app' => new \\ContaoManagerPlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'app' => new \\ContaoManagerPlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -253,11 +220,11 @@ class ManagerPluginInstallerTest extends TestCase
 
         $io = $this->createMock(IOInterface::class);
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
-            'app' => new \\App\\ContaoManager\\Plugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/bar-bundle' => new \\Foo\\Bar\\FooBarPlugin(),
+  'app' => new \\App\\ContaoManager\\Plugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -283,16 +250,16 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->exactly(3))
             ->method('write')
             ->withConsecutive(
-                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
+                ['<info>contao/manager-plugin:</info> Dumping generated plugins file...'],
                 [' - Added plugin for foo/config-bundle', true, IOInterface::VERY_VERBOSE],
-                ['<info>contao/manager-plugin:</info> ...done generating plugin class']
+                ['<info>contao/manager-plugin:</info> ...done dumping generated plugins file']
             )
         ;
 
-        $filesystem = $this->mockFilesystemAndCheckDump("
-        \$this->plugins = \$plugins ?: [
-            'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
-        ];");
+        $filesystem = $this->mockFilesystemAndCheckDump("<?php
+return array (
+  'foo/config-bundle' => new \\Foo\\Config\\FooConfigPlugin(),
+);");
 
         $installer = new ManagerPluginInstaller($filesystem);
         $installer->dumpPlugins($this->mockEventWithRepositoryAndIO($repository, $io));
@@ -344,7 +311,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
-                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
+                ['<info>contao/manager-plugin:</info> Dumping generated plugins file...'],
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
             )
         ;
@@ -377,7 +344,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->exactly(2))
             ->method('write')
             ->withConsecutive(
-                ['<info>contao/manager-plugin:</info> Generating plugin class...'],
+                ['<info>contao/manager-plugin:</info> Dumping generated plugins file...'],
                 [' - Added plugin for foo/bar-bundle', true, IOInterface::VERY_VERBOSE]
             )
         ;
@@ -458,7 +425,7 @@ class ManagerPluginInstallerTest extends TestCase
             ->expects($this->once())
             ->method('dumpFile')
             ->with(
-                \dirname(__DIR__, 2).'/src/Composer/../PluginLoader.php',
+                \dirname(__DIR__, 2).'/src/../.generated/plugins.php',
                 $this->callback(
                     static function ($content) use ($match) {
                         return false !== strpos($content, $match);

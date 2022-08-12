@@ -23,113 +23,12 @@ use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 use Contao\ManagerPlugin\Dependency\DependencyResolverTrait;
 use Contao\ManagerPlugin\Dependency\DependentPluginInterface;
+use Contao\ManagerPlugin\PluginLoader;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ManagerPluginInstaller implements PluginInterface, EventSubscriberInterface
 {
     use DependencyResolverTrait;
-
-    /**
-     * @var string
-     */
-    private static $generatedClassTemplate = <<<'PHP'
-<?php
-
-declare(strict_types=1);
-
-/*
- * This file is part of Contao.
- *
- * (c) Leo Feyer
- *
- * @license LGPL-3.0-or-later
- */
-
-namespace Contao\ManagerPlugin;
-
-use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
-use Contao\ManagerPlugin\Config\ConfigPluginInterface;
-use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
-use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
-
-/**
- * This class has been auto-generated. It will be overwritten at every run of
- * "composer install" or "composer update".
- *
- * @see \Contao\ManagerPlugin\Composer\Installer
- */
-%s
-{
-    public const BUNDLE_PLUGINS = BundlePluginInterface::class;
-    public const CONFIG_PLUGINS = ConfigPluginInterface::class;
-    public const EXTENSION_PLUGINS = ExtensionPluginInterface::class;
-    public const ROUTING_PLUGINS = RoutingPluginInterface::class;
-
-    /**
-     * @var array
-     */
-    private $plugins;
-
-    /**
-     * @var array
-     */
-    private $disabled = [];
-
-    public function __construct(string $installedJson = null, array $plugins = null)
-    {
-        if (null !== $installedJson) {
-            @trigger_error('Passing the path to the Composer installed.json as first argument is no longer supported in version 2.3.', E_USER_DEPRECATED);
-        }
-
-        $this->plugins = $plugins ?: %s;
-    }
-
-    /**
-     * Returns all active plugin instances.
-     *
-     * @return array<string,BundlePluginInterface>
-     */
-    public function getInstances(): array
-    {
-        return array_diff_key($this->plugins, array_flip($this->disabled));
-    }
-
-    /**
-     * Returns the active plugin instances of a given type (see class constants).
-     *
-     * @return array<string,BundlePluginInterface>
-     */
-    public function getInstancesOf(string $type, bool $reverseOrder = false): array
-    {
-        $plugins = array_filter(
-            $this->getInstances(),
-            function ($plugin) use ($type) {
-                return is_a($plugin, $type);
-            }
-        );
-
-        if ($reverseOrder) {
-            $plugins = array_reverse($plugins, true);
-        }
-
-        return array_diff_key($plugins, array_flip($this->disabled));
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getDisabledPackages(): array
-    {
-        return $this->disabled;
-    }
-
-    public function setDisabledPackages(array $packages): void
-    {
-        $this->disabled = $packages;
-    }
-}
-
-PHP;
 
     /**
      * @var Filesystem
@@ -161,21 +60,17 @@ PHP;
 
     public function dumpPlugins(Event $event): void
     {
+        $this->handleUpdateFromLegacyPlugin();
+
         $io = $event->getIO();
-
-        if (!file_exists(__DIR__.'/../PluginLoader.php')) {
-            $io->write('<info>contao/manager-plugin:</info> Class not found (probably scheduled for removal); generation of plugin class skipped.');
-
-            return;
-        }
-
-        $io->write('<info>contao/manager-plugin:</info> Generating plugin class...');
+        $io->write('<info>contao/manager-plugin:</info> Dumping generated plugins file...');
 
         // Require the autoload.php file so the Plugin classes are loaded
         require $event->getComposer()->getConfig()->get('vendor-dir').'/autoload.php';
 
         $this->doDumpPlugins($event->getComposer()->getRepositoryManager()->getLocalRepository(), $io);
-        $io->write('<info>contao/manager-plugin:</info> ...done generating plugin class');
+
+        $io->write('<info>contao/manager-plugin:</info> ...done dumping generated plugins file');
     }
 
     /**
@@ -187,6 +82,23 @@ PHP;
             ScriptEvents::POST_INSTALL_CMD => 'dumpPlugins',
             ScriptEvents::POST_UPDATE_CMD => 'dumpPlugins',
         ];
+    }
+
+    private function handleUpdateFromLegacyPlugin(): void
+    {
+        $fs = new Filesystem();
+        $classPath = __DIR__.'/../PluginLoader.php';
+        $resourcePath = __DIR__.'/../Resources/PluginLoader.php';
+
+        // In the old plugin version there were cases where the PluginLoader could not exist
+        if ($fs->exists($classPath) && file_get_contents($classPath) === file_get_contents($resourcePath)) {
+            return;
+        }
+
+        // If the file did not exist at all or the content is not equal, it means we‘re updating from
+        // an old version where the PluginLoader class got dynamically replaced. In this case, we have
+        // to copy our file again and from that point in time on, things should work just fine.
+        $fs->copy($resourcePath, $classPath, true);
     }
 
     private function doDumpPlugins(RepositoryInterface $repository, IOInterface $io): void
@@ -231,23 +143,15 @@ PHP;
 
         foreach ($plugins as $package => $plugin) {
             $class = \get_class($plugin);
-            $load[] = "            '$package' => new \\$class()";
-        }
-
-        // Dump empty list if there are no packages
-        if (empty($load)) {
-            $pluginList = '[]';
-        } else {
-            $pluginList = sprintf("[\n%s,\n        ]", implode(",\n", $load));
+            $load[$package] = "#new \\$class()#";
         }
 
         $content = sprintf(
-            static::$generatedClassTemplate,
-            'cla'.'ss '.'PluginLoader', // workaround for regex-based code parsers :-(
-            $pluginList
+            "<?php\nreturn %s;",
+            str_replace(['\'#', '#\'', '\\\\'], ['', '', '\\'], var_export($load, true))
         );
 
-        $this->filesystem->dumpFile(__DIR__.'/../PluginLoader.php', $content);
+        $this->filesystem->dumpFile(PluginLoader::getGeneratedPath(), $content);
     }
 
     /**
