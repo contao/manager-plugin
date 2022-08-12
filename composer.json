@@ -53,9 +53,6 @@
             "bin-links": false,
             "target-directory": "tools"
         },
-        "branch-alias": {
-            "dev-main": "2.12.x-dev"
-        },
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
             "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller",
