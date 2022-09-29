@@ -24,7 +24,7 @@ class PluginLoaderTest extends TestCase
 {
     public function testCanBeInstantiated(): void
     {
-        $pluginLoader = new PluginLoader();
+        $pluginLoader = new PluginLoader(null, []);
 
         $this->assertInstanceOf('Contao\ManagerPlugin\PluginLoader', $pluginLoader);
     }
@@ -87,5 +87,10 @@ class PluginLoaderTest extends TestCase
         $this->assertSame('foo/config3-bundle', $keys[0]);
         $this->assertSame('foo/config2-bundle', $keys[1]);
         $this->assertSame('foo/config1-bundle', $keys[2]);
+    }
+
+    public function testLegacyUpdateFilesAreIdentical(): void
+    {
+        $this->assertFileEquals(__DIR__.'/../src/PluginLoader.php', __DIR__.'/../src/Resources/PluginLoader.php');
     }
 }
