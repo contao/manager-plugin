@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
+use SlevomatCodingStandard\Sniffs\Classes\ModernClassNameReferenceSniff;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symplify\EasyCodingStandard\ValueObject\Option;
 
@@ -13,6 +14,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     $parameters->set(Option::PARALLEL, true);
 
     $services = $containerConfigurator->services();
+    $services->remove(ModernClassNameReferenceSniff::class);
+
     $services
         ->set(HeaderCommentFixer::class)
         ->call('configure', [[
