@@ -59,7 +59,14 @@ class PluginLoader
      */
     public function getInstances(): array
     {
-        return array_diff_key($this->plugins, array_flip($this->disabled));
+        $plugins = array_filter(
+            $this->getInstances(),
+            static function ($plugin) {
+                return !$plugin instanceof DisabledPluginInterface || !$plugin->isDisabled();
+            }
+        );
+
+        return array_diff_key($plugins, array_flip($this->disabled));
     }
 
     /**
@@ -80,7 +87,7 @@ class PluginLoader
             $plugins = array_reverse($plugins, true);
         }
 
-        return array_diff_key($plugins, array_flip($this->disabled));
+        return $plugins;
     }
 
     /**
