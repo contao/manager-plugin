@@ -18,6 +18,7 @@ use Contao\ManagerPlugin\PluginLoader;
 use Foo\Bar\FooBarPlugin;
 use Foo\Config\FooConfigPlugin;
 use Foo\Dependend\FooDependendPlugin;
+use Foo\Disabled\FooDisabledPlugin;
 use PHPUnit\Framework\TestCase;
 
 class PluginLoaderTest extends TestCase
@@ -42,6 +43,27 @@ class PluginLoaderTest extends TestCase
 
         $this->assertArrayHasKey('foo/bar-bundle', $pluginLoader->getInstances());
         $this->assertInstanceOf(FooBarPlugin::class, $pluginLoader->getInstances()['foo/bar-bundle']);
+    }
+
+    public function testSkipsDisabledPlugins(): void
+    {
+        include_once __DIR__.'/Fixtures/PluginLoader/FooBarPlugin.php';
+        include_once __DIR__.'/Fixtures/PluginLoader/FooDisabledPlugin.php';
+
+        $pluginLoader = new PluginLoader(
+            null,
+            [
+                'foo/bar-bundle' => new FooBarPlugin(),
+                'foo/enabled-bundle' => new FooDisabledPlugin(false),
+                'foo/disabled-bundle' => new FooDisabledPlugin(true),
+            ]
+        );
+
+        $this->assertArrayHasKey('foo/bar-bundle', $pluginLoader->getInstances());
+        $this->assertArrayHasKey('foo/enabled-bundle', $pluginLoader->getInstances());
+        $this->assertArrayHasKey('foo/disabled-bundle', $pluginLoader->getInstances());
+        $this->assertInstanceOf(FooBarPlugin::class, $pluginLoader->getInstances()['foo/bar-bundle']);
+        $this->assertInstanceOf(FooDisabledPlugin::class, $pluginLoader->getInstances()['foo/enabled-bundle']);
     }
 
     public function testReturnsPluginsByType(): void
@@ -72,6 +94,8 @@ class PluginLoaderTest extends TestCase
 
     public function testReturnsReversedPluginOrder(): void
     {
+        include_once __DIR__.'/Fixtures/PluginLoader/FooConfigPlugin.php';
+
         $pluginLoader = new PluginLoader(
             null,
             [
