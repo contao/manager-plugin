@@ -60,7 +60,7 @@ class PluginLoader
     public function getInstances(): array
     {
         $plugins = array_filter(
-            $this->getInstances(),
+            $this->plugins,
             static function ($plugin) {
                 return !$plugin instanceof DisabledPluginInterface || !$plugin->isDisabled();
             }

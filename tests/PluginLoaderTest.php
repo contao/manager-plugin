@@ -61,7 +61,7 @@ class PluginLoaderTest extends TestCase
 
         $this->assertArrayHasKey('foo/bar-bundle', $pluginLoader->getInstances());
         $this->assertArrayHasKey('foo/enabled-bundle', $pluginLoader->getInstances());
-        $this->assertArrayHasKey('foo/disabled-bundle', $pluginLoader->getInstances());
+        $this->assertArrayNotHasKey('foo/disabled-bundle', $pluginLoader->getInstances());
         $this->assertInstanceOf(FooBarPlugin::class, $pluginLoader->getInstances()['foo/bar-bundle']);
         $this->assertInstanceOf(FooDisabledPlugin::class, $pluginLoader->getInstances()['foo/enabled-bundle']);
     }
