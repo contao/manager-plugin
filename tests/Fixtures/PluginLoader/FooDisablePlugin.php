@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Foo\Disabled;
 
-use Contao\ManagerPlugin\DisabledPluginInterface;
+use Contao\ManagerPlugin\DisablePluginInterface;
 
-class FooDisabledPlugin implements DisabledPluginInterface
+class FooDisablePlugin implements DisablePluginInterface
 {
     /**
      * @var bool

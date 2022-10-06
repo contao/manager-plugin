@@ -18,7 +18,7 @@ use Contao\ManagerPlugin\PluginLoader;
 use Foo\Bar\FooBarPlugin;
 use Foo\Config\FooConfigPlugin;
 use Foo\Dependend\FooDependendPlugin;
-use Foo\Disabled\FooDisabledPlugin;
+use Foo\Disabled\FooDisablePlugin;
 use PHPUnit\Framework\TestCase;
 
 class PluginLoaderTest extends TestCase
@@ -54,8 +54,8 @@ class PluginLoaderTest extends TestCase
             null,
             [
                 'foo/bar-bundle' => new FooBarPlugin(),
-                'foo/enabled-bundle' => new FooDisabledPlugin(false),
-                'foo/disabled-bundle' => new FooDisabledPlugin(true),
+                'foo/enabled-bundle' => new FooDisablePlugin(false),
+                'foo/disabled-bundle' => new FooDisablePlugin(true),
             ]
         );
 
@@ -63,7 +63,7 @@ class PluginLoaderTest extends TestCase
         $this->assertArrayHasKey('foo/enabled-bundle', $pluginLoader->getInstances());
         $this->assertArrayNotHasKey('foo/disabled-bundle', $pluginLoader->getInstances());
         $this->assertInstanceOf(FooBarPlugin::class, $pluginLoader->getInstances()['foo/bar-bundle']);
-        $this->assertInstanceOf(FooDisabledPlugin::class, $pluginLoader->getInstances()['foo/enabled-bundle']);
+        $this->assertInstanceOf(FooDisablePlugin::class, $pluginLoader->getInstances()['foo/enabled-bundle']);
     }
 
     public function testReturnsPluginsByType(): void

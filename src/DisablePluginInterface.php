@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Contao\ManagerPlugin;
 
-interface DisabledPluginInterface
+interface DisablePluginInterface
 {
     /**
      * Gets whether the plugin is disabled.
