@@ -22,7 +22,7 @@ use Composer\Plugin\PluginInterface;
 use Composer\Plugin\PreCommandRunEvent;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
-use Composer\Semver\VersionParser;
+use Composer\Package\Version\VersionParser;
 
 class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
 {
@@ -80,10 +80,9 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
             return;
         }
 
-        $packages = $event->getInput()->getArgument('packages');
-        $requirements = (new \Composer\Package\Version\VersionParser())->parseNameVersionPairs($packages);
-
         $versionParser = new VersionParser();
+        $requirements = $versionParser->parseNameVersionPairs($event->getInput()->getArgument('packages'));
+
         $requires = [];
         foreach ($requirements as $requirement) {
             $requires[$requirement['name']] = $versionParser->parseConstraints($requirement['version'] ?? '*');
