@@ -18,12 +18,15 @@ use Composer\IO\IOInterface;
 use Composer\Package\Link;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
+use Composer\Plugin\PluginEvents;
+use Composer\Plugin\PreCommandRunEvent;
 use Composer\Repository\RepositoryInterface;
 use Composer\Repository\RepositoryManager;
 use Composer\Semver\Constraint\Constraint;
 use Contao\ManagerPlugin\Composer\ArtifactsPlugin;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Input\Input;
 
 class ArtifactsPluginTest extends TestCase
 {
@@ -210,12 +213,6 @@ class ArtifactsPluginTest extends TestCase
             ->expects($this->once())
             ->method('getRepositories')
             ->willReturn($repositories)
-        ;
-
-        $config
-            ->expects($this->once())
-            ->method('getRepositories')
-            ->willReturn([])
         ;
 
         $composer = $this->mockComposerWithDataDir(
@@ -478,6 +475,75 @@ class ArtifactsPluginTest extends TestCase
 
         $this->assertNull($plugin->deactivate($composer, $io));
         $this->assertNull($plugin->uninstall($composer, $io));
+    }
+
+    public function testRegistersPreCommandeEvent(): void
+    {
+        $this->assertSame([PluginEvents::PRE_COMMAND_RUN => ['preCommandRun', 1]], ArtifactsPlugin::getSubscribedEvents());
+    }
+
+    public function testRegistersContaoProvidersFromRequireCommand(): void
+    {
+        putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
+
+        $repositories = [
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'],
+            ['type' => 'vcs', 'url' => 'https://example.org/'],
+        ];
+
+        $config = $this->mockConfig(null);
+
+        $config
+            ->expects($this->exactly(2))
+            ->method('merge')
+            ->withConsecutive(
+                ...array_map(
+                    static function (array $repository) {
+                        return [['repositories' => [$repository]]];
+                    },
+                    $repositories
+                )
+            )
+        ;
+
+        $config
+            ->expects($this->once())
+            ->method('getRepositories')
+            ->willReturn($repositories)
+        ;
+
+        $composer = $this->mockComposerWithDataDir(
+            $config,
+            null,
+            [
+                $this->mockPackage(
+                    'foo/bar',
+                    'contao-provider',
+                    '1.0.0',
+                    __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages/foo-bar-1.0.0.zip'
+                ),
+            ],
+        );
+
+        /** @var PackageInterface|MockObject $rootPackage */
+        $rootPackage = $composer->getPackage();
+        $rootPackage
+            ->expects($this->once())
+            ->method('setRepositories')
+        ;
+
+        $plugin = new ArtifactsPlugin();
+        $plugin->activate($composer, $this->createMock(IOInterface::class));
+
+        $input = $this->createMock(Input::class);
+        $input
+            ->expects($this->once())
+            ->method('getArgument')
+            ->with('packages')
+            ->willReturn(['foo/bar'])
+        ;
+
+        $plugin->preCommandRun(new PreCommandRunEvent('pre-command-run', $input, 'require'));
     }
 
     /**

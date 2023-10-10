@@ -13,21 +13,33 @@ declare(strict_types=1);
 namespace Contao\ManagerPlugin\Composer;
 
 use Composer\Composer;
+use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
+use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
+use Composer\Plugin\PreCommandRunEvent;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
 use Composer\Semver\VersionParser;
 
-class ArtifactsPlugin implements PluginInterface
+class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
 {
     /**
-     * {@inheritdoc}
+     * @var Composer
      */
+    private $composer;
+
+    /**
+     * @var RepositoryInterface|null
+     */
+    private $artifacts;
+
     public function activate(Composer $composer, IOInterface $io): void
     {
+        $this->composer = $composer;
+
         $packagesDir = \dirname(Factory::getComposerFile()).'/contao-manager/packages';
 
         if (!is_dir($packagesDir)) {
@@ -38,13 +50,18 @@ class ArtifactsPlugin implements PluginInterface
             return;
         }
 
-        $repository = $this->addArtifactRepository($composer, $packagesDir);
+        $this->artifacts = $this->addArtifactRepository($composer, $packagesDir);
 
-        if (null === $repository) {
+        if (null === $this->artifacts) {
             return;
         }
 
-        $this->registerProviders($repository, $composer);
+        $requires = [];
+        foreach ($composer->getPackage()->getRequires() as $name => $link) {
+            $requires[$name] = $link->getConstraint();
+        }
+
+        $this->registerProviders($requires);
     }
 
     public function deactivate(Composer $composer, IOInterface $io): void
@@ -55,6 +72,28 @@ class ArtifactsPlugin implements PluginInterface
     public function uninstall(Composer $composer, IOInterface $io): void
     {
         // Nothing to do here
+    }
+
+    public function preCommandRun(PreCommandRunEvent $event): void
+    {
+        if (!$this->composer || !$this->artifacts || 'require' !== $event->getCommand()) {
+            return;
+        }
+
+        $packages = $event->getInput()->getArgument('packages');
+        $requirements = (new \Composer\Package\Version\VersionParser())->parseNameVersionPairs($packages);
+
+        $versionParser = new VersionParser();
+        $requires = [];
+        foreach ($requirements as $requirement) {
+            $requires[$requirement['name']] = $versionParser->parseConstraints($requirement['version'] ?? '*');
+        }
+
+        if ([] === $requires) {
+            return;
+        }
+
+        $this->registerProviders($requires);
     }
 
     private function addArtifactRepository(Composer $composer, string $repositoryUrl): ?RepositoryInterface
@@ -71,21 +110,20 @@ class ArtifactsPlugin implements PluginInterface
         return $repository;
     }
 
-    private function registerProviders(RepositoryInterface $artifacts, Composer $composer): void
+    private function registerProviders(array $requires): void
     {
         $versionParser = new VersionParser();
-        $repositoryManager = $composer->getRepositoryManager();
-        $requires = $composer->getPackage()->getRequires();
+        $repositoryManager = $this->composer->getRepositoryManager();
         $repositories = [];
 
-        foreach ($artifacts->getPackages() as $package) {
+        foreach ($this->artifacts->getPackages() as $package) {
             $name = $package->getName();
 
             if (!\array_key_exists($name, $requires) || 'contao-provider' !== $package->getType()) {
                 continue;
             }
 
-            $constraint = $requires[$name]->getConstraint();
+            $constraint = $requires[$name];
             $version = $versionParser->parseConstraints($package->getVersion());
 
             if (null === $constraint || !$constraint->matches($version)) {
@@ -108,8 +146,8 @@ class ArtifactsPlugin implements PluginInterface
                 $repositoryManager->addRepository($repo);
             }
 
-            $composer->getConfig()->merge(['repositories' => array_values($repositories)]);
-            $composer->getPackage()->setRepositories($composer->getConfig()->getRepositories());
+            $this->composer->getConfig()->merge(['repositories' => array_values($repositories)]);
+            $this->composer->getPackage()->setRepositories($this->composer->getConfig()->getRepositories());
         }
     }
 
@@ -177,5 +215,12 @@ class ArtifactsPlugin implements PluginInterface
         }
 
         return $indexOfShortestMatch;
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            PluginEvents::PRE_COMMAND_RUN => ['preCommandRun', 1],
+        ];
     }
 }
