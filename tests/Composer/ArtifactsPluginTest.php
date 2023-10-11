@@ -492,7 +492,6 @@ class ArtifactsPluginTest extends TestCase
         ];
 
         $config = $this->mockConfig(null);
-
         $config
             ->expects($this->exactly(2))
             ->method('merge')
