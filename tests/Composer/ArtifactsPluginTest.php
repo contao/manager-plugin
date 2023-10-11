@@ -522,7 +522,7 @@ class ArtifactsPluginTest extends TestCase
                     '1.0.0',
                     __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages/foo-bar-1.0.0.zip'
                 ),
-            ],
+            ]
         );
 
         /** @var PackageInterface|MockObject $rootPackage */

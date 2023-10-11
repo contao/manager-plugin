@@ -17,12 +17,12 @@ use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Factory;
 use Composer\IO\IOInterface;
 use Composer\Json\JsonFile;
+use Composer\Package\Version\VersionParser;
 use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Plugin\PreCommandRunEvent;
 use Composer\Repository\ArtifactRepository;
 use Composer\Repository\RepositoryInterface;
-use Composer\Package\Version\VersionParser;
 
 class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
 {
@@ -57,6 +57,7 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         }
 
         $requires = [];
+
         foreach ($composer->getPackage()->getRequires() as $name => $link) {
             $requires[$name] = $link->getConstraint();
         }
@@ -84,6 +85,7 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         $requirements = $versionParser->parseNameVersionPairs($event->getInput()->getArgument('packages'));
 
         $requires = [];
+
         foreach ($requirements as $requirement) {
             $requires[$requirement['name']] = $versionParser->parseConstraints($requirement['version'] ?? '*');
         }
