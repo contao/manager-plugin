@@ -88,6 +88,7 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
             $requires[$requirement['name']] = $versionParser->parseConstraints($requirement['version'] ?? '*');
         }
 
+        // Ping
         if ([] === $requires) {
             return;
         }
