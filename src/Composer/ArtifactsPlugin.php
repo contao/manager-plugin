@@ -95,6 +95,13 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         $this->registerProviders($requires);
     }
 
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            PluginEvents::PRE_COMMAND_RUN => ['preCommandRun', 1],
+        ];
+    }
+
     private function addArtifactRepository(Composer $composer, string $repositoryUrl): ?RepositoryInterface
     {
         $repository = $composer->getRepositoryManager()->createRepository('artifact', ['url' => $repositoryUrl]);
@@ -214,12 +221,5 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         }
 
         return $indexOfShortestMatch;
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            PluginEvents::PRE_COMMAND_RUN => ['preCommandRun', 1],
-        ];
     }
 }
