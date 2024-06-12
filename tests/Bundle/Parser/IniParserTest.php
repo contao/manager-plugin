@@ -51,7 +51,7 @@ class IniParserTest extends TestCase
         /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('with-requires');
 
-        $this->assertCount(4, $configs);
+        $this->assertCount(2, $configs);
         $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
 
         $this->assertSame('with-requires', $configs[0]->getName());
@@ -118,19 +118,12 @@ class IniParserTest extends TestCase
         $this->assertTrue($configs[0]->loadInDevelopment());
     }
 
-    public function testParsesNonExistingDirectories(): void
+    public function testIgnoresNonExistingDirectories(): void
     {
         /** @var array<ConfigInterface> $configs */
         $configs = $this->parser->parse('foobar');
 
-        $this->assertCount(1, $configs);
-        $this->assertInstanceOf(ConfigInterface::class, $configs[0]);
-
-        $this->assertSame('foobar', $configs[0]->getName());
-        $this->assertSame([], $configs[0]->getReplace());
-        $this->assertNotEmpty($configs[0]->getLoadAfter());
-        $this->assertTrue($configs[0]->loadInProduction());
-        $this->assertTrue($configs[0]->loadInDevelopment());
+        $this->assertCount(0, $configs);
     }
 
     /**
