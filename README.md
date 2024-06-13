@@ -1,7 +1,7 @@
-# Contao 4 manager plugin
+# Contao manager plugin
 
-[![](https://img.shields.io/travis/contao/manager-plugin/master.svg?style=flat-square)](https://travis-ci.com/contao/manager-plugin/)
-[![](https://img.shields.io/coveralls/contao/manager-plugin/master.svg?style=flat-square)](https://coveralls.io/github/contao/manager-plugin)
+[![](https://img.shields.io/packagist/v/contao/manager-plugin.svg?style=flat-square)](https://packagist.org/packages/contao/manager-plugin)
+[![](https://img.shields.io/packagist/dt/contao/manager-plugin.svg?style=flat-square)](https://packagist.org/packages/contao/manager-plugin)
 
 The Contao managed edition is a self-configuring application, which registers
 bundles automatically based on their plugin class. The Contao manager bundle
