@@ -24,16 +24,16 @@ jobs:
                   coverage: pcov
 
             - name: Checkout
-              uses: actions/checkout@v1
+              uses: actions/checkout@v4
 
             - name: Install the dependencies
-              run: composer install --no-interaction --no-progress
+              uses: ramsey/composer-install@v3
 
             - name: Generate the coverage report
               run: php -d pcov.enabled=1 vendor/bin/phpunit --testsuite=coverage --coverage-clover=clover.xml --colors=always
 
             - name: Upload the coverage report
-              uses: codecov/codecov-action@v2
+              uses: codecov/codecov-action@v4
               with:
                   files: ./clover.xml
                   fail_ci_if_error: true
@@ -51,12 +51,15 @@ jobs:
                   coverage: none
 
             - name: Checkout
-              uses: actions/checkout@v1
+              uses: actions/checkout@v4
 
             - name: Install the dependencies
-              run: |
-                  composer install --no-interaction --no-progress
-                  composer bin ecs install --no-interaction --no-progress
+              uses: ramsey/composer-install@v3
+
+            - name: Install ECS
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: tools/ecs
 
             - name: Check the coding style
               run: tools/ecs/vendor/bin/ecs check src tests --no-progress-bar --ansi
@@ -68,7 +71,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: [7.2, 7.3, 7.4, 8.0, 8.1]
+                php: [7.4, 8.0, 8.1, 8.2, 8.3]
         steps:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
@@ -78,52 +81,10 @@ jobs:
                   coverage: none
 
             - name: Checkout
-              uses: actions/checkout@v1
+              uses: actions/checkout@v4
 
             - name: Install the dependencies
-              run: composer install --no-interaction --no-progress
-
-            - name: Run the unit tests
-              run: vendor/bin/phpunit --colors=always
-
-    nightly:
-        name: PHP 8.2
-        runs-on: ubuntu-latest
-        if: github.event_name != 'push'
-        steps:
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 8.0
-                  extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  coverage: none
-
-            - name: Checkout
-              uses: actions/checkout@v1
-
-            - name: Install the dependencies
-              run: composer install --ignore-platform-req=php --no-interaction --no-progress
-
-            - name: Run the unit tests
-              run: vendor/bin/phpunit --colors=always
-
-    prefer-lowest:
-        name: Prefer Lowest
-        runs-on: ubuntu-latest
-        if: github.event_name != 'push'
-        steps:
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 7.4
-                  extensions: dom, fileinfo, filter, gd, hash, intl, json, mbstring, mysqli, pcre, pdo_mysql, zlib
-                  coverage: none
-
-            - name: Checkout
-              uses: actions/checkout@v1
-
-            - name: Install the dependencies
-              run: composer update --prefer-lowest --prefer-stable --no-interaction --no-progress
+              uses: ramsey/composer-install@v3
 
             - name: Run the unit tests
               run: vendor/bin/phpunit --colors=always

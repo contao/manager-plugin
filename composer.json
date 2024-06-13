@@ -12,11 +12,11 @@
     "require": {
         "php": "^7.1 || ^8.0",
         "composer-plugin-api": "^1.7 || ^2.0",
-        "symfony/config": "^3.3 || ^4.0 || ^5.0 || ^6.0",
-        "symfony/dependency-injection": "^3.3 || ^4.0 || ^5.0 || ^6.0",
-        "symfony/filesystem": "^3.3 || ^4.0 || ^5.0 || ^6.0",
-        "symfony/http-kernel": "^3.3 || ^4.0 || ^5.0 || ^6.0",
-        "symfony/routing": "^3.3 || ^4.0 || ^5.0 || ^6.0"
+        "symfony/config": "^3.3 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/dependency-injection": "^3.3 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/filesystem": "^3.3 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/http-kernel": "^3.3 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
+        "symfony/routing": "^3.3 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
     },
     "require-dev": {
         "ext-zip": "*",
@@ -25,7 +25,7 @@
         "contao/core-bundle": "^4.4 || ^5.0",
         "php-http/guzzle6-adapter": "^1.1",
         "phpunit/phpunit": "^8.5 || ^9.3",
-        "symfony/phpunit-bridge": "^3.4.40 || ^4.0 || ^5.0 || ^6.0",
+        "symfony/phpunit-bridge": "^3.4.40 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
         "webmozart/path-util": "^2.0"
     },
     "conflict": {
@@ -45,7 +45,8 @@
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true,
             "composer/package-versions-deprecated": true,
-            "contao-components/installer": false
+            "contao-components/installer": false,
+            "php-http/discovery": false
         }
     },
     "extra": {
