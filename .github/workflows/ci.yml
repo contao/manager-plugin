@@ -25,6 +25,8 @@ jobs:
 
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  show-progress: false
 
             - name: Install the dependencies
               uses: ramsey/composer-install@v3
@@ -53,6 +55,8 @@ jobs:
 
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  show-progress: false
 
             - name: Install the dependencies
               uses: ramsey/composer-install@v3
@@ -83,6 +87,8 @@ jobs:
 
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  show-progress: false
 
             - name: Install the dependencies
               uses: ramsey/composer-install@v3
