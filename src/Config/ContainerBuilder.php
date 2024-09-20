@@ -28,7 +28,7 @@ class ContainerBuilder extends SymfonyContainerBuilder
      */
     private $managerConfig;
 
-    public function __construct(PluginLoader $pluginLoader, array $managerConfig, ParameterBagInterface $parameterBag = null)
+    public function __construct(PluginLoader $pluginLoader, array $managerConfig, ?ParameterBagInterface $parameterBag = null)
     {
         parent::__construct($parameterBag);
 
