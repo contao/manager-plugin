@@ -551,7 +551,7 @@ class ArtifactsPluginTest extends TestCase
      *
      * @return Composer&MockObject
      */
-    private function mockComposerWithDataDir(Config $config, RepositoryManager $repositoryManager = null, array $packages = [], array $requires = []): Composer
+    private function mockComposerWithDataDir(Config $config, ?RepositoryManager $repositoryManager = null, array $packages = [], array $requires = []): Composer
     {
         $requires = array_map(
             function ($matches) {
@@ -641,7 +641,7 @@ class ArtifactsPluginTest extends TestCase
     /**
      * @return PackageInterface&MockObject
      */
-    private function mockPackage(string $name, string $type, string $version = null, string $distUrl = null, bool $required = true): PackageInterface
+    private function mockPackage(string $name, string $type, ?string $version = null, ?string $distUrl = null, bool $required = true): PackageInterface
     {
         $package = $this->createMock(PackageInterface::class);
         $package

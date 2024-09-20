@@ -34,7 +34,7 @@ class PluginLoader
      */
     private $disabled = [];
 
-    public function __construct(string $installedJson = null, array $plugins = null)
+    public function __construct(?string $installedJson = null, ?array $plugins = null)
     {
         if (null !== $installedJson) {
             @trigger_error('Passing the path to the Composer installed.json as first argument is no longer supported in version 2.3.', E_USER_DEPRECATED);
