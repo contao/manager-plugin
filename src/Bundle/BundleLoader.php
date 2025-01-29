@@ -40,7 +40,7 @@ class BundleLoader
      */
     private $filesystem;
 
-    public function __construct(PluginLoader $pluginLoader, ConfigResolverFactory $resolverFactory, ParserInterface $parser, ?Filesystem $filesystem = null)
+    public function __construct(PluginLoader $pluginLoader, ConfigResolverFactory $resolverFactory, ParserInterface $parser, Filesystem|null $filesystem = null)
     {
         $this->pluginLoader = $pluginLoader;
         $this->resolverFactory = $resolverFactory;
@@ -57,7 +57,7 @@ class BundleLoader
      *
      * @return array<ConfigInterface>
      */
-    public function getBundleConfigs(bool $development, ?string $cacheFile = null): array
+    public function getBundleConfigs(bool $development, string|null $cacheFile = null): array
     {
         if (null !== $cacheFile) {
             return $this->loadFromCache($development, $cacheFile);
@@ -71,7 +71,7 @@ class BundleLoader
      *
      * @return array<ConfigInterface>
      */
-    private function loadFromCache(bool $development, ?string $cacheFile = null): array
+    private function loadFromCache(bool $development, string|null $cacheFile = null): array
     {
         $bundleConfigs = is_file($cacheFile) ? include $cacheFile : null;
 
@@ -87,7 +87,7 @@ class BundleLoader
      *
      * @return array<ConfigInterface>
      */
-    private function loadFromPlugins(bool $development, ?string $cacheFile = null): array
+    private function loadFromPlugins(bool $development, string|null $cacheFile = null): array
     {
         $resolver = $this->resolverFactory->create();
 
