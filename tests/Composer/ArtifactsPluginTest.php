@@ -55,7 +55,7 @@ class ArtifactsPluginTest extends TestCase
 
         $repositoryManager
             ->expects($this->once())
-            ->method('addRepository')
+            ->method('prependRepository')
             ->with($repository)
         ;
 
@@ -99,7 +99,7 @@ class ArtifactsPluginTest extends TestCase
 
         $repositoryManager
             ->expects($this->once())
-            ->method('addRepository')
+            ->method('prependRepository')
             ->with($repository)
         ;
 
@@ -133,7 +133,7 @@ class ArtifactsPluginTest extends TestCase
 
         $repositoryManager
             ->expects($this->never())
-            ->method('addRepository')
+            ->method('prependRepository')
         ;
 
         putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/null-data/composer.json');
@@ -168,7 +168,7 @@ class ArtifactsPluginTest extends TestCase
 
         $repositoryManager
             ->expects($this->never())
-            ->method('addRepository')
+            ->method('prependRepository')
         ;
 
         putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
@@ -381,7 +381,7 @@ class ArtifactsPluginTest extends TestCase
 
         $repositoryManager
             ->expects($this->exactly(2))
-            ->method('addRepository')
+            ->method('prependRepository')
         ;
 
         $plugin = new ArtifactsPlugin();

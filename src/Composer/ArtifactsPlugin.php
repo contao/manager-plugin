@@ -112,7 +112,7 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
             return null;
         }
 
-        $composer->getRepositoryManager()->addRepository($repository);
+        $composer->getRepositoryManager()->prependRepository($repository);
         $composer->getConfig()->merge(['repositories' => [['type' => 'artifact', 'url' => $repositoryUrl]]]);
 
         return $repository;
@@ -151,7 +151,7 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         if (!empty($repositories)) {
             foreach ($repositories as $config) {
                 $repo = $repositoryManager->createRepository($config['type'], $config);
-                $repositoryManager->addRepository($repo);
+                $repositoryManager->prependRepository($repo);
             }
 
             $this->composer->getConfig()->merge(['repositories' => array_values($repositories)]);
