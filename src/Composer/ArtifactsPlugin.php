@@ -50,9 +50,14 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
             return;
         }
 
-        $this->artifacts = $this->addArtifactRepository($composer, $packagesDir);
+        $artifactsConfig = ['type' => 'artifact', 'url' => $packagesDir, 'canonical' => false];
+        $this->artifacts = $composer
+            ->getRepositoryManager()
+            ->createRepository('artifact', $artifactsConfig)
+        ;
 
-        if (null === $this->artifacts) {
+        if (empty($this->artifacts->getPackages())) {
+            $this->artifacts = null;
             return;
         }
 
@@ -63,6 +68,10 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         }
 
         $this->registerProviders($requires);
+
+        // Prepend the artifacts repository after all providers
+        $composer->getRepositoryManager()->prependRepository($this->artifacts);
+        $composer->getConfig()->merge(['repositories' => [$artifactsConfig]]);
     }
 
     public function deactivate(Composer $composer, IOInterface $io): void
@@ -102,20 +111,6 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
         return [
             PluginEvents::PRE_COMMAND_RUN => ['preCommandRun', 1],
         ];
-    }
-
-    private function addArtifactRepository(Composer $composer, string $repositoryUrl): ?RepositoryInterface
-    {
-        $repository = $composer->getRepositoryManager()->createRepository('artifact', ['url' => $repositoryUrl]);
-
-        if (empty($repository->getPackages())) {
-            return null;
-        }
-
-        $composer->getRepositoryManager()->prependRepository($repository);
-        $composer->getConfig()->merge(['repositories' => [['type' => 'artifact', 'url' => $repositoryUrl]]]);
-
-        return $repository;
     }
 
     private function registerProviders(array $requires): void

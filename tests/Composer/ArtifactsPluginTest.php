@@ -49,7 +49,7 @@ class ArtifactsPluginTest extends TestCase
         $repositoryManager
             ->expects($this->once())
             ->method('createRepository')
-            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'])
+            ->with('artifact', ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages', 'canonical' => false])
             ->willReturn($repository)
         ;
 
@@ -70,6 +70,7 @@ class ArtifactsPluginTest extends TestCase
                     [
                         'type' => 'artifact',
                         'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages',
+                        'canonical' => false,
                     ],
                 ],
             ])
@@ -93,7 +94,7 @@ class ArtifactsPluginTest extends TestCase
         $repositoryManager
             ->expects($this->once())
             ->method('createRepository')
-            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'])
+            ->with('artifact', ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages', 'canonical' => false])
             ->willReturn($repository)
         ;
 
@@ -112,6 +113,7 @@ class ArtifactsPluginTest extends TestCase
                     [
                         'type' => 'artifact',
                         'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages',
+                        'canonical' => false,
                     ],
                 ],
             ])
@@ -162,7 +164,7 @@ class ArtifactsPluginTest extends TestCase
         $repositoryManager
             ->expects($this->once())
             ->method('createRepository')
-            ->with('artifact', ['url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'])
+            ->with('artifact', ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages', 'canonical' => false])
             ->willReturn($repository)
         ;
 
@@ -190,8 +192,8 @@ class ArtifactsPluginTest extends TestCase
         putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
 
         $repositories = [
-            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'],
             ['type' => 'vcs', 'url' => 'https://example.org/'],
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages', 'canonical' => false],
         ];
 
         $config = $this->mockConfig(null);
@@ -323,7 +325,6 @@ class ArtifactsPluginTest extends TestCase
             ->expects($this->exactly(2))
             ->method('merge')
             ->withConsecutive(
-                [$this->arrayHasKey('repositories')],
                 [
                     $this->logicalAnd(
                         $this->arrayHasKey('repositories'),
@@ -334,7 +335,19 @@ class ArtifactsPluginTest extends TestCase
                             ]],
                         ])
                     ),
-                ]
+                ],
+                [
+                    $this->logicalAnd(
+                        $this->arrayHasKey('repositories'),
+                        $this->equalTo([
+                            'repositories' => [[
+                                'type' => 'artifact',
+                                'url' => __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages',
+                                'canonical' => false,
+                            ]],
+                        ])
+                    )
+                ],
             )
         ;
 
@@ -391,8 +404,8 @@ class ArtifactsPluginTest extends TestCase
     public function testCorrectlyHandlesMultiplePackagesAndProviders(): void
     {
         $repositories = [
-            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages'],
             ['type' => 'vcs', 'url' => 'https://example.org/'],
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/provider-data/contao-manager/packages', 'canonical' => false],
         ];
 
         $config = $this->mockConfig(__DIR__.'/../Fixtures/Composer/provider-data/contao-manager');
@@ -487,7 +500,7 @@ class ArtifactsPluginTest extends TestCase
         putenv('COMPOSER='.__DIR__.'/../Fixtures/Composer/artifact-data/composer.json');
 
         $repositories = [
-            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages'],
+            ['type' => 'artifact', 'url' => __DIR__.'/../Fixtures/Composer/artifact-data/contao-manager/packages', 'canonical' => false],
             ['type' => 'vcs', 'url' => 'https://example.org/'],
         ];
 
