@@ -346,7 +346,7 @@ class ArtifactsPluginTest extends TestCase
                                 'canonical' => false,
                             ]],
                         ])
-                    )
+                    ),
                 ],
             )
         ;

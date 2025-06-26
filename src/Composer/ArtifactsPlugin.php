@@ -58,6 +58,7 @@ class ArtifactsPlugin implements PluginInterface, EventSubscriberInterface
 
         if (empty($this->artifacts->getPackages())) {
             $this->artifacts = null;
+
             return;
         }
 
