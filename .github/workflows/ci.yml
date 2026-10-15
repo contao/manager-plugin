@@ -10,6 +10,10 @@ on:
     schedule:
         - cron: 0 13 * * MON,THU
 
+env:
+    COMPOSER_POLICY_ADVISORIES_BLOCK: '0'
+    COMPOSER_NO_AUDIT: '1'
+
 jobs:
     coverage:
         name: Coverage
@@ -28,14 +32,11 @@ jobs:
               with:
                   show-progress: false
 
-            - name: Ignore security advisory for older PHP versions
-              run: composer config policy.advisories.ignore-id --json '["PKSA-qv5y-crcz-9nxw", "PKSA-kbc7-dq62-pt7d", "PKSA-8zx5-v2nz-58pb", "PKSA-fbvq-z33h-r2np", "PKSA-g9zw-qxh8-pq8w", "PKSA-yd6k-t2gh-1m43", "PKSA-1tmc-rt7x-12w6", "PKSA-xx6c-6d96-db2w", "PKSA-sjvz-tbbr-vwth", "PKSA-h8hf-ytnd-5t9q", "PKSA-wwb1-81rc-pd65", "PKSA-kvv6-36cr-fkzb", "PKSA-n14z-jjjg-g8vd", "PKSA-3mcc-k66d-pydb", "PKSA-gw7n-z4yx-7xjt", "PKSA-dpx1-78wg-1kqs", "PKSA-yhcn-xrg3-68b1", "PKSA-2wrf-1xmk-1pky", "PKSA-6319-ffpf-gx66"]'
-
             - name: Install the dependencies
               uses: ramsey/composer-install@v3
 
             - name: Generate the coverage report
-              run: php -d pcov.enabled=1 vendor/bin/phpunit --testsuite=coverage --coverage-clover=clover.xml --colors=always
+              run: php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover=clover.xml --colors=always
 
             - name: Upload the coverage report
               uses: codecov/codecov-action@v4
@@ -60,9 +61,6 @@ jobs:
               uses: actions/checkout@v4
               with:
                   show-progress: false
-
-            - name: Ignore security advisory for older PHP versions
-              run: composer config policy.advisories.ignore-id --json '["PKSA-qv5y-crcz-9nxw", "PKSA-kbc7-dq62-pt7d", "PKSA-8zx5-v2nz-58pb", "PKSA-fbvq-z33h-r2np", "PKSA-g9zw-qxh8-pq8w", "PKSA-yd6k-t2gh-1m43", "PKSA-1tmc-rt7x-12w6", "PKSA-xx6c-6d96-db2w", "PKSA-sjvz-tbbr-vwth", "PKSA-h8hf-ytnd-5t9q", "PKSA-wwb1-81rc-pd65", "PKSA-kvv6-36cr-fkzb", "PKSA-n14z-jjjg-g8vd", "PKSA-3mcc-k66d-pydb", "PKSA-gw7n-z4yx-7xjt", "PKSA-dpx1-78wg-1kqs", "PKSA-yhcn-xrg3-68b1", "PKSA-2wrf-1xmk-1pky", "PKSA-6319-ffpf-gx66"]'
 
             - name: Install the dependencies
               uses: ramsey/composer-install@v3
@@ -95,10 +93,6 @@ jobs:
               uses: actions/checkout@v4
               with:
                   show-progress: false
-
-            - name: Ignore security advisory for older PHP versions
-              run: composer config policy.advisories.ignore-id --json '["PKSA-qv5y-crcz-9nxw", "PKSA-kbc7-dq62-pt7d", "PKSA-8zx5-v2nz-58pb", "PKSA-fbvq-z33h-r2np", "PKSA-g9zw-qxh8-pq8w", "PKSA-yd6k-t2gh-1m43", "PKSA-1tmc-rt7x-12w6", "PKSA-xx6c-6d96-db2w", "PKSA-sjvz-tbbr-vwth", "PKSA-h8hf-ytnd-5t9q", "PKSA-wwb1-81rc-pd65", "PKSA-kvv6-36cr-fkzb", "PKSA-n14z-jjjg-g8vd", "PKSA-3mcc-k66d-pydb", "PKSA-gw7n-z4yx-7xjt", "PKSA-dpx1-78wg-1kqs", "PKSA-yhcn-xrg3-68b1", "PKSA-2wrf-1xmk-1pky", "PKSA-6319-ffpf-gx66"]'
-              if: matrix.php < 8.1
 
             - name: Install the dependencies
               uses: ramsey/composer-install@v3

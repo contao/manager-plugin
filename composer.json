@@ -72,7 +72,8 @@
         "class": [
             "Contao\\ManagerPlugin\\Composer\\ArtifactsPlugin",
             "Contao\\ManagerPlugin\\Composer\\ManagerPluginInstaller",
-            "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin"
+            "Contao\\ManagerPlugin\\Composer\\AppAutoloadPlugin",
+            "Contao\\ManagerPlugin\\Composer\\RuntimePlugin"
         ]
     },
     "scripts": {
