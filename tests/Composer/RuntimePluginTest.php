@@ -102,6 +102,7 @@ class RuntimePluginTest extends TestCase
             ->method('getLocalRepository')
             ->willReturn(new InstalledArrayRepository($packages))
         ;
+
         $composer = $this->createStub(Composer::class);
         $composer
             ->method('getPackage')
